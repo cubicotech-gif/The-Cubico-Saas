@@ -30,6 +30,7 @@ export interface Service {
   slug?: string;
   order_index: number;
   is_active: boolean;
+  image_url?: string;
   page_hero_title?: string;
   page_hero_subtitle?: string;
   features?: ServiceFeature[];
