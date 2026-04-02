@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ServicePageContent from '@/components/ServicePageContent';
 import { getServiceBySlug, getAllServiceSlugs, getSiteSettings } from '@/lib/data';
+import { getMediaAssets } from '@/lib/mediaData';
 
 export const revalidate = 60;
 
@@ -27,9 +28,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ServicePage({ params }: Props) {
-  const [service, settings] = await Promise.all([
+  const [service, settings, media] = await Promise.all([
     getServiceBySlug(params.slug),
     getSiteSettings(),
+    getMediaAssets(),
   ]);
 
   if (!service) notFound();
@@ -40,6 +42,7 @@ export default async function ServicePage({ params }: Props) {
       <ServicePageContent
         service={service}
         contactWhatsapp={settings.contact_whatsapp}
+        media={media}
       />
       <Footer settings={settings} />
     </>

@@ -3,13 +3,15 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import MediaPlaceholder from '@/components/MediaPlaceholder';
+import type { MediaAsset } from '@/lib/media';
 
 interface Project {
   title: string;
   category: string;
   description: string;
   url: string;
-  thumbnail: string;
+  mediaKey: string;
   tags: string[];
 }
 
@@ -20,7 +22,7 @@ const projects: Project[] = [
     description:
       'A complete school management portal with admissions, fee tracking, and parent communication — built with brand-aligned blues and warm neutrals to convey trust and academic excellence.',
     url: 'https://manage.cubico.tech',
-    thumbnail: '/portfolio/alnoor.png',
+    mediaKey: 'portfolio-alnoor',
     tags: ['Next.js', 'Branding', 'Dashboard'],
   },
   {
@@ -29,7 +31,7 @@ const projects: Project[] = [
     description:
       'Patient-facing booking and EHR system designed with calming greens and clean whites — every color choice rooted in healthcare psychology to reduce patient anxiety.',
     url: 'https://teach.cubico.tech',
-    thumbnail: '/portfolio/medcare.png',
+    mediaKey: 'portfolio-medcare',
     tags: ['React', 'Health UX', 'Accessibility'],
   },
   {
@@ -38,7 +40,7 @@ const projects: Project[] = [
     description:
       'A fashion e-commerce store with bold typographic hierarchy and conversion-optimised product pages — color palette derived from brand identity guidelines for maximum recall.',
     url: 'https://creative.cubico.tech',
-    thumbnail: '/portfolio/urbanthreads.png',
+    mediaKey: 'portfolio-urbanthreads',
     tags: ['E-Commerce', 'Shopify', 'CRO'],
   },
   {
@@ -47,7 +49,7 @@ const projects: Project[] = [
     description:
       'Corporate website for a renewable energy firm featuring data-driven animations, sustainability-inspired color science, and an authoritative yet approachable tone.',
     url: 'https://learn.cubico.tech',
-    thumbnail: '/portfolio/greenvolt.png',
+    mediaKey: 'portfolio-greenvolt',
     tags: ['Corporate', 'Animation', 'SEO'],
   },
   {
@@ -56,12 +58,16 @@ const projects: Project[] = [
     description:
       'Restaurant ordering platform designed with appetite-stimulating warm tones, intuitive menu navigation, and a seamless checkout — psychology meets plate presentation.',
     url: 'https://market.cubico.tech',
-    thumbnail: '/portfolio/foodieshub.png',
+    mediaKey: 'portfolio-foodieshub',
     tags: ['Food Tech', 'PWA', 'UX Design'],
   },
 ];
 
-export default function PortfolioShowcase() {
+interface PortfolioShowcaseProps {
+  media: Record<string, MediaAsset>;
+}
+
+export default function PortfolioShowcase({ media }: PortfolioShowcaseProps) {
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const scrollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -78,15 +84,13 @@ export default function PortfolioShowcase() {
     }
 
     const startAutoScroll = () => {
-      // Wait for iframe to load, then start scrolling
       const iframe = iframeRef.current;
       if (!iframe) return;
-
       scrollIntervalRef.current = setInterval(() => {
         try {
           iframe.contentWindow?.scrollBy({ top: 1, behavior: 'auto' });
         } catch {
-          // Cross-origin — use postMessage fallback or just let it be
+          // Cross-origin
         }
       }, 30);
     };
@@ -94,23 +98,18 @@ export default function PortfolioShowcase() {
     const timer = setTimeout(startAutoScroll, 2000);
     return () => {
       clearTimeout(timer);
-      if (scrollIntervalRef.current) {
-        clearInterval(scrollIntervalRef.current);
-      }
+      if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
     };
   }, [activeProject]);
 
   const openProject = (project: Project) => {
     setActiveProject(project);
-    // Smooth scroll to the showcase container
     setTimeout(() => {
       containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 100);
   };
 
-  const closeProject = () => {
-    setActiveProject(null);
-  };
+  const closeProject = () => setActiveProject(null);
 
   const navigateProject = (direction: 'prev' | 'next') => {
     if (!activeProject) return;
@@ -123,7 +122,7 @@ export default function PortfolioShowcase() {
   };
 
   return (
-    <section className="py-20 bg-surface-950">
+    <section id="portfolio" className="py-20 bg-surface-900/50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -138,66 +137,73 @@ export default function PortfolioShowcase() {
             Projects that speak for themselves
           </h2>
           <p className="text-surface-400 font-body max-w-2xl mx-auto">
-            Every project we deliver is a blend of strategic branding, colour
-            psychology, and performance engineering. Click any project to see it
-            live — right here.
+            Every project is a blend of strategic branding, colour psychology,
+            and performance engineering. Click any project to see it live.
           </p>
         </motion.div>
 
-        {/* Project Grid */}
+        {/* Project Grid — large visual cards */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {projects.map((project, i) => (
-            <motion.button
-              key={project.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
-              onClick={() => openProject(project)}
-              className={`group relative text-left p-5 rounded-2xl border transition-all duration-300 ${
-                activeProject?.title === project.title
-                  ? 'bg-brand-900/40 border-brand-700 shadow-xl shadow-brand-900/20'
-                  : 'bg-surface-900 border-surface-800 hover:border-surface-700 hover:shadow-lg hover:shadow-brand-900/10'
-              }`}
-            >
-              {/* Thumbnail placeholder */}
-              <div className="w-full h-36 rounded-xl bg-surface-800 border border-surface-700 mb-4 overflow-hidden relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-600/20 via-transparent to-brand-400/10" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-surface-500 text-xs font-body uppercase tracking-wider">
-                    {project.category}
-                  </span>
-                </div>
-                <div className="absolute inset-0 bg-brand-600/0 group-hover:bg-brand-600/10 transition-colors flex items-center justify-center">
-                  <ExternalLink
-                    size={20}
-                    className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
+          {projects.map((project, i) => {
+            const asset = media[project.mediaKey];
+            return (
+              <motion.button
+                key={project.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                onClick={() => openProject(project)}
+                className={`group relative text-left rounded-2xl border overflow-hidden transition-all duration-300 ${
+                  activeProject?.title === project.title
+                    ? 'border-brand-700 shadow-xl shadow-brand-900/20'
+                    : 'border-surface-800 hover:border-surface-700 hover:shadow-lg hover:shadow-brand-900/10'
+                }`}
+              >
+                {/* Screenshot image */}
+                <div className="w-full aspect-[16/10] overflow-hidden relative bg-surface-800">
+                  <MediaPlaceholder
+                    url={asset?.url}
+                    type="image"
+                    alt={project.title}
+                    hint={`Upload: ${project.title} screenshot`}
+                    width={800}
+                    height={500}
                   />
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-brand-600/0 group-hover:bg-brand-600/15 transition-colors flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
+                      <ExternalLink size={16} className="text-white" />
+                    </div>
+                  </div>
+                  {/* Category badge */}
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-surface-950/70 backdrop-blur-sm text-[10px] text-surface-300 font-body font-medium uppercase tracking-wider">
+                    {project.category}
+                  </div>
                 </div>
-              </div>
 
-              <p className="text-xs text-brand-400 font-body font-medium uppercase tracking-wider mb-1">
-                {project.category}
-              </p>
-              <h3 className="font-display font-semibold text-white mb-2 group-hover:text-brand-300 transition-colors">
-                {project.title}
-              </h3>
-              <p className="text-sm text-surface-400 font-body leading-relaxed line-clamp-2">
-                {project.description}
-              </p>
-
-              <div className="flex flex-wrap gap-1.5 mt-3">
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-0.5 text-[10px] font-body font-medium rounded-full bg-surface-800 text-surface-400 border border-surface-700"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </motion.button>
-          ))}
+                {/* Card text */}
+                <div className="p-5 bg-surface-900">
+                  <h3 className="font-display font-semibold text-white mb-1.5 group-hover:text-brand-300 transition-colors">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm text-surface-400 font-body leading-relaxed line-clamp-2 mb-3">
+                    {project.description}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-0.5 text-[10px] font-body font-medium rounded-full bg-surface-800 text-surface-400 border border-surface-700"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.button>
+            );
+          })}
         </div>
 
         {/* Inline Iframe Showcase */}
@@ -212,7 +218,7 @@ export default function PortfolioShowcase() {
               className="overflow-hidden"
             >
               <div className="rounded-2xl border border-surface-700 bg-surface-900 overflow-hidden">
-                {/* Browser chrome bar */}
+                {/* Browser chrome */}
                 <div className="flex items-center justify-between px-4 py-3 bg-surface-800 border-b border-surface-700">
                   <div className="flex items-center gap-3">
                     <div className="flex gap-1.5">
@@ -228,7 +234,6 @@ export default function PortfolioShowcase() {
                       <span className="truncate">{activeProject.url}</span>
                     </div>
                   </div>
-
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => navigateProject('prev')}
@@ -254,13 +259,13 @@ export default function PortfolioShowcase() {
                   </div>
                 </div>
 
-                {/* Project info bar */}
-                <div className="px-4 py-3 bg-surface-850 border-b border-surface-700 flex items-center justify-between">
+                {/* Info bar */}
+                <div className="px-4 py-3 border-b border-surface-700 flex items-center justify-between">
                   <div>
                     <h3 className="font-display font-semibold text-white text-sm">
                       {activeProject.title}
                     </h3>
-                    <p className="text-xs text-surface-400 font-body mt-0.5">
+                    <p className="text-xs text-surface-400 font-body mt-0.5 line-clamp-1">
                       {activeProject.description}
                     </p>
                   </div>
@@ -271,11 +276,11 @@ export default function PortfolioShowcase() {
                     className="flex-shrink-0 ml-4 flex items-center gap-1.5 px-3 py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-medium rounded-lg transition-colors font-body"
                   >
                     <ExternalLink size={12} />
-                    Open Full Site
+                    Full Site
                   </a>
                 </div>
 
-                {/* Iframe with auto-scroll */}
+                {/* Iframe */}
                 <div className="relative w-full h-[500px] sm:h-[600px]">
                   <iframe
                     ref={iframeRef}
@@ -285,7 +290,6 @@ export default function PortfolioShowcase() {
                     sandbox="allow-scripts allow-same-origin"
                     loading="lazy"
                   />
-                  {/* Scroll indicator overlay */}
                   <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-surface-900/80 to-transparent pointer-events-none flex items-end justify-center pb-3">
                     <span className="text-[10px] text-surface-400 font-body uppercase tracking-widest animate-pulse">
                       Auto-scrolling preview
