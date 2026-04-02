@@ -10,10 +10,10 @@ create extension if not exists "pgcrypto";
 create table if not exists site_settings (
   id          uuid        primary key default gen_random_uuid(),
   hero_title  text        not null default 'Technology That Moves You Forward',
-  hero_subtitle text      not null default 'Cubico Technologies delivers enterprise-grade software for institutions, healthcare providers, and growing businesses across Pakistan.',
+  hero_subtitle text      not null default 'Cubico Technologies delivers enterprise-grade software for institutions, healthcare providers, and growing businesses worldwide.',
   contact_whatsapp text   not null default '+923001234567',
   contact_email    text   not null default 'hello@cubico.tech',
-  footer_text      text   not null default '© 2026 Cubico Technologies. Built in Karachi, Pakistan.',
+  footer_text      text   not null default '© 2026 Cubico Technologies. Headquartered in Pakistan, serving clients globally.',
   updated_at  timestamptz not null default now()
 );
 
@@ -70,13 +70,29 @@ create table if not exists service_pricing (
 
 create index if not exists service_pricing_service_idx on service_pricing (service_id);
 
+-- ── Media Assets ──────────────────────────────────────────────────────────────
+-- Stores references to uploaded images/videos in Supabase Storage.
+-- Each slot_key maps to a specific placeholder on the website.
+create table if not exists media_assets (
+  id          uuid        primary key default gen_random_uuid(),
+  slot_key    text        unique not null,
+  url         text        not null,
+  file_name   text        not null,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+
+create index if not exists media_assets_slot_idx on media_assets (slot_key);
+
 -- ── Row Level Security ─────────────────────────────────────────────────────────
--- Public read access; admin writes are done server-side with the service role key.
-alter table site_settings  enable row level security;
-alter table services        enable row level security;
+-- Public read access; admin writes use the anon key with permissive insert/update/delete.
+alter table site_settings    enable row level security;
+alter table services         enable row level security;
 alter table service_features enable row level security;
 alter table service_pricing  enable row level security;
+alter table media_assets     enable row level security;
 
+-- Read policies (public)
 create policy "Public read site_settings"
   on site_settings for select using (true);
 
@@ -88,6 +104,71 @@ create policy "Public read service_features"
 
 create policy "Public read service_pricing"
   on service_pricing for select using (true);
+
+create policy "Public read media_assets"
+  on media_assets for select using (true);
+
+-- Write policies for media_assets (anon key — admin panel is password-protected client-side)
+create policy "Anon insert media_assets"
+  on media_assets for insert with check (true);
+
+create policy "Anon update media_assets"
+  on media_assets for update using (true);
+
+create policy "Anon delete media_assets"
+  on media_assets for delete using (true);
+
+-- Write policies for site_settings (admin)
+create policy "Anon update site_settings"
+  on site_settings for update using (true);
+
+-- Write policies for services (admin)
+create policy "Anon insert services"
+  on services for insert with check (true);
+
+create policy "Anon update services"
+  on services for update using (true);
+
+create policy "Anon delete services"
+  on services for delete using (true);
+
+-- ── Storage Bucket ─────────────────────────────────────────────────────────────
+-- Create the 'media' bucket for image/video uploads.
+-- NOTE: This uses Supabase's storage API. Run this AFTER the tables above.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'media',
+  'media',
+  true,
+  52428800, -- 50 MB max file size
+  array[
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/svg+xml',
+    'image/gif',
+    'video/mp4',
+    'video/webm'
+  ]
+)
+on conflict (id) do nothing;
+
+-- Storage RLS: allow public reads, anon uploads/overwrites
+create policy "Public read media bucket"
+  on storage.objects for select
+  using (bucket_id = 'media');
+
+create policy "Anon upload to media bucket"
+  on storage.objects for insert
+  with check (bucket_id = 'media');
+
+create policy "Anon update media bucket"
+  on storage.objects for update
+  using (bucket_id = 'media');
+
+create policy "Anon delete from media bucket"
+  on storage.objects for delete
+  using (bucket_id = 'media');
 
 -- ── Seed Data ──────────────────────────────────────────────────────────────────
 -- Institution services
@@ -106,7 +187,7 @@ on conflict do nothing;
 
 -- Individual services
 insert into services (title, description, category, icon, link_type, link_url, slug, order_index, page_hero_title, page_hero_subtitle) values
-  ('Website Development', 'Custom websites and web apps — from landing pages to complex portals — built with modern frameworks and SEO best practices.', 'individual', 'Globe', 'internal', '/services/website-development', 'website-development', 7, 'Websites That Work as Hard as You Do', 'We design and build fast, beautiful, and conversion-optimised websites tailored to your business goals.'),
+  ('Website Development', 'Custom websites and web apps — from landing pages to complex portals — built with modern frameworks and SEO best practices.', 'individual', 'Globe', 'internal', '/services/website-development', 'website-development', 7, 'Websites Engineered by Psychology, Crafted by Design', 'We build brand-first websites rooted in colour science, cognitive psychology, and conversion architecture — every design decision has a reason behind it.'),
   ('Client Portals',       'Secure, branded portals giving your clients real-time visibility into projects, invoices, and communications.', 'individual', 'LayoutDashboard', 'internal', '/services/client-portals', 'client-portals', 8, 'Give Clients a Front-Row Seat', 'Replace scattered emails and spreadsheets with a single branded portal your clients will love.'),
   ('CRM Systems',          'Purpose-built CRM to track leads, manage relationships, and close deals — tailored to your sales process.', 'individual', 'Users2', 'internal', '/services/crm-systems', 'crm-systems', 9, 'Close More Deals, Lose Fewer Leads', 'A CRM built around how you actually sell — flexible pipelines, smart follow-ups, and real insights.'),
   ('Digital Marketing',    'Data-driven marketing campaigns — SEO, social media, paid ads, and content — managed end to end by our team.', 'individual', 'TrendingUp', 'internal', '/services/digital-marketing', 'digital-marketing', 10, 'Growth You Can Measure', 'We run performance-focused marketing campaigns that bring real customers, not just clicks.')
