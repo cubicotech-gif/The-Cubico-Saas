@@ -17,7 +17,7 @@ export default function Footer({ settings }: FooterProps) {
             </p>
             <p className="text-sm text-surface-500 font-body leading-relaxed">
               Enterprise software for institutions, healthcare, and businesses
-              across Pakistan.
+              worldwide.
             </p>
           </div>
 

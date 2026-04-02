@@ -35,7 +35,7 @@ export default function Hero({ settings }: HeroProps) {
           className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full bg-brand-950 border border-brand-800 text-brand-300 text-xs font-body tracking-wide"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse" />
-          Enterprise Software · Karachi, Pakistan
+          Enterprise Software · Global SaaS
         </motion.div>
 
         {/* Headline */}

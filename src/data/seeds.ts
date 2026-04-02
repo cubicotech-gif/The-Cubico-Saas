@@ -3,10 +3,10 @@ import type { Service, SiteSettings } from '@/lib/types';
 export const seedSettings: SiteSettings = {
   hero_title: 'Technology That Moves You Forward',
   hero_subtitle:
-    'Cubico Technologies delivers enterprise-grade software for institutions, healthcare providers, and growing businesses across Pakistan.',
+    'Cubico Technologies delivers enterprise-grade software for institutions, healthcare providers, and growing businesses worldwide.',
   contact_whatsapp: '+923001234567',
   contact_email: 'hello@cubico.tech',
-  footer_text: '© 2026 Cubico Technologies. Built in Karachi, Pakistan.',
+  footer_text: '© 2026 Cubico Technologies. Headquartered in Pakistan, serving clients globally.',
 };
 
 export const seedServices: Service[] = [
@@ -257,9 +257,9 @@ export const seedServices: Service[] = [
     slug: 'website-development',
     order_index: 7,
     is_active: true,
-    page_hero_title: 'Websites That Work as Hard as You Do',
+    page_hero_title: 'Websites Engineered by Psychology, Crafted by Design',
     page_hero_subtitle:
-      'We design and build fast, beautiful, and conversion-optimised websites tailored to your business goals.',
+      'We build brand-first websites rooted in colour science, cognitive psychology, and conversion architecture — every design decision has a reason behind it.',
     features: [
       {
         icon: 'Palette',
