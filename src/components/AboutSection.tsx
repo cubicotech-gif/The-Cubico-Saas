@@ -6,7 +6,7 @@ import { Building2, Users, Globe, Award } from 'lucide-react';
 const stats = [
   { icon: Building2, value: '50+', label: 'Institutions served' },
   { icon: Users, value: '10k+', label: 'Active users' },
-  { icon: Globe, value: '4', label: 'Product verticals' },
+  { icon: Globe, value: '12+', label: 'Countries reached' },
   { icon: Award, value: '5+', label: 'Years in market' },
 ];
 
@@ -26,13 +26,14 @@ export default function AboutSection() {
               About Cubico
             </p>
             <h2 className="text-3xl sm:text-4xl font-display font-bold text-white leading-tight mb-6">
-              Building the software layer for Pakistan&apos;s growth story
+              Building the software layer for tomorrow&apos;s growth story
             </h2>
             <p className="text-surface-400 font-body leading-relaxed mb-4">
-              Cubico Technologies is a Karachi-based software company on a mission
-              to replace outdated processes with modern, reliable technology. From
-              school management to hospital systems, we build software that works
-              the way people actually work.
+              Cubico Technologies is a global software company headquartered in
+              Pakistan, on a mission to replace outdated processes with modern,
+              reliable technology. From school management to hospital systems, we
+              build software that works the way people actually work — wherever
+              they are in the world.
             </p>
             <p className="text-surface-400 font-body leading-relaxed mb-8">
               Every product in our portfolio shares the same DNA — clean design,

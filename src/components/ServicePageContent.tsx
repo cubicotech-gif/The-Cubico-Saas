@@ -4,12 +4,17 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, Check, MessageCircle } from 'lucide-react';
 import DynamicIcon from '@/components/ui/DynamicIcon';
+import DevelopmentApproach from '@/components/DevelopmentApproach';
+import PortfolioShowcase from '@/components/PortfolioShowcase';
+import WebsitePricing from '@/components/WebsitePricing';
 import type { Service } from '@/lib/types';
 
 interface ServicePageContentProps {
   service: Service;
   contactWhatsapp: string;
 }
+
+const isWebsiteDev = (slug?: string) => slug === 'website-development';
 
 export default function ServicePageContent({
   service,
@@ -65,6 +70,9 @@ export default function ServicePageContent({
         </div>
       </section>
 
+      {/* Development Approach — website-development only */}
+      {isWebsiteDev(service.slug) && <DevelopmentApproach />}
+
       {/* Features */}
       {service.features && service.features.length > 0 && (
         <section className="py-20 bg-surface-900/50">
@@ -109,88 +117,96 @@ export default function ServicePageContent({
         </section>
       )}
 
-      {/* Pricing */}
-      {service.pricing && service.pricing.length > 0 && (
-        <section className="py-20">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl font-display font-bold text-white mb-3">
-                Simple, transparent pricing
-              </h2>
-              <p className="text-surface-400 font-body">
-                No hidden fees. Cancel or upgrade any time.
-              </p>
-            </motion.div>
+      {/* Portfolio Showcase — website-development only */}
+      {isWebsiteDev(service.slug) && <PortfolioShowcase />}
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {service.pricing.map((tier, i) => (
-                <motion.div
-                  key={tier.id ?? i}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className={`relative flex flex-col p-6 rounded-2xl border transition-all ${
-                    tier.is_featured
-                      ? 'bg-brand-900/40 border-brand-700 shadow-xl shadow-brand-900/20'
-                      : 'bg-surface-900 border-surface-800'
-                  }`}
-                >
-                  {tier.is_featured && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-brand-600 text-white text-xs font-medium rounded-full font-body">
-                      Most Popular
-                    </div>
-                  )}
+      {/* Pricing — custom component for website-development, generic for others */}
+      {isWebsiteDev(service.slug) ? (
+        <WebsitePricing waNumber={waNumber} serviceTitle={service.title} />
+      ) : (
+        service.pricing &&
+        service.pricing.length > 0 && (
+          <section className="py-20">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-center mb-12"
+              >
+                <h2 className="text-3xl font-display font-bold text-white mb-3">
+                  Simple, transparent pricing
+                </h2>
+                <p className="text-surface-400 font-body">
+                  No hidden fees. Cancel or upgrade any time.
+                </p>
+              </motion.div>
 
-                  <p className="font-display font-semibold text-white mb-2">
-                    {tier.name}
-                  </p>
-                  <p className="text-3xl font-display font-bold text-white mb-0.5">
-                    {tier.price}
-                  </p>
-                  {tier.period && (
-                    <p className="text-sm text-surface-500 font-body mb-5">
-                      / {tier.period}
-                    </p>
-                  )}
-
-                  <ul className="space-y-2 mb-6 flex-1">
-                    {tier.features.map((feat, fi) => (
-                      <li
-                        key={fi}
-                        className="flex items-start gap-2 text-sm text-surface-300 font-body"
-                      >
-                        <Check
-                          size={14}
-                          className="text-brand-400 mt-0.5 flex-shrink-0"
-                        />
-                        {feat}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <a
-                    href={`https://wa.me/${waNumber}?text=Hi, I'd like to know more about the ${encodeURIComponent(tier.name)} plan for ${encodeURIComponent(service.title)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`block text-center py-2.5 rounded-xl text-sm font-medium transition-colors font-body ${
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {service.pricing.map((tier, i) => (
+                  <motion.div
+                    key={tier.id ?? i}
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.1 }}
+                    className={`relative flex flex-col p-6 rounded-2xl border transition-all ${
                       tier.is_featured
-                        ? 'bg-brand-600 hover:bg-brand-500 text-white'
-                        : 'bg-surface-800 hover:bg-surface-700 text-white'
+                        ? 'bg-brand-900/40 border-brand-700 shadow-xl shadow-brand-900/20'
+                        : 'bg-surface-900 border-surface-800'
                     }`}
                   >
-                    Get Started
-                  </a>
-                </motion.div>
-              ))}
+                    {tier.is_featured && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-brand-600 text-white text-xs font-medium rounded-full font-body">
+                        Most Popular
+                      </div>
+                    )}
+
+                    <p className="font-display font-semibold text-white mb-2">
+                      {tier.name}
+                    </p>
+                    <p className="text-3xl font-display font-bold text-white mb-0.5">
+                      {tier.price}
+                    </p>
+                    {tier.period && (
+                      <p className="text-sm text-surface-500 font-body mb-5">
+                        / {tier.period}
+                      </p>
+                    )}
+
+                    <ul className="space-y-2 mb-6 flex-1">
+                      {tier.features.map((feat, fi) => (
+                        <li
+                          key={fi}
+                          className="flex items-start gap-2 text-sm text-surface-300 font-body"
+                        >
+                          <Check
+                            size={14}
+                            className="text-brand-400 mt-0.5 flex-shrink-0"
+                          />
+                          {feat}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <a
+                      href={`https://wa.me/${waNumber}?text=Hi, I'd like to know more about the ${encodeURIComponent(tier.name)} plan for ${encodeURIComponent(service.title)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`block text-center py-2.5 rounded-xl text-sm font-medium transition-colors font-body ${
+                        tier.is_featured
+                          ? 'bg-brand-600 hover:bg-brand-500 text-white'
+                          : 'bg-surface-800 hover:bg-surface-700 text-white'
+                      }`}
+                    >
+                      Get Started
+                    </a>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )
       )}
 
       {/* CTA footer strip */}
