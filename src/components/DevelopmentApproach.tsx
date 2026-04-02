@@ -1,61 +1,69 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import {
-  Palette,
-  Eye,
-  Brain,
-  Layers,
-  Target,
-  Sparkles,
-} from 'lucide-react';
+import { Palette, Eye, Brain, Target, Layers, Sparkles } from 'lucide-react';
+import MediaPlaceholder from '@/components/MediaPlaceholder';
+import type { MediaAsset } from '@/lib/media';
 
-const pillars = [
+const approaches = [
   {
     icon: Palette,
-    title: 'Brand-First Design',
+    tag: 'Branding',
+    title: 'Brand-First Design & Colour Science',
     description:
-      'Every pixel reflects your brand DNA. We extract your core identity — values, voice, visual language — and weave it into every component, ensuring your website feels unmistakably yours.',
-    accent: 'from-brand-600 to-brand-400',
-  },
-  {
-    icon: Eye,
-    title: 'Colour Accuracy & Science',
-    description:
-      'We don\'t pick colours randomly. Each hue is selected using colour theory and calibrated for accessibility (WCAG AA+), ensuring your palette communicates the right emotion on every screen.',
-    accent: 'from-emerald-500 to-cyan-400',
+      'Every pixel reflects your brand DNA. We extract your core identity — values, voice, visual language — and build a scientific colour system around it. Each hue is selected using colour theory, calibrated for accessibility (WCAG AA+), and designed to trigger the right emotional response from your audience.',
+    bullets: [
+      'Brand identity extraction & mood boarding',
+      'Colour palette derived from psychology, not trends',
+      'WCAG AA+ accessibility compliance',
+      'Consistent tokens across every page',
+    ],
+    mediaKey: 'webdev-approach-branding',
+    accent: 'brand',
   },
   {
     icon: Brain,
-    title: 'Psychology-Driven Patterns',
+    tag: 'Psychology',
+    title: 'Psychology-Driven Layout Patterns',
     description:
-      'From the F-pattern eye tracking on landing pages to trust-building social proof placement — every layout decision is backed by cognitive psychology and behavioural research.',
-    accent: 'from-violet-500 to-purple-400',
+      'From the F-pattern eye tracking on landing pages to Gestalt grouping principles and trust-building social proof placement — every layout decision is backed by cognitive psychology and behavioural research. We design for how the human brain actually processes information.',
+    bullets: [
+      'F-pattern & Z-pattern eye tracking layouts',
+      'Strategic social proof & trust signal placement',
+      'Cognitive load reduction techniques',
+      'Gestalt principles for visual grouping',
+    ],
+    mediaKey: 'webdev-approach-psychology',
+    accent: 'violet',
   },
   {
     icon: Target,
-    title: 'Conversion Architecture',
+    tag: 'Conversion',
+    title: 'Conversion Architecture & Micro-Interactions',
     description:
-      'Beautiful design means nothing without results. We engineer visual hierarchies, strategic CTAs, and micro-interactions that guide visitors toward taking action.',
-    accent: 'from-amber-500 to-orange-400',
-  },
-  {
-    icon: Layers,
-    title: 'Systematic Design Tokens',
-    description:
-      'We build a living design system — spacing scales, type ramps, colour tokens — so your website stays consistent and your brand scales effortlessly across pages and platforms.',
-    accent: 'from-rose-500 to-pink-400',
-  },
-  {
-    icon: Sparkles,
-    title: 'Emotional Micro-Interactions',
-    description:
-      'Subtle hover effects, smooth transitions, and purposeful animations create a premium feel that builds trust and keeps visitors engaged longer.',
-    accent: 'from-cyan-500 to-blue-400',
+      'Beautiful design means nothing without results. We engineer visual hierarchies, strategic CTAs, and purposeful micro-interactions that create a premium feel and guide visitors toward taking action. Subtle hover effects, smooth transitions — every animation has a purpose.',
+    bullets: [
+      'Strategic CTA placement & visual hierarchy',
+      'Purposeful hover effects & transitions',
+      'Living design system with reusable tokens',
+      'Data-driven A/B testing ready',
+    ],
+    mediaKey: 'webdev-approach-conversion',
+    accent: 'amber',
   },
 ];
 
-export default function DevelopmentApproach() {
+const accentColors: Record<string, { tag: string; border: string; bg: string }> = {
+  brand: { tag: 'text-brand-400', border: 'border-brand-800', bg: 'bg-brand-950' },
+  violet: { tag: 'text-violet-400', border: 'border-violet-800', bg: 'bg-violet-950' },
+  amber: { tag: 'text-amber-400', border: 'border-amber-800', bg: 'bg-amber-950' },
+};
+
+interface DevelopmentApproachProps {
+  media: Record<string, MediaAsset>;
+}
+
+export default function DevelopmentApproach({ media }: DevelopmentApproachProps) {
   return (
     <section className="py-20 bg-surface-900/50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -63,7 +71,7 @@ export default function DevelopmentApproach() {
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-14"
+          className="text-center mb-16"
         >
           <p className="text-brand-400 text-sm font-body font-medium tracking-widest uppercase mb-3">
             Our Approach
@@ -73,91 +81,93 @@ export default function DevelopmentApproach() {
           </h2>
           <p className="text-surface-400 font-body max-w-2xl mx-auto leading-relaxed">
             We don&apos;t just build websites — we engineer digital experiences rooted
-            in brand psychology, colour science, and conversion research. Every
-            design decision has a reason behind it.
+            in brand psychology, colour science, and conversion research.
           </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {pillars.map((pillar, i) => (
-            <motion.div
-              key={pillar.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="group relative p-6 rounded-2xl bg-surface-900 border border-surface-800 hover:border-surface-700 transition-all duration-300"
-            >
-              {/* Gradient glow on hover */}
+        {/* Zigzag rows */}
+        <div className="space-y-16 lg:space-y-24">
+          {approaches.map((item, i) => {
+            const isReversed = i % 2 === 1;
+            const colors = accentColors[item.accent];
+            const asset = media[item.mediaKey];
+
+            return (
               <div
-                className={`absolute -inset-px rounded-2xl bg-gradient-to-br ${pillar.accent} opacity-0 group-hover:opacity-[0.08] transition-opacity duration-500 pointer-events-none`}
-              />
-
-              <div className="relative">
-                <div
-                  className={`w-10 h-10 rounded-xl bg-gradient-to-br ${pillar.accent} bg-opacity-10 flex items-center justify-center mb-4`}
-                  style={{ background: 'rgba(255,255,255,0.05)' }}
+                key={item.title}
+                className={`grid lg:grid-cols-2 gap-10 lg:gap-16 items-center ${
+                  isReversed ? 'lg:direction-rtl' : ''
+                }`}
+              >
+                {/* Image */}
+                <motion.div
+                  initial={{ opacity: 0, x: isReversed ? 30 : -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className={isReversed ? 'lg:order-2' : 'lg:order-1'}
                 >
-                  <pillar.icon size={20} className="text-brand-400" />
-                </div>
-                <h3 className="font-display font-semibold text-white mb-2">
-                  {pillar.title}
-                </h3>
-                <p className="text-sm text-surface-400 font-body leading-relaxed">
-                  {pillar.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                  <div className="rounded-2xl overflow-hidden border border-surface-800 aspect-[4/3]">
+                    <MediaPlaceholder
+                      url={asset?.url}
+                      type="image"
+                      alt={item.title}
+                      hint={`Upload: ${item.tag.toLowerCase()} visual`}
+                      width={640}
+                      height={480}
+                      className="rounded-2xl"
+                    />
+                  </div>
+                </motion.div>
 
-        {/* Process strip */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-14 p-6 sm:p-8 rounded-2xl bg-surface-900 border border-surface-800"
-        >
-          <h3 className="font-display font-bold text-white text-lg mb-6 text-center">
-            How we bring your vision to life
-          </h3>
-          <div className="grid sm:grid-cols-4 gap-6">
-            {[
-              {
-                step: '01',
-                title: 'Discovery',
-                desc: 'We study your brand, audience, competitors, and goals to build a strategic foundation.',
-              },
-              {
-                step: '02',
-                title: 'Design System',
-                desc: 'Colour palettes, typography, and component library — all aligned with your brand psychology.',
-              },
-              {
-                step: '03',
-                title: 'Development',
-                desc: 'Pixel-perfect code with blazing performance, SEO, and accessibility baked in from day one.',
-              },
-              {
-                step: '04',
-                title: 'Launch & Grow',
-                desc: 'We deploy, monitor, and continuously optimise based on real analytics and user behaviour.',
-              },
-            ].map((phase, i) => (
-              <div key={phase.step} className="text-center sm:text-left">
-                <p className="text-brand-400 font-display font-bold text-2xl mb-2">
-                  {phase.step}
-                </p>
-                <h4 className="font-display font-semibold text-white text-sm mb-1">
-                  {phase.title}
-                </h4>
-                <p className="text-xs text-surface-400 font-body leading-relaxed">
-                  {phase.desc}
-                </p>
+                {/* Text */}
+                <motion.div
+                  initial={{ opacity: 0, x: isReversed ? -30 : 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className={isReversed ? 'lg:order-1' : 'lg:order-2'}
+                >
+                  <div
+                    className={`inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full ${colors.bg} border ${colors.border}`}
+                  >
+                    <item.icon size={14} className={colors.tag} />
+                    <span className={`text-xs font-body font-medium ${colors.tag}`}>
+                      {item.tag}
+                    </span>
+                  </div>
+
+                  <h3 className="text-2xl sm:text-3xl font-display font-bold text-white mb-4 leading-tight">
+                    {item.title}
+                  </h3>
+                  <p className="text-surface-400 font-body leading-relaxed mb-6">
+                    {item.description}
+                  </p>
+
+                  <ul className="space-y-2.5">
+                    {item.bullets.map((bullet) => (
+                      <li
+                        key={bullet}
+                        className="flex items-start gap-2.5 text-sm text-surface-300 font-body"
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${
+                            item.accent === 'brand'
+                              ? 'bg-brand-400'
+                              : item.accent === 'violet'
+                              ? 'bg-violet-400'
+                              : 'bg-amber-400'
+                          }`}
+                        />
+                        {bullet}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
               </div>
-            ))}
-          </div>
-        </motion.div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
