@@ -46,7 +46,7 @@ export default function ServicePageContent({
         <TechLogoTicker media={media} />
 
         {/* 3. Pain Points — agitation */}
-        <PainPoints />
+        <PainPoints media={media} />
 
         {/* 4. Process Steps — 4-step timeline */}
         <ProcessSteps />
