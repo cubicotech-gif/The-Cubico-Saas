@@ -80,6 +80,35 @@ export const MEDIA_SLOTS: MediaSlot[] = [
     height: 450,
   },
 
+  // ── Process Browser Animation ──
+  {
+    key: 'process-sample-logo',
+    label: 'Browser Animation — Sample Logo',
+    section: 'Web Dev — Process',
+    accept: 'image/webp,image/png,image/svg+xml',
+    hint: 'A professional sample logo for the browser animation. PNG/SVG with transparency, max 100KB.',
+    width: 120,
+    height: 40,
+  },
+  {
+    key: 'process-hero-image',
+    label: 'Browser Animation — Hero Image',
+    section: 'Web Dev — Process',
+    accept: 'image/webp,image/*',
+    hint: 'Sample hero image that fills in during Stage 2. WebP, max 150KB.',
+    width: 900,
+    height: 400,
+  },
+  {
+    key: 'process-hero-swap',
+    label: 'Browser Animation — Swap Image',
+    section: 'Web Dev — Process',
+    accept: 'image/webp,image/*',
+    hint: 'Alternative hero image for the Stage 3 swap animation. WebP, max 150KB.',
+    width: 900,
+    height: 400,
+  },
+
   // ── Development Approach (zigzag) ──
   {
     key: 'webdev-approach-branding',
