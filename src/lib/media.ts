@@ -232,6 +232,35 @@ export const MEDIA_SLOTS: MediaSlot[] = [
     height: 500,
   },
 
+  // ── Portfolio Project Videos (optional) ──
+  {
+    key: 'portfolio-alnoor-video',
+    label: 'Al-Noor Academy Screen Recording',
+    section: 'Web Dev — Portfolio',
+    accept: 'video/mp4,video/webm',
+    hint: 'Short scroll-through recording of the live site. Muted, loop, max 2MB.',
+    width: 800,
+    height: 500,
+  },
+  {
+    key: 'portfolio-medcare-video',
+    label: 'MedCare Clinic Screen Recording',
+    section: 'Web Dev — Portfolio',
+    accept: 'video/mp4,video/webm',
+    hint: 'Short scroll-through recording of the live site. Muted, loop, max 2MB.',
+    width: 800,
+    height: 500,
+  },
+  {
+    key: 'portfolio-urbanthreads-video',
+    label: 'Urban Threads Screen Recording',
+    section: 'Web Dev — Portfolio',
+    accept: 'video/mp4,video/webm',
+    hint: 'Short scroll-through recording of the live site. Muted, loop, max 2MB.',
+    width: 800,
+    height: 500,
+  },
+
   // ── Social Proof / Testimonials ──
   {
     key: 'testimonial-client1-photo',
