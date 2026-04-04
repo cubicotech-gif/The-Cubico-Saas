@@ -16,56 +16,48 @@ export default function Footer({ settings }: FooterProps) {
               cubico<span className="text-brand-400">.</span>
             </p>
             <p className="text-sm text-surface-500 font-body leading-relaxed">
-              Enterprise software for institutions, healthcare, and businesses
+              Websites, portals, CRMs, and marketing — engineered for businesses
               worldwide.
             </p>
           </div>
 
-          {/* Links */}
+          {/* Services */}
           <div>
             <p className="text-xs text-surface-500 font-body uppercase tracking-widest mb-3">
-              Products
+              Services
             </p>
             <ul className="space-y-2 text-sm font-body text-surface-400">
               <li>
-                <a
-                  href="https://manage.cubico.tech"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/services/website-development"
                   className="hover:text-white transition-colors"
                 >
-                  Cubico Manage
-                </a>
+                  Website Development
+                </Link>
               </li>
               <li>
-                <a
-                  href="https://teach.cubico.tech"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/services/client-portals"
                   className="hover:text-white transition-colors"
                 >
-                  Cubico Teach
-                </a>
+                  Client Portals
+                </Link>
               </li>
               <li>
-                <a
-                  href="https://learn.cubico.tech"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/services/crm-systems"
                   className="hover:text-white transition-colors"
                 >
-                  Cubico Learn
-                </a>
+                  CRM Systems
+                </Link>
               </li>
               <li>
-                <a
-                  href="https://creative.cubico.tech"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/services/digital-marketing"
                   className="hover:text-white transition-colors"
                 >
-                  Creative Studio
-                </a>
+                  Digital Marketing
+                </Link>
               </li>
             </ul>
           </div>

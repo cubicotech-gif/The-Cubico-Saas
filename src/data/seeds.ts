@@ -1,9 +1,9 @@
 import type { Service, SiteSettings } from '@/lib/types';
 
 export const seedSettings: SiteSettings = {
-  hero_title: 'Technology That Moves You Forward',
+  hero_title: 'We Build Digital Products That Grow Businesses',
   hero_subtitle:
-    'Cubico Technologies delivers enterprise-grade software for institutions, healthcare providers, and growing businesses worldwide.',
+    'Websites, portals, CRMs, and marketing — engineered with brand psychology, clean code, and conversion science. Globally.',
   contact_whatsapp: '+923001234567',
   contact_email: 'hello@cubico.tech',
   footer_text: '© 2026 Cubico Technologies. Headquartered in Pakistan, serving clients globally.',
