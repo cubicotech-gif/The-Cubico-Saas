@@ -49,7 +49,7 @@ export default function ServicePageContent({
         <PainPoints media={media} />
 
         {/* 4. Process Steps — 4-step timeline */}
-        <ProcessSteps />
+        <ProcessSteps media={media} />
 
         {/* 5. Comparison Table — why Cubico is different */}
         <ComparisonTable />
