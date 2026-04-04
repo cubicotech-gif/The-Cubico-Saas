@@ -52,7 +52,7 @@ export default function ServicePageContent({
         <WebsitePricing waNumber={waNumber} serviceTitle={service.title} />
 
         {/* 6. Final CTA */}
-        <section className="relative py-20 bg-surface-900/50 border-t border-surface-800 overflow-hidden">
+        <section id="webdev-cta" className="relative py-20 bg-surface-900/50 border-t border-surface-800 overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-600/8 rounded-full blur-3xl" />
           </div>
@@ -73,7 +73,7 @@ export default function ServicePageContent({
                 href={`https://wa.me/${waNumber}?text=Hi, I'm interested in Website Development`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-xl transition-all hover:shadow-lg hover:shadow-brand-600/25 font-body text-lg"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-semibold rounded-xl transition-all hover:scale-[1.02] hover:shadow-xl hover:shadow-[#FF6B4A]/25 font-body text-lg"
               >
                 <MessageCircle size={18} />
                 Start Your Project

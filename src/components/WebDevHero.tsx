@@ -1,9 +1,9 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft, MessageCircle, ChevronDown, Globe, Users, Award } from 'lucide-react';
-import MediaPlaceholder from '@/components/MediaPlaceholder';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { MediaAsset } from '@/lib/media';
 
 interface WebDevHeroProps {
@@ -13,151 +13,168 @@ interface WebDevHeroProps {
   media: Record<string, MediaAsset>;
 }
 
-const stats = [
-  { value: '50+', label: 'Sites Built' },
-  { value: '12+', label: 'Countries' },
-  { value: '98%', label: 'Client Retention' },
-];
-
 export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevHeroProps) {
   const heroVideo = media['webdev-hero-video'];
-  const heroMockup = media['webdev-hero-mockup'];
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  // Ensure autoplay works after mount
+  useEffect(() => {
+    const v = videoRef.current;
+    if (v) {
+      v.play().catch(() => {});
+    }
+  }, [heroVideo?.url]);
+
+  const scrollToCta = () => {
+    const el = document.getElementById('webdev-cta');
+    el?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-surface-950">
-      {/* Background gradient effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-brand-600/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] bg-brand-500/8 rounded-full blur-3xl" />
+    <section className="relative h-screen min-h-[600px] max-h-[1000px] overflow-hidden">
+
+      {/* ── VIDEO / FALLBACK BACKGROUND (full width, behind everything) ── */}
+      <div className="absolute inset-0 z-0">
+        {heroVideo?.url ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: videoLoaded ? 1 : 0 }}
+            transition={{ duration: 1, delay: 0.6 }}
+            className="absolute inset-0"
+          >
+            <video
+              ref={videoRef}
+              src={heroVideo.url}
+              muted
+              autoPlay
+              loop
+              playsInline
+              onLoadedData={() => setVideoLoaded(true)}
+              className="w-full h-full object-cover"
+            />
+            {/* Opacity overlay — 40% on desktop, 70% on mobile */}
+            <div className="absolute inset-0 bg-[#0A1628]/60 lg:bg-[#0A1628]/40" />
+          </motion.div>
+        ) : (
+          /* Animated gradient mesh fallback */
+          <div className="absolute inset-0 bg-[#0A1628]">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-brand-600/8 blur-[120px] animate-glow" />
+              <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#FF6B4A]/6 blur-[120px] animate-glow [animation-delay:1.5s]" />
+              <div className="absolute top-[40%] left-[50%] w-[40%] h-[40%] rounded-full bg-violet-600/5 blur-[100px] animate-glow [animation-delay:3s]" />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── DIAGONAL LEFT PANEL (desktop only) ── */}
+      <div
+        className="hidden lg:block absolute inset-0 z-10"
+        style={{
+          clipPath: 'polygon(0 0, 65% 0, 50% 100%, 0 100%)',
+          background: 'linear-gradient(160deg, #0A1628 0%, #0d1f3c 50%, #0A1628 100%)',
+        }}
+      >
+        {/* Subtle texture */}
         <div
-          className="absolute inset-0 opacity-[0.02]"
+          className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
+              'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)',
+            backgroundSize: '32px 32px',
           }}
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 lg:py-0">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left — Text */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Link
-              href="/#services"
-              className="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-white transition-colors mb-6 font-body"
+      {/* ── MOBILE: full overlay instead of diagonal ── */}
+      <div className="lg:hidden absolute inset-0 z-10 bg-[#0A1628]/70" />
+
+      {/* ── TEXT CONTENT ── */}
+      <div className="relative z-20 h-full flex items-center">
+        <div className="w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="lg:max-w-[55%]">
+
+            {/* Back link */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
             >
-              <ArrowLeft size={14} />
-              Back to services
-            </Link>
-
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-brand-950 border border-brand-800 text-brand-300 text-xs font-body tracking-wide">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse" />
-              Website Development
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-display font-bold text-white leading-[1.1] tracking-tight mb-5">
-              {title}
-            </h1>
-            <p className="text-lg text-surface-400 font-body leading-relaxed max-w-lg mb-8">
-              {subtitle}
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 mb-10">
-              <a
-                href={`https://wa.me/${waNumber}?text=Hi, I'm interested in Website Development`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-xl transition-all hover:shadow-lg hover:shadow-brand-600/25 font-body"
+              <Link
+                href="/#services"
+                className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/70 transition-colors mb-8 font-body"
               >
-                <MessageCircle size={16} />
-                Get Started
-              </a>
-              <a
-                href="#portfolio"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-surface-800 hover:bg-surface-700 text-white font-medium rounded-xl transition-colors border border-surface-700 font-body"
+                <ArrowLeft size={14} />
+                Back to services
+              </Link>
+            </motion.div>
+
+            {/* Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-[2rem] sm:text-[2.8rem] lg:text-[3.5rem] xl:text-[4rem] font-display font-extrabold text-white leading-[1.08] tracking-tight mb-5"
+            >
+              Your Website.<br />
+              Built by Humans.<br />
+              <span className="text-[#FF6B4A]">Ready in Hours.</span>
+            </motion.h1>
+
+            {/* Subheadline */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="text-[1rem] sm:text-lg text-white/50 font-body leading-relaxed max-w-md lg:max-w-lg mb-8"
+            >
+              No templates to fight. No subscriptions forever. No freelancer who
+              vanishes. Just a team that builds it, launches it, and stays.
+            </motion.p>
+
+            {/* CTA Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+            >
+              <button
+                onClick={scrollToCta}
+                className="group inline-flex items-center gap-2.5 px-8 py-4 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-semibold rounded-xl transition-all duration-200 hover:scale-[1.03] hover:shadow-xl hover:shadow-[#FF6B4A]/25 font-body text-base sm:text-lg w-full sm:w-auto justify-center sm:justify-start"
               >
-                See Our Work
-              </a>
-            </div>
+                Get Your Website
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </motion.div>
 
-            {/* Stats row */}
-            <div className="flex gap-8">
-              {stats.map((stat, i) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + i * 0.1 }}
-                >
-                  <p className="text-2xl font-display font-bold text-white">
-                    {stat.value}
-                  </p>
-                  <p className="text-xs text-surface-500 font-body">{stat.label}</p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Right — Visual */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative"
-          >
-            <div className="relative rounded-2xl overflow-hidden border border-surface-800 shadow-2xl shadow-brand-900/20 aspect-[4/3]">
-              {/* Show video first, then mockup image, then placeholder */}
-              {heroVideo?.url ? (
-                <MediaPlaceholder
-                  url={heroVideo.url}
-                  type="video"
-                  alt="Website development showreel"
-                  hint="Hero showreel video"
-                />
-              ) : (
-                <MediaPlaceholder
-                  url={heroMockup?.url}
-                  type="image"
-                  alt="Website development mockup"
-                  hint="Upload a hero video or device mockup image via Admin Panel"
-                  width={1920}
-                  height={1080}
-                  className="rounded-2xl"
-                />
-              )}
-
-              {/* Floating badge */}
-              <div className="absolute bottom-4 left-4 px-3 py-2 rounded-xl bg-surface-950/80 backdrop-blur-md border border-surface-800 text-xs text-white font-body">
-                <span className="text-brand-400 font-semibold">Live Preview</span>
-                <span className="text-surface-500 ml-1.5">of our work</span>
-              </div>
-            </div>
-
-            {/* Decorative dots */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 opacity-20">
-              <div className="grid grid-cols-4 gap-2">
-                {Array.from({ length: 16 }).map((_, i) => (
-                  <div key={i} className="w-1.5 h-1.5 rounded-full bg-brand-400" />
-                ))}
-              </div>
-            </div>
-          </motion.div>
+            {/* Micro trust line */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 1 }}
+              className="mt-6 text-[11px] text-white/25 font-body tracking-wide"
+            >
+              50+ websites built &nbsp;·&nbsp; 12+ countries &nbsp;·&nbsp; 98% client retention
+            </motion.p>
+          </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* ── SCROLL INDICATOR ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1"
       >
-        <ChevronDown size={20} className="text-surface-600 animate-bounce" />
+        <div className="w-5 h-8 rounded-full border border-white/15 flex justify-center pt-1.5">
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            className="w-1 h-1 rounded-full bg-white/40"
+          />
+        </div>
       </motion.div>
     </section>
   );
