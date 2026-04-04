@@ -8,7 +8,6 @@ import WebDevHero from '@/components/WebDevHero';
 import TechLogoTicker from '@/components/TechLogoTicker';
 import PainPoints from '@/components/PainPoints';
 import ProcessSteps from '@/components/ProcessSteps';
-import ComparisonTable from '@/components/ComparisonTable';
 import BentoShowcase from '@/components/BentoShowcase';
 import PortfolioShowcase from '@/components/PortfolioShowcase';
 import WebsitePricing from '@/components/WebsitePricing';
@@ -51,10 +50,7 @@ export default function ServicePageContent({
         {/* 4. Process Steps — 4-step timeline */}
         <ProcessSteps media={media} />
 
-        {/* 5. Comparison Table — why Cubico is different */}
-        <ComparisonTable />
-
-        {/* 6. Bento Grid — everything at a glance */}
+        {/* 5. Bento Grid — everything at a glance */}
         <BentoShowcase media={media} />
 
         {/* 4. Portfolio Showcase — large image cards + iframe */}
