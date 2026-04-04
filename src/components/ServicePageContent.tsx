@@ -8,7 +8,6 @@ import WebDevHero from '@/components/WebDevHero';
 import TechLogoTicker from '@/components/TechLogoTicker';
 import PainPoints from '@/components/PainPoints';
 import ProcessSteps from '@/components/ProcessSteps';
-import BentoShowcase from '@/components/BentoShowcase';
 import PortfolioShowcase from '@/components/PortfolioShowcase';
 import WebsitePricing from '@/components/WebsitePricing';
 import type { Service } from '@/lib/types';
@@ -50,10 +49,7 @@ export default function ServicePageContent({
         {/* 4. Process Steps — 4-step timeline */}
         <ProcessSteps media={media} />
 
-        {/* 5. Bento Grid — everything at a glance */}
-        <BentoShowcase media={media} />
-
-        {/* 4. Portfolio Showcase — large image cards + iframe */}
+        {/* 5. Portfolio Showcase — device mockups + iframe */}
         <PortfolioShowcase media={media} />
 
         {/* 5. Pricing — geo-dynamic */}
