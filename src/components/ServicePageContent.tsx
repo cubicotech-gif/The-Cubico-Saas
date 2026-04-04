@@ -6,6 +6,7 @@ import { ArrowLeft, Check, MessageCircle } from 'lucide-react';
 import DynamicIcon from '@/components/ui/DynamicIcon';
 import WebDevHero from '@/components/WebDevHero';
 import TechLogoTicker from '@/components/TechLogoTicker';
+import PainPoints from '@/components/PainPoints';
 import BentoShowcase from '@/components/BentoShowcase';
 import PortfolioShowcase from '@/components/PortfolioShowcase';
 import WebsitePricing from '@/components/WebsitePricing';
@@ -42,7 +43,10 @@ export default function ServicePageContent({
         {/* 2. Tech Logo Ticker — trust bar */}
         <TechLogoTicker media={media} />
 
-        {/* 3. Bento Grid — everything at a glance */}
+        {/* 3. Pain Points — agitation */}
+        <PainPoints />
+
+        {/* 4. Bento Grid — everything at a glance */}
         <BentoShowcase media={media} />
 
         {/* 4. Portfolio Showcase — large image cards + iframe */}
