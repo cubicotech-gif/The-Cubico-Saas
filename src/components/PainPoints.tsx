@@ -1,84 +1,391 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  type TouchEvent as ReactTouchEvent,
+} from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import type { MediaAsset } from '@/lib/media';
 
-const painPoints = [
+/* ═══════════════════════════════════════════════════════════════════
+   DATA
+   ═══════════════════════════════════════════════════════════════════ */
+
+interface StoryCard {
+  mediaKey: string; // maps to media[key]
+  mediaType: 'video' | 'image';
+  headline: string;
+  subtext: string;
+  buttons: 'pair' | 'single-cta' | 'result';
+}
+
+const CARDS: StoryCard[] = [
   {
-    title: 'You tried building it yourself',
-    description:
-      'Wix, WordPress, Squarespace — you spent weekends fighting templates that never looked like the demo. The result? A site that screams "I made this in a weekend."',
-    icon: (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="6" y="10" width="36" height="26" rx="3" stroke="#FF6B4A" strokeWidth="2" />
-        <line x1="6" y1="18" x2="42" y2="18" stroke="#FF6B4A" strokeWidth="2" />
-        <circle cx="10" cy="14" r="1.5" fill="#FF6B4A" />
-        <circle cx="15" cy="14" r="1.5" fill="#FF6B4A" />
-        <circle cx="20" cy="14" r="1.5" fill="#FF6B4A" />
-        {/* Crack / broken lines */}
-        <path d="M20 24L24 28L22 32L26 36" stroke="#FF6B4A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M28 22L32 26L30 30" stroke="#FF6B4A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
-      </svg>
-    ),
+    mediaKey: 'paincard-1-video',
+    mediaType: 'video',
+    headline: '2 weeks. 6 tutorials. Still broken.',
+    subtext:
+      "You tried building it yourself. The AI tools promised 5 minutes. It's been 5 weeks.",
+    buttons: 'pair',
   },
   {
-    title: 'You hired someone who vanished',
-    description:
-      'The freelancer was great — until they weren\'t. Halfway through, they ghosted. Now you\'re stuck with half a site, no source files, and zero answers.',
-    icon: (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Person outline fading */}
-        <circle cx="24" cy="16" r="6" stroke="#FF6B4A" strokeWidth="2" strokeDasharray="3 3" />
-        <path d="M14 38C14 32.477 18.477 28 24 28C29.523 28 34 32.477 34 38" stroke="#FF6B4A" strokeWidth="2" strokeLinecap="round" strokeDasharray="4 4" />
-        {/* Question mark */}
-        <path d="M36 10C36 7.79 37.79 6 40 6C42.21 6 44 7.79 44 10C44 11.66 42.92 13.07 41.41 13.64C40.88 13.84 40.5 14.35 40.5 14.93V16" stroke="#FF6B4A" strokeWidth="2" strokeLinecap="round" />
-        <circle cx="40.5" cy="19" r="1" fill="#FF6B4A" />
-      </svg>
-    ),
+    mediaKey: 'paincard-2-image',
+    mediaType: 'image',
+    headline: 'Paid $800. Got ghosted.',
+    subtext:
+      'You hired a freelancer. They took your money, delivered half the work, and stopped responding.',
+    buttons: 'pair',
   },
   {
-    title: 'You\'re paying monthly for a site you don\'t own',
-    description:
-      'Subscription site builders keep you locked in. You pay $30/month forever, can\'t export your site, and if you stop paying — it all disappears.',
-    icon: (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Coin / dollar */}
-        <circle cx="20" cy="24" r="12" stroke="#FF6B4A" strokeWidth="2" />
-        <path d="M20 18V30" stroke="#FF6B4A" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M17 21C17 19.9 18.34 19 20 19C21.66 19 23 19.9 23 21C23 22.1 21.66 23 20 23C18.34 23 17 23.9 17 25C17 26.1 18.34 27 20 27C21.66 27 23 26.1 23 25" stroke="#FF6B4A" strokeWidth="1.5" strokeLinecap="round" />
-        {/* Circular arrow — subscription loop */}
-        <path d="M34 14C37.31 17.31 39 21.58 38.5 26" stroke="#FF6B4A" strokeWidth="2" strokeLinecap="round" />
-        <path d="M36 12L34 14L36.5 16" stroke="#FF6B4A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M34 34C30.69 37.31 26.42 39 22 38.5" stroke="#FF6B4A" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
-      </svg>
-    ),
+    mediaKey: 'paincard-3-image',
+    mediaType: 'image',
+    headline: "$468/year. And you can't even leave.",
+    subtext:
+      'Monthly subscriptions that never end. Want to move your site? Start from zero.',
+    buttons: 'pair',
   },
   {
-    title: 'You just want it done — properly',
-    description:
-      'You don\'t want to learn code. You don\'t want another meeting about "sprints." You want a site that looks incredible, works perfectly, and is live this week.',
-    icon: (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Person with hands up / overwhelmed */}
-        <circle cx="24" cy="12" r="5" stroke="#FF6B4A" strokeWidth="2" />
-        <path d="M24 20V32" stroke="#FF6B4A" strokeWidth="2" strokeLinecap="round" />
-        <path d="M18 42L24 32L30 42" stroke="#FF6B4A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        {/* Arms up */}
-        <path d="M16 22L20 26" stroke="#FF6B4A" strokeWidth="2" strokeLinecap="round" />
-        <path d="M32 22L28 26" stroke="#FF6B4A" strokeWidth="2" strokeLinecap="round" />
-        {/* Stress marks */}
-        <line x1="10" y1="8" x2="10" y2="12" stroke="#FF6B4A" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
-        <line x1="38" y1="8" x2="38" y2="12" stroke="#FF6B4A" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
-        <line x1="8" y1="16" x2="12" y2="16" stroke="#FF6B4A" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
-        <line x1="36" y1="16" x2="40" y2="16" stroke="#FF6B4A" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
-      </svg>
-    ),
+    mediaKey: 'paincard-4-video',
+    mediaType: 'video',
+    headline: 'You just want it done.',
+    subtext:
+      'No tutorials. No subscriptions. No freelancers. Just someone who builds it and stays.',
+    buttons: 'single-cta',
+  },
+  {
+    mediaKey: '',
+    mediaType: 'image',
+    headline: '',
+    subtext: '',
+    buttons: 'result',
   },
 ];
 
-export default function PainPoints() {
+const TOTAL = CARDS.length;
+const AUTO_ADVANCE_MS = 5000;
+
+/* ═══════════════════════════════════════════════════════════════════
+   COMPONENT
+   ═══════════════════════════════════════════════════════════════════ */
+
+interface PainPointsProps {
+  media?: Record<string, MediaAsset>;
+}
+
+export default function PainPoints({ media = {} }: PainPointsProps) {
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(1); // 1 = forward, -1 = back
+  const [beenThereCount, setBeenThereCount] = useState(0);
+  const [beenThereCards, setBeenThereCards] = useState<Set<number>>(new Set());
+  const [barProgress, setBarProgress] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  // Touch tracking
+  const touchStart = useRef({ x: 0, y: 0, t: 0 });
+  const touchDelta = useRef(0);
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Reduced motion
+  const reducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── Navigation ── */
+  const goTo = useCallback(
+    (idx: number) => {
+      if (idx < 0 || idx >= TOTAL) return;
+      setDirection(idx > current ? 1 : -1);
+      setCurrent(idx);
+      setBarProgress(0);
+    },
+    [current],
+  );
+
+  const goNext = useCallback(() => {
+    if (current < TOTAL - 1) goTo(current + 1);
+  }, [current, goTo]);
+
+  const goPrev = useCallback(() => {
+    if (current > 0) goTo(current - 1);
+  }, [current, goTo]);
+
+  /* ── Auto-advance timer ── */
+  useEffect(() => {
+    if (paused || current >= TOTAL - 1) return;
+    const start = Date.now();
+    let raf: number;
+    const tick = () => {
+      const elapsed = Date.now() - start;
+      setBarProgress(Math.min(elapsed / AUTO_ADVANCE_MS, 1));
+      if (elapsed >= AUTO_ADVANCE_MS) {
+        goNext();
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [current, paused, goNext]);
+
+  /* ── Keyboard ── */
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'ArrowLeft') goPrev();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [goNext, goPrev]);
+
+  /* ── Touch handlers (horizontal card swipe, vertical = section scroll) ── */
+  const onTouchStart = (e: ReactTouchEvent) => {
+    const t = e.touches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY, t: Date.now() };
+    touchDelta.current = 0;
+    setPaused(true);
+  };
+
+  const onTouchMove = (e: ReactTouchEvent) => {
+    const t = e.touches[0];
+    const dx = t.clientX - touchStart.current.x;
+    const dy = t.clientY - touchStart.current.y;
+    // Only capture horizontal swipe
+    if (Math.abs(dx) > Math.abs(dy) + 5) {
+      touchDelta.current = dx;
+      setSwipeOffset(dx);
+    }
+  };
+
+  const onTouchEnd = () => {
+    const dx = touchDelta.current;
+    const elapsed = Date.now() - touchStart.current.t;
+    const velocity = Math.abs(dx) / Math.max(elapsed, 1);
+
+    // Fast swipe or dragged > 60px
+    if (dx < -60 || (dx < -20 && velocity > 0.5)) goNext();
+    else if (dx > 60 || (dx > 20 && velocity > 0.5)) goPrev();
+
+    setSwipeOffset(0);
+    setPaused(false);
+    touchDelta.current = 0;
+  };
+
+  /* ── "Been There" handler ── */
+  const handleBeenThere = () => {
+    if (!beenThereCards.has(current)) {
+      setBeenThereCards((prev) => new Set(prev).add(current));
+      setBeenThereCount((c) => c + 1);
+    }
+  };
+
+  /* ── Scroll to CTA ── */
+  const scrollToCta = () => {
+    document.getElementById('webdev-cta')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  /* ── Preload next media ── */
+  useEffect(() => {
+    const next = CARDS[current + 1];
+    if (!next || !next.mediaKey || !media[next.mediaKey]) return;
+    const url = media[next.mediaKey].url;
+    if (next.mediaType === 'image') {
+      const img = new Image();
+      img.src = url;
+    }
+    // Video: browser will handle via preload attribute
+  }, [current, media]);
+
+  /* ═══ Card content renderer ═══ */
+  const renderCard = (idx: number) => {
+    const card = CARDS[idx];
+
+    // ── Card 5: Results ──
+    if (card.buttons === 'result') {
+      return (
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-8 bg-[#0A1628]">
+          <motion.span
+            key={beenThereCount}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 12 }}
+            className="text-6xl sm:text-7xl font-display font-extrabold text-[#FF6B4A] mb-2"
+          >
+            {beenThereCount}
+          </motion.span>
+          <p className="text-lg sm:text-xl font-display font-semibold text-white mb-1">
+            out of 4
+          </p>
+          <p className="text-surface-400 font-body text-center text-sm sm:text-base mb-8 max-w-xs">
+            You&apos;re not alone. That&apos;s why Cubico exists.
+          </p>
+          <button
+            onClick={scrollToCta}
+            className="w-full max-w-xs py-3.5 px-6 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-display font-semibold rounded-xl transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-[#FF6B4A]/25 text-base"
+          >
+            Get Your Website &rarr;
+          </button>
+        </div>
+      );
+    }
+
+    // ── Cards 1-4: Media + text ──
+    const asset = media[card.mediaKey];
+    return (
+      <>
+        {/* Layer 1: Media */}
+        <div className="absolute inset-0">
+          {asset ? (
+            card.mediaType === 'video' ? (
+              <video
+                src={asset.url}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload={idx <= current + 1 ? 'auto' : 'none'}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={asset.url}
+                alt={card.headline}
+                className="w-full h-full object-cover"
+                loading={idx <= current + 1 ? 'eager' : 'lazy'}
+              />
+            )
+          ) : (
+            /* Placeholder when no media uploaded */
+            <div className="w-full h-full bg-gradient-to-br from-[#0F1D32] to-[#0A1628] flex items-center justify-center">
+              <svg
+                width="64"
+                height="64"
+                viewBox="0 0 64 64"
+                fill="none"
+                className="opacity-20"
+              >
+                <rect
+                  x="8"
+                  y="12"
+                  width="48"
+                  height="36"
+                  rx="4"
+                  stroke="#FF6B4A"
+                  strokeWidth="2"
+                />
+                <circle cx="22" cy="28" r="5" stroke="#FF6B4A" strokeWidth="1.5" />
+                <path
+                  d="M8 40L22 30L34 38L42 32L56 42"
+                  stroke="#FF6B4A"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+          )}
+        </div>
+
+        {/* Layer 2: Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+
+        {/* Layer 3: Text + Buttons */}
+        <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 flex flex-col">
+          <h3 className="font-display font-bold text-white text-xl sm:text-2xl mb-2 leading-tight">
+            {card.headline}
+          </h3>
+          <p className="font-body text-white/80 text-sm sm:text-base mb-6 leading-relaxed">
+            {card.subtext}
+          </p>
+
+          {card.buttons === 'pair' && (
+            <div className="flex gap-3">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleBeenThere();
+                }}
+                className={`flex-1 py-2.5 rounded-lg font-body font-medium text-sm transition-all ${
+                  beenThereCards.has(idx)
+                    ? 'bg-[#FF6B4A]/80 text-white'
+                    : 'bg-[#FF6B4A] text-white hover:bg-[#ff7f61] active:scale-95'
+                }`}
+              >
+                {beenThereCards.has(idx) ? '✓ Been There' : 'Been There'}
+              </button>
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className="flex-1 py-2.5 rounded-lg font-body font-medium text-sm border border-white/30 text-white hover:bg-white/10 transition-all active:scale-95"
+              >
+                Not Me
+              </button>
+            </div>
+          )}
+
+          {card.buttons === 'single-cta' && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                scrollToCta();
+              }}
+              className="w-full py-3 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-display font-semibold rounded-xl transition-all hover:scale-[1.02] active:scale-95 text-base"
+            >
+              That&apos;s exactly what I want &rarr;
+            </button>
+          )}
+        </div>
+      </>
+    );
+  };
+
+  /* ═══ Animation variants ═══ */
+  const variants = reducedMotion
+    ? { enter: {}, center: {}, exit: {} }
+    : {
+        enter: (dir: number) => ({
+          x: dir > 0 ? 300 : -300,
+          scale: 0.95,
+          rotate: dir > 0 ? 3 : -3,
+          opacity: 0,
+        }),
+        center: {
+          x: 0,
+          scale: 1,
+          rotate: 0,
+          opacity: 1,
+        },
+        exit: (dir: number) => ({
+          x: dir > 0 ? -300 : 300,
+          scale: 0.92,
+          rotate: dir > 0 ? -5 : 5,
+          opacity: 0,
+        }),
+      };
+
+  /* ═══ Desktop peek cards (stacked behind) ═══ */
+  const peekCards = [];
+  for (let offset = 1; offset <= 2; offset++) {
+    const idx = current + offset;
+    if (idx >= TOTAL) break;
+    peekCards.push(
+      <div
+        key={`peek-${idx}`}
+        className="absolute inset-0 rounded-2xl bg-[#0F1D32] border border-white/5 pointer-events-none"
+        style={{
+          transform: `translateY(${offset * 8}px) scale(${1 - offset * 0.03}) rotate(${offset % 2 === 0 ? 2 : -2}deg)`,
+          opacity: 0.4 - offset * 0.15,
+          zIndex: -offset,
+        }}
+      />,
+    );
+  }
+
   return (
-    <section className="relative py-20 sm:py-28 bg-surface-950 overflow-hidden">
-      {/* Subtle background glow */}
+    <section className="relative py-16 sm:py-24 bg-surface-950 overflow-hidden">
+      {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#FF6B4A]/[0.03] rounded-full blur-[120px]" />
       </div>
@@ -90,7 +397,7 @@ export default function PainPoints() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-14"
+          className="text-center mb-10"
         >
           <h2 className="text-3xl sm:text-4xl font-display font-bold text-white mb-3">
             We Know Why You&apos;re Here
@@ -100,33 +407,125 @@ export default function PainPoints() {
           </p>
         </motion.div>
 
-        {/* 2x2 grid on desktop, stack on mobile */}
-        <div className="grid sm:grid-cols-2 gap-5 sm:gap-6">
-          {painPoints.map((point, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.45, delay: i * 0.15 }}
-              className="group flex flex-row sm:flex-col items-start gap-4 sm:gap-0 rounded-xl border border-white/10 bg-[#0F1D32] p-5 sm:p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-[#FF6B4A]/[0.06] hover:border-[#FF6B4A]/20"
-            >
-              {/* Icon */}
-              <div className="flex-shrink-0 sm:mb-5">
-                {point.icon}
-              </div>
+        {/* ── Card Deck ── */}
+        <div className="flex justify-center">
+          <div className="relative w-full max-w-[600px]">
+            {/* Progress bars */}
+            <div className="flex gap-1.5 mb-4 px-1">
+              {CARDS.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  className="flex-1 h-1 rounded-full overflow-hidden bg-white/10 cursor-pointer"
+                  aria-label={`Go to card ${i + 1}`}
+                >
+                  <div
+                    className="h-full rounded-full transition-all duration-100"
+                    style={{
+                      width:
+                        i < current
+                          ? '100%'
+                          : i === current
+                            ? `${barProgress * 100}%`
+                            : '0%',
+                      background: '#FF6B4A',
+                    }}
+                  />
+                </button>
+              ))}
+            </div>
 
-              {/* Text */}
-              <div>
-                <h3 className="font-display font-semibold text-white text-base sm:text-lg mb-1.5 sm:mb-2">
-                  {point.title}
-                </h3>
-                <p className="text-sm sm:text-[15px] text-surface-400 font-body leading-relaxed">
-                  {point.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+            {/* Card container */}
+            <div
+              ref={containerRef}
+              className="relative w-full overflow-hidden rounded-2xl border border-white/10"
+              style={{ aspectRatio: '4/3' }}
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+              onMouseEnter={() => setPaused(true)}
+              onMouseLeave={() => setPaused(false)}
+            >
+              {/* Peek cards behind (desktop) */}
+              <div className="hidden sm:block">{peekCards}</div>
+
+              {/* Active card */}
+              <AnimatePresence mode="wait" custom={direction}>
+                <motion.div
+                  key={current}
+                  custom={direction}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{
+                    duration: reducedMotion ? 0 : 0.35,
+                    ease: [0.4, 0, 0.2, 1],
+                  }}
+                  style={{
+                    x: swipeOffset,
+                    rotate: swipeOffset * 0.02,
+                  }}
+                  className="absolute inset-0 rounded-2xl overflow-hidden"
+                  role="group"
+                  aria-label={CARDS[current].headline || `Result card`}
+                >
+                  {renderCard(current)}
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Tap zones (left/right) — mobile + desktop */}
+              <button
+                onClick={goPrev}
+                className="absolute left-0 top-0 w-1/4 h-full z-20 cursor-pointer"
+                aria-label="Previous card"
+              />
+              <button
+                onClick={goNext}
+                className="absolute right-0 top-0 w-1/4 h-full z-20 cursor-pointer"
+                aria-label="Next card"
+              />
+            </div>
+
+            {/* Desktop arrow buttons */}
+            <div className="hidden sm:flex justify-between mt-4">
+              <button
+                onClick={goPrev}
+                disabled={current === 0}
+                className="p-2.5 rounded-xl border border-white/10 bg-[#0F1D32] text-white disabled:opacity-30 hover:border-[#FF6B4A]/30 transition-all"
+                aria-label="Previous"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M12 4L6 10L12 16"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              <span className="text-xs font-body text-surface-600 self-center">
+                {current + 1} / {TOTAL}
+              </span>
+              <button
+                onClick={goNext}
+                disabled={current === TOTAL - 1}
+                className="p-2.5 rounded-xl border border-white/10 bg-[#0F1D32] text-white disabled:opacity-30 hover:border-[#FF6B4A]/30 transition-all"
+                aria-label="Next"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M8 4L14 10L8 16"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Transition line */}
@@ -134,14 +533,13 @@ export default function PainPoints() {
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-14 sm:mt-16 text-center"
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-12 sm:mt-14 text-center"
         >
           <p className="text-lg sm:text-xl font-display font-semibold text-white">
             Cubico eliminates all of this.{' '}
             <span className="text-[#FF6B4A]">Here&apos;s how.</span>
           </p>
-          {/* Downward indicator */}
           <div className="mt-4 flex justify-center">
             <motion.div
               animate={{ y: [0, 6, 0] }}

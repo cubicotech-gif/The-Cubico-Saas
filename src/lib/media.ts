@@ -42,15 +42,42 @@ export const MEDIA_SLOTS: MediaSlot[] = [
     height: 600,
   },
 
-  // ── Problem Section ──
+  // ── Pain Points Story Cards ──
   {
-    key: 'webdev-problem-image',
-    label: 'Problem Section Image',
-    section: 'Web Dev — Problem',
-    accept: 'image/*',
-    hint: 'Person frustrated at laptop OR annotated screenshot of a bad website.',
-    width: 640,
-    height: 480,
+    key: 'paincard-1-video',
+    label: 'Story Card 1 — Broken Builder (Video)',
+    section: 'Web Dev — Pain Points',
+    accept: 'video/mp4,video/webm',
+    hint: 'Screen recording of broken website builder layout. Loop, muted, max 1.5MB. MP4 H.264.',
+    width: 600,
+    height: 450,
+  },
+  {
+    key: 'paincard-2-image',
+    label: 'Story Card 2 — Ghosted Messages (Image)',
+    section: 'Web Dev — Pain Points',
+    accept: 'image/webp,image/*',
+    hint: 'WhatsApp/email screenshot showing unanswered messages with visible dates. WebP, max 200KB.',
+    width: 600,
+    height: 450,
+  },
+  {
+    key: 'paincard-3-image',
+    label: 'Story Card 3 — Billing Screenshot (Image)',
+    section: 'Web Dev — Pain Points',
+    accept: 'image/webp,image/*',
+    hint: 'Billing page showing recurring monthly charge with red circle annotation. WebP, max 200KB.',
+    width: 600,
+    height: 450,
+  },
+  {
+    key: 'paincard-4-video',
+    label: 'Story Card 4 — Tab Overload (Video)',
+    section: 'Web Dev — Pain Points',
+    accept: 'video/mp4,video/webm',
+    hint: 'Screen recording of browser with 15+ open tabs: tutorials, dashboards, billing. Loop, muted, max 1.5MB.',
+    width: 600,
+    height: 450,
   },
 
   // ── Development Approach (zigzag) ──
