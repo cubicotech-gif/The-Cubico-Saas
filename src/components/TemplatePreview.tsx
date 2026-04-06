@@ -2,13 +2,15 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink } from 'lucide-react';
+import { X, ExternalLink, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 /* ═══════════════════════════════════════════════════════════════════
    TEMPLATE DATA
    ═══════════════════════════════════════════════════════════════════ */
 
-interface Template {
+export interface Template {
+  key: string;
   name: string;
   industry: string;
   color: string;
@@ -17,8 +19,9 @@ interface Template {
   description: string;
 }
 
-const TEMPLATES: Template[] = [
+export const TEMPLATES: Template[] = [
   {
+    key: 'restaurant',
     name: 'Flavor House',
     industry: 'Restaurant',
     color: '#C9A227',
@@ -27,6 +30,7 @@ const TEMPLATES: Template[] = [
     description: 'Warm tones, menu cards, reservation form',
   },
   {
+    key: 'clinic',
     name: 'CareFirst Medical',
     industry: 'Healthcare',
     color: '#0D9488',
@@ -35,6 +39,7 @@ const TEMPLATES: Template[] = [
     description: 'Clean clinical layout, booking system, doctor profiles',
   },
   {
+    key: 'shop',
     name: 'Urban Threads',
     industry: 'E-Commerce',
     color: '#FF6B4A',
@@ -43,6 +48,7 @@ const TEMPLATES: Template[] = [
     description: 'Product grid, cart UI, newsletter signup',
   },
   {
+    key: 'school',
     name: 'Bright Minds',
     industry: 'Education',
     color: '#FBBF24',
@@ -51,6 +57,7 @@ const TEMPLATES: Template[] = [
     description: 'Programs, facilities, admissions form',
   },
   {
+    key: 'portfolio',
     name: 'Alex Morgan',
     industry: 'Portfolio',
     color: '#8B5CF6',
@@ -59,6 +66,7 @@ const TEMPLATES: Template[] = [
     description: 'Bold typography, project grid, creative layout',
   },
   {
+    key: 'corporate',
     name: 'Nexus Solutions',
     industry: 'Corporate',
     color: '#3B82F6',
@@ -117,9 +125,13 @@ function PreviewModal({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-white/40 font-body hidden sm:inline">
-              {template.name} — {template.industry}
-            </span>
+            <Link
+              href={`/order?template=${template.key}`}
+              className="flex items-center gap-1.5 px-4 py-1.5 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white text-xs font-body font-semibold rounded-lg transition-colors"
+            >
+              Use This Template
+              <ArrowRight size={12} />
+            </Link>
             <a
               href={template.file}
               target="_blank"
@@ -140,13 +152,24 @@ function PreviewModal({
         </div>
 
         {/* iframe */}
-        <iframe
-          src={template.file}
-          title={`${template.name} template preview`}
-          className="w-full border-0"
-          style={{ height: 'calc(100% - 44px)' }}
-          loading="lazy"
-        />
+        <div className="relative" style={{ height: 'calc(100% - 44px)' }}>
+          <iframe
+            src={template.file}
+            title={`${template.name} template preview`}
+            className="w-full h-full border-0"
+            loading="lazy"
+          />
+          {/* Sticky bottom CTA bar */}
+          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 flex items-center justify-center">
+            <Link
+              href={`/order?template=${template.key}`}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-body font-semibold rounded-xl transition-all hover:scale-[1.02] text-sm shadow-lg shadow-[#FF6B4A]/25"
+            >
+              Use This Template — Get Your Website
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+        </div>
       </motion.div>
     </motion.div>
   );
