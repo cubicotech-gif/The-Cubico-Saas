@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bright Minds Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#1E40AF;--yellow:#FBBF24;--white:#FFFFFF;--light-blue:#EFF6FF;--dark:#1E293B;--gray:#64748B}
+html{scroll-behavior:smooth}
+body{font-family:'Open Sans',sans-serif;color:var(--dark);line-height:1.6}
+h1,h2,h3,h4{font-family:'Nunito',sans-serif}
+a{text-decoration:none;color:inherit}
+.container{max-width:1140px;margin:0 auto;padding:0 20px}
+
+/* Animations */
+.fade-in{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;width:100%;background:var(--white);z-index:1000;box-shadow:0 2px 16px rgba(0,0,0,.08);transition:background .3s}
+nav .container{display:flex;align-items:center;justify-content:space-between;height:70px}
+.logo{font-family:'Nunito',sans-serif;font-weight:800;font-size:1.4rem;color:var(--blue)}
+.logo span{color:var(--yellow)}
+nav ul{display:flex;list-style:none;gap:28px}
+nav ul a{font-weight:600;font-size:.95rem;color:var(--dark);transition:color .2s}
+nav ul a:hover{color:var(--blue)}
+.nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none}
+.nav-toggle span{display:block;width:26px;height:3px;background:var(--blue);border-radius:2px;transition:transform .3s}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;align-items:center;background:linear-gradient(135deg,var(--light-blue) 0%,#dbeafe 50%,var(--light-blue) 100%);padding-top:70px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:400px;height:400px;border-radius:50%;background:rgba(251,191,36,.15)}
+.hero::after{content:'';position:absolute;bottom:-80px;left:-40px;width:300px;height:300px;border-radius:50%;background:rgba(30,64,175,.06)}
+.hero .container{display:flex;align-items:center;gap:60px;position:relative;z-index:1}
+.hero-text{flex:1}
+.hero-text h1{font-size:3.2rem;font-weight:800;color:var(--blue);line-height:1.15;margin-bottom:16px}
+.hero-text h1 span{color:var(--yellow)}
+.hero-text p{font-size:1.15rem;color:var(--gray);max-width:500px;margin-bottom:32px}
+.btn{display:inline-block;padding:14px 36px;border-radius:50px;font-weight:700;font-size:1rem;transition:transform .2s,box-shadow .2s;cursor:pointer;border:none;font-family:'Nunito',sans-serif}
+.btn-primary{background:var(--yellow);color:var(--blue);box-shadow:0 4px 16px rgba(251,191,36,.4)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(251,191,36,.5)}
+.hero-visual{flex:1;display:flex;justify-content:center}
+.hero-visual svg{width:100%;max-width:400px;height:auto}
+
+/* Section common */
+section{padding:80px 0}
+.section-title{text-align:center;margin-bottom:48px}
+.section-title h2{font-size:2.2rem;color:var(--blue);margin-bottom:8px}
+.section-title p{color:var(--gray);font-size:1.05rem}
+
+/* Programs */
+.programs{background:var(--white)}
+.programs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.program-card{background:var(--light-blue);border-radius:16px;padding:32px 24px;text-align:center;transition:transform .3s,box-shadow .3s}
+.program-card:hover{transform:translateY(-6px);box-shadow:0 12px 32px rgba(30,64,175,.1)}
+.program-card .icon{width:64px;height:64px;margin:0 auto 16px;background:var(--blue);border-radius:14px;display:flex;align-items:center;justify-content:center}
+.program-card .icon svg{width:32px;height:32px}
+.program-card h3{font-size:1.15rem;color:var(--blue);margin-bottom:4px}
+.program-card .age{font-size:.85rem;color:var(--yellow);font-weight:600;margin-bottom:10px}
+.program-card p{font-size:.9rem;color:var(--gray)}
+
+/* Stats */
+.stats{background:var(--blue);padding:48px 0}
+.stats .container{display:flex;justify-content:space-around;flex-wrap:wrap;gap:24px}
+.stat{text-align:center;color:var(--white)}
+.stat .num{font-family:'Nunito',sans-serif;font-size:2rem;font-weight:800}
+.stat .label{font-size:.95rem;opacity:.85}
+
+/* Facilities */
+.facilities{background:var(--light-blue)}
+.facilities-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.facility{background:var(--white);border-radius:14px;padding:28px 24px;text-align:center;transition:transform .3s,box-shadow .3s}
+.facility:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.facility .icon{width:56px;height:56px;margin:0 auto 14px;background:var(--light-blue);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.facility .icon svg{width:28px;height:28px}
+.facility h3{font-size:1.05rem;color:var(--blue);margin-bottom:6px}
+.facility p{font-size:.88rem;color:var(--gray)}
+
+/* Admissions */
+.admissions{background:var(--white)}
+.admissions-inner{display:flex;gap:48px;align-items:center}
+.admissions-text{flex:1}
+.admissions-text h2{font-size:2.2rem;color:var(--blue);margin-bottom:12px}
+.admissions-text p{color:var(--gray);font-size:1.05rem;margin-bottom:20px}
+.admissions-text ul{list-style:none;color:var(--dark)}
+.admissions-text ul li{padding:6px 0;font-size:.95rem}
+.admissions-text ul li::before{content:'\2713';color:var(--yellow);font-weight:700;margin-right:10px}
+.admissions-form{flex:1;background:var(--light-blue);border-radius:20px;padding:36px;box-shadow:0 8px 32px rgba(30,64,175,.08)}
+.admissions-form h3{font-family:'Nunito',sans-serif;font-size:1.3rem;color:var(--blue);margin-bottom:20px;text-align:center}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:.88rem;font-weight:600;color:var(--dark);margin-bottom:5px}
+.form-group input,.form-group select{width:100%;padding:12px 16px;border:2px solid #dbeafe;border-radius:10px;font-size:.95rem;font-family:'Open Sans',sans-serif;outline:none;transition:border .2s;background:var(--white)}
+.form-group input:focus,.form-group select:focus{border-color:var(--blue)}
+.form-submit{width:100%;padding:14px;border:none;border-radius:10px;background:var(--blue);color:var(--white);font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:700;cursor:pointer;transition:background .2s,transform .2s}
+.form-submit:hover{background:#1e3a8a;transform:translateY(-1px)}
+
+/* Footer */
+footer{background:var(--dark);color:rgba(255,255,255,.8);padding:60px 0 24px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-about .logo{font-size:1.3rem;margin-bottom:12px;display:inline-block}
+.footer-about p{font-size:.9rem;line-height:1.7;max-width:320px}
+.footer-links h4,.footer-contact h4{font-family:'Nunito',sans-serif;color:var(--white);margin-bottom:14px;font-size:1.05rem}
+.footer-links ul{list-style:none}
+.footer-links ul li{margin-bottom:8px}
+.footer-links ul a{font-size:.9rem;transition:color .2s}
+.footer-links ul a:hover{color:var(--yellow)}
+.footer-contact p{font-size:.9rem;margin-bottom:8px}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;text-align:center;font-size:.85rem;opacity:.7}
+
+/* Badge */
+.cubico-badge{position:fixed;bottom:20px;right:20px;background:var(--blue);color:var(--white);padding:8px 16px;border-radius:8px;font-size:.78rem;font-weight:600;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s}
+.cubico-badge:hover{transform:scale(1.05)}
+
+/* Responsive */
+@media(max-width:992px){
+  .hero .container{flex-direction:column;text-align:center;gap:40px}
+  .hero-text p{margin:0 auto 32px}
+  .programs-grid{grid-template-columns:repeat(2,1fr)}
+  .facilities-grid{grid-template-columns:repeat(2,1fr)}
+  .admissions-inner{flex-direction:column}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .hero-text h1{font-size:2.2rem}
+  .programs-grid{grid-template-columns:1fr}
+  .facilities-grid{grid-template-columns:1fr}
+  .stats .container{flex-direction:column;gap:16px}
+  .footer-grid{grid-template-columns:1fr}
+  nav ul{position:fixed;top:70px;left:0;width:100%;background:var(--white);flex-direction:column;align-items:center;padding:24px 0;gap:16px;box-shadow:0 8px 16px rgba(0,0,0,.08);transform:translateY(-120%);transition:transform .3s;z-index:999}
+  nav ul.open{transform:translateY(0)}
+  .nav-toggle{display:flex}
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="container">
+    <a href="#home" class="logo">Bright<span>Minds</span></a>
+    <ul id="navMenu">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#programs">Programs</a></li>
+      <li><a href="#facilities">Facilities</a></li>
+      <li><a href="#admissions">Admissions</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="home">
+  <div class="container">
+    <div class="hero-text fade-in">
+      <h1>Where Every Mind <span>Shines</span></h1>
+      <p>At Bright Minds Academy, we nurture curiosity, creativity, and confidence through holistic education that prepares young learners for a brilliant future.</p>
+      <a href="#admissions" class="btn btn-primary">Enroll Now</a>
+    </div>
+    <div class="hero-visual fade-in">
+      <svg viewBox="0 0 400 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="200" cy="175" r="140" fill="#DBEAFE"/>
+        <rect x="130" y="120" width="140" height="100" rx="8" fill="#1E40AF"/>
+        <rect x="140" y="130" width="120" height="60" rx="4" fill="#EFF6FF"/>
+        <circle cx="200" cy="155" r="15" fill="#FBBF24"/>
+        <polygon points="200,140 210,155 190,155" fill="#1E40AF"/>
+        <rect x="160" y="200" width="80" height="8" rx="4" fill="#FBBF24"/>
+        <rect x="150" y="220" width="30" height="30" rx="6" fill="#FBBF24" opacity=".8"/>
+        <rect x="185" y="220" width="30" height="30" rx="6" fill="#3B82F6" opacity=".8"/>
+        <rect x="220" y="220" width="30" height="30" rx="6" fill="#1E40AF" opacity=".6"/>
+        <circle cx="100" cy="100" r="20" fill="#FBBF24" opacity=".3"/>
+        <circle cx="310" cy="260" r="16" fill="#3B82F6" opacity=".25"/>
+        <path d="M80 260 Q90 240 100 260" stroke="#1E40AF" stroke-width="3" fill="none" opacity=".3"/>
+        <path d="M290 100 L300 85 L310 100" stroke="#FBBF24" stroke-width="3" fill="none" opacity=".4"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- Programs -->
+<section class="programs" id="programs">
+  <div class="container">
+    <div class="section-title fade-in">
+      <h2>Our Programs</h2>
+      <p>Tailored learning paths for every stage of growth</p>
+    </div>
+    <div class="programs-grid">
+      <div class="program-card fade-in">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        </div>
+        <h3>Primary School</h3>
+        <div class="age">Ages 5 - 10</div>
+        <p>Building strong foundations through play-based and interactive learning in literacy, numeracy, and creative expression.</p>
+      </div>
+      <div class="program-card fade-in">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.66 3.58 3 8 3s8-1.34 8-3v-5"/></svg>
+        </div>
+        <h3>Middle School</h3>
+        <div class="age">Ages 11 - 13</div>
+        <p>Developing critical thinking and independence with a rich curriculum spanning sciences, humanities, and the arts.</p>
+      </div>
+      <div class="program-card fade-in">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M9 3h6l2 4H7l2-4z"/><path d="M7 7v10a2 2 0 002 2h6a2 2 0 002-2V7"/><circle cx="12" cy="13" r="2"/><path d="M12 7v4"/></svg>
+        </div>
+        <h3>Secondary School</h3>
+        <div class="age">Ages 14 - 18</div>
+        <p>Rigorous academics with O/A Level tracks, career guidance, and leadership opportunities to prepare for university.</p>
+      </div>
+      <div class="program-card fade-in">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/><path d="M8 2h8"/></svg>
+        </div>
+        <h3>After-School Activities</h3>
+        <div class="age">All Ages</div>
+        <p>Sports, robotics, debate, music, and art clubs that let students explore passions beyond the classroom.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="stats">
+  <div class="container">
+    <div class="stat fade-in"><div class="num">500+</div><div class="label">Students</div></div>
+    <div class="stat fade-in"><div class="num">50+</div><div class="label">Teachers</div></div>
+    <div class="stat fade-in"><div class="num">15</div><div class="label">Years of Excellence</div></div>
+    <div class="stat fade-in"><div class="num">98%</div><div class="label">Parent Satisfaction</div></div>
+  </div>
+</section>
+
+<!-- Facilities -->
+<section class="facilities" id="facilities">
+  <div class="container">
+    <div class="section-title fade-in">
+      <h2>Campus Facilities</h2>
+      <p>State-of-the-art spaces designed to inspire learning</p>
+    </div>
+    <div class="facilities-grid">
+      <div class="facility fade-in">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1E40AF" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        </div>
+        <h3>Library</h3>
+        <p>Over 10,000 books, digital resources, and cozy reading corners for every age group.</p>
+      </div>
+      <div class="facility fade-in">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1E40AF" stroke-width="2" stroke-linecap="round"><path d="M9 3h6l2 4H7l2-4z"/><path d="M7 7v10a2 2 0 002 2h6a2 2 0 002-2V7"/><circle cx="12" cy="13" r="2"/></svg>
+        </div>
+        <h3>Science Labs</h3>
+        <p>Fully equipped physics, chemistry, and biology labs for hands-on experimentation.</p>
+      </div>
+      <div class="facility fade-in">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1E40AF" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </div>
+        <h3>Sports Complex</h3>
+        <p>Cricket ground, basketball courts, swimming pool, and a multi-purpose indoor gym.</p>
+      </div>
+      <div class="facility fade-in">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1E40AF" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3>Arts Studio</h3>
+        <p>A vibrant space for painting, sculpture, ceramics, and digital design projects.</p>
+      </div>
+      <div class="facility fade-in">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1E40AF" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>Computer Lab</h3>
+        <p>Modern workstations with high-speed internet and coding curriculum from Grade 3.</p>
+      </div>
+      <div class="facility fade-in">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1E40AF" stroke-width="2" stroke-linecap="round"><path d="M18 8a6 6 0 01-6 6"/><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 000 20"/><path d="M2 12h20"/></svg>
+        </div>
+        <h3>Playground</h3>
+        <p>Safe, colourful play areas with age-appropriate equipment and shaded seating.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Admissions -->
+<section class="admissions" id="admissions">
+  <div class="container">
+    <div class="admissions-inner">
+      <div class="admissions-text fade-in">
+        <h2>Admissions Open for 2026-27</h2>
+        <p>Give your child the gift of an education that balances academic excellence with character building. Limited seats available.</p>
+        <ul>
+          <li>Small class sizes (max 25 students)</li>
+          <li>Qualified and caring faculty</li>
+          <li>Safe, inclusive campus environment</li>
+          <li>Scholarships for deserving students</li>
+          <li>Easy installment-based fee plans</li>
+        </ul>
+      </div>
+      <div class="admissions-form fade-in">
+        <h3>Enquire Now</h3>
+        <form id="admissionForm" onsubmit="return handleSubmit(event)">
+          <div class="form-group">
+            <label for="studentName">Student Name</label>
+            <input type="text" id="studentName" placeholder="Enter student's full name" required>
+          </div>
+          <div class="form-group">
+            <label for="parentName">Parent / Guardian Name</label>
+            <input type="text" id="parentName" placeholder="Enter parent's full name" required>
+          </div>
+          <div class="form-group">
+            <label for="grade">Grade Applying For</label>
+            <select id="grade" required>
+              <option value="" disabled selected>Select grade</option>
+              <option>Nursery</option>
+              <option>Prep</option>
+              <option>Grade 1</option>
+              <option>Grade 2</option>
+              <option>Grade 3</option>
+              <option>Grade 4</option>
+              <option>Grade 5</option>
+              <option>Grade 6</option>
+              <option>Grade 7</option>
+              <option>Grade 8</option>
+              <option>Grade 9 (O Level)</option>
+              <option>Grade 11 (A Level)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="+92 3XX XXXXXXX" required>
+          </div>
+          <button type="submit" class="form-submit">Submit Enquiry</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer id="contact">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <a href="#home" class="logo">Bright<span>Minds</span></a>
+        <p>Empowering young learners since 2011 with a commitment to academic excellence, ethical values, and a love for lifelong learning.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#programs">Programs</a></li>
+          <li><a href="#facilities">Facilities</a></li>
+          <li><a href="#admissions">Admissions</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>Contact Us</h4>
+        <p>15 Knowledge Road, Islamabad</p>
+        <p>+92 51 2345678</p>
+        <p>info@brightminds.edu.pk</p>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 Bright Minds Academy. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- Cubico Badge -->
+<a href="https://cubico.tech" target="_blank" rel="noopener" class="cubico-badge">Template by Cubico</a>
+
+<script>
+// Mobile nav toggle
+document.getElementById('navToggle').addEventListener('click',function(){
+  document.getElementById('navMenu').classList.toggle('open');
+});
+// Close menu on link click
+document.querySelectorAll('#navMenu a').forEach(function(a){
+  a.addEventListener('click',function(){document.getElementById('navMenu').classList.remove('open')});
+});
+
+// Fade-in on scroll
+const observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}});
+},{threshold:0.15});
+document.querySelectorAll('.fade-in').forEach(function(el){observer.observe(el)});
+
+// Form handler
+function handleSubmit(e){
+  e.preventDefault();
+  var btn=e.target.querySelector('.form-submit');
+  btn.textContent='Submitted!';
+  btn.style.background='#16a34a';
+  setTimeout(function(){btn.textContent='Submit Enquiry';btn.style.background='';e.target.reset()},2500);
+  return false;
+}
+</script>
+</body>
+</html>

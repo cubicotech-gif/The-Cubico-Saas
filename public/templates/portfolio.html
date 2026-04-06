@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alex Morgan Creative | Digital Designer & Brand Strategist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --black: #111111;
+      --violet: #8B5CF6;
+      --violet-light: #A78BFA;
+      --white: #FFFFFF;
+      --dark-gray: #1A1A1A;
+      --gray-400: #9CA3AF;
+      --gray-600: #4B5563;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ---- Custom Cursor ---- */
+    .cursor-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--violet);
+      border-radius: 50%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 10000;
+      transition: transform 0.1s ease;
+    }
+
+    .cursor-ring {
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid rgba(139, 92, 246, 0.5);
+      border-radius: 50%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 10000;
+      transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+    }
+
+    .cursor-ring.hovering {
+      width: 56px;
+      height: 56px;
+      border-color: var(--violet);
+    }
+
+    /* ---- Navigation ---- */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 24px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease, backdrop-filter 0.4s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(17, 17, 17, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 16px 48px;
+    }
+
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      position: relative;
+    }
+
+    .nav-logo::after {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--violet);
+      border-radius: 50%;
+      margin-left: 2px;
+      vertical-align: super;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.95rem;
+      color: var(--gray-400);
+      transition: color 0.3s ease;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .mobile-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .mobile-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--white);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .mobile-toggle.active span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .mobile-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .mobile-toggle.active span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* ---- Hero ---- */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 48px 80px;
+      position: relative;
+    }
+
+    .hero-bg-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(4rem, 12vw, 11rem);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-name .line {
+      display: block;
+      opacity: 0;
+      transform: translateY(40px);
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    .hero-name .line:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .hero-subtitle {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      color: var(--gray-400);
+      letter-spacing: 0.04em;
+      margin-bottom: 56px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s ease 0.4s forwards;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-cta {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--violet-light);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s ease 0.6s forwards;
+      position: relative;
+      z-index: 1;
+      transition: color 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-cta:hover {
+      color: var(--white);
+    }
+
+    .hero-cta .arrow {
+      display: inline-block;
+      animation: bounce 2s ease infinite;
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ---- Section shared ---- */
+    .section {
+      padding: 120px 48px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--violet);
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: -0.03em;
+      margin-bottom: 56px;
+      line-height: 1.15;
+    }
+
+    /* ---- Reveal animation ---- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---- Work / Projects ---- */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .project-card {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      cursor: pointer;
+    }
+
+    .project-card:nth-child(1) .project-thumb {
+      background: linear-gradient(135deg, #8B5CF6, #3B82F6);
+    }
+    .project-card:nth-child(2) .project-thumb {
+      background: linear-gradient(135deg, #EC4899, #8B5CF6);
+    }
+    .project-card:nth-child(3) .project-thumb {
+      background: linear-gradient(135deg, #3B82F6, #06B6D4);
+    }
+    .project-card:nth-child(4) .project-thumb {
+      background: linear-gradient(135deg, #8B5CF6, #EC4899, #F59E0B);
+    }
+    .project-card:nth-child(5) .project-thumb {
+      background: linear-gradient(135deg, #6366F1, #8B5CF6, #A855F7);
+    }
+    .project-card:nth-child(6) .project-thumb {
+      background: linear-gradient(135deg, #10B981, #3B82F6);
+    }
+
+    .project-card:nth-child(odd) {
+      transform: translateY(40px);
+    }
+
+    .project-thumb {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .project-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .project-card:hover .project-thumb {
+      transform: scale(1.06);
+    }
+
+    .project-card:hover .project-overlay {
+      opacity: 1;
+    }
+
+    .project-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .project-category {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.9rem;
+      color: var(--violet-light);
+    }
+
+    /* ---- About ---- */
+    #about .section-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .about-bio {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1.2rem;
+      line-height: 1.75;
+      color: var(--gray-400);
+    }
+
+    .about-bio strong {
+      color: var(--white);
+      font-weight: 500;
+    }
+
+    .skills-label {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 20px;
+    }
+
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skill-pill {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      padding: 10px 22px;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 100px;
+      color: var(--violet-light);
+      transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .skill-pill:hover {
+      background: var(--violet);
+      color: var(--white);
+      border-color: var(--violet);
+    }
+
+    /* ---- Testimonials ---- */
+    .testimonials-section {
+      background: var(--dark-gray);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 48px;
+    }
+
+    .testimonial-card {
+      position: relative;
+      padding: 48px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      transition: border-color 0.3s ease;
+    }
+
+    .testimonial-card:hover {
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+
+    .testimonial-quote-mark {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 6rem;
+      font-weight: 700;
+      color: var(--violet);
+      opacity: 0.15;
+      line-height: 1;
+      position: absolute;
+      top: 20px;
+      left: 36px;
+    }
+
+    .testimonial-text {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--gray-400);
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .testimonial-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet), #3B82F6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .testimonial-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--white);
+    }
+
+    .testimonial-company {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.8rem;
+      color: var(--gray-600);
+      margin-top: 2px;
+    }
+
+    /* ---- Contact ---- */
+    #contact {
+      text-align: center;
+      padding: 160px 48px;
+    }
+
+    .contact-headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 32px;
+    }
+
+    .contact-headline .accent {
+      color: var(--violet);
+    }
+
+    .contact-email {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 1.15rem;
+      color: var(--gray-400);
+      display: inline-block;
+      margin-bottom: 48px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.4);
+      transition: color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .contact-email:hover {
+      color: var(--white);
+      border-color: var(--violet);
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .social-links a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--gray-400);
+      transition: color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .social-links a:hover {
+      color: var(--violet);
+      border-color: var(--violet);
+      transform: translateY(-3px);
+    }
+
+    .social-links svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* ---- Footer ---- */
+    footer {
+      text-align: center;
+      padding: 32px 48px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    footer p {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      font-size: 0.8rem;
+      color: var(--gray-600);
+    }
+
+    /* ---- Cubico badge ---- */
+    .cubico-badge {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      color: var(--gray-400);
+      background: var(--dark-gray);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 16px;
+      border-radius: 100px;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .cubico-badge:hover {
+      border-color: var(--violet);
+      color: var(--white);
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 1024px) {
+      .projects-grid {
+        gap: 16px;
+      }
+
+      .project-card:nth-child(odd) {
+        transform: none;
+      }
+
+      #about .section-inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 20px 24px;
+      }
+
+      nav.scrolled {
+        padding: 14px 24px;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(17, 17, 17, 0.97);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 36px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+      }
+
+      .nav-links.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .nav-links a {
+        font-size: 1.5rem;
+        color: var(--white);
+      }
+
+      .mobile-toggle {
+        display: flex;
+        z-index: 1001;
+      }
+
+      .hero {
+        padding: 100px 24px 60px;
+      }
+
+      .section {
+        padding: 80px 24px;
+      }
+
+      .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .project-card {
+        aspect-ratio: 16 / 10;
+      }
+
+      .project-overlay {
+        opacity: 1;
+        background: linear-gradient(to top, rgba(17, 17, 17, 0.9) 0%, transparent 100%);
+      }
+
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .testimonial-card {
+        padding: 32px;
+      }
+
+      #contact {
+        padding: 100px 24px;
+      }
+
+      .cursor-dot, .cursor-ring {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-name {
+        font-size: clamp(3rem, 16vw, 5rem);
+      }
+
+      .contact-headline {
+        font-size: clamp(2rem, 10vw, 3rem);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#" class="nav-logo">AM</a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="mobile-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg-glow"></div>
+    <h1 class="hero-name">
+      <span class="line">Alex</span>
+      <span class="line">Morgan</span>
+    </h1>
+    <p class="hero-subtitle">Digital Designer &amp; Brand Strategist</p>
+    <a href="#work" class="hero-cta">View Work <span class="arrow">&darr;</span></a>
+  </section>
+
+  <!-- Work -->
+  <section id="work" class="section">
+    <p class="section-label reveal">Selected Work</p>
+    <h2 class="section-title reveal">Projects</h2>
+    <div class="projects-grid">
+      <div class="project-card reveal">
+        <div class="project-thumb"></div>
+        <div class="project-overlay">
+          <p class="project-name">Nova Brand</p>
+          <p class="project-category">Identity Design</p>
+        </div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-thumb"></div>
+        <div class="project-overlay">
+          <p class="project-name">Pulse App</p>
+          <p class="project-category">UI/UX</p>
+        </div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-thumb"></div>
+        <div class="project-overlay">
+          <p class="project-name">Drift Studio</p>
+          <p class="project-category">Web Design</p>
+        </div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-thumb"></div>
+        <div class="project-overlay">
+          <p class="project-name">Echo</p>
+          <p class="project-category">Motion Graphics</p>
+        </div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-thumb"></div>
+        <div class="project-overlay">
+          <p class="project-name">Vertex</p>
+          <p class="project-category">Brand Strategy</p>
+        </div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-thumb"></div>
+        <div class="project-overlay">
+          <p class="project-name">Bloom</p>
+          <p class="project-category">Product Design</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="section">
+    <p class="section-label reveal">About</p>
+    <h2 class="section-title reveal">A little about me</h2>
+    <div class="section-inner">
+      <div class="reveal">
+        <p class="about-bio">
+          I'm a <strong>digital designer</strong> with 8+ years of experience crafting brands that resonate and interfaces that convert. I believe great design lives at the intersection of strategy and aesthetics &mdash; every pixel should earn its place. <strong>Based in Dubai, working globally.</strong>
+        </p>
+      </div>
+      <div class="reveal">
+        <p class="skills-label">Core Skills</p>
+        <div class="skills-list">
+          <span class="skill-pill">Design</span>
+          <span class="skill-pill">Branding</span>
+          <span class="skill-pill">UI/UX</span>
+          <span class="skill-pill">Motion</span>
+          <span class="skill-pill">Typography</span>
+          <span class="skill-pill">Art Direction</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials-section">
+    <div class="section" style="padding-top:120px;padding-bottom:120px;">
+      <p class="section-label reveal">Testimonials</p>
+      <h2 class="section-title reveal">Kind words</h2>
+      <div class="testimonials-grid">
+        <div class="testimonial-card reveal">
+          <span class="testimonial-quote-mark">&ldquo;</span>
+          <p class="testimonial-text">Alex completely transformed our brand. The strategic thinking behind every design decision was remarkable. Our conversion rate doubled within the first quarter after launch.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">SK</div>
+            <div>
+              <p class="testimonial-name">Sarah Kim</p>
+              <p class="testimonial-company">CEO, Pulse Technologies</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal">
+          <span class="testimonial-quote-mark">&ldquo;</span>
+          <p class="testimonial-text">Working with Alex was a game-changer. They brought a level of craft and intentionality to our project that we hadn't experienced before. Truly world-class design talent.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">JR</div>
+            <div>
+              <p class="testimonial-name">James Rivera</p>
+              <p class="testimonial-company">Founder, Drift Studio</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="reveal">
+      <p class="section-label">Get in Touch</p>
+      <h2 class="contact-headline">Let's Work<br><span class="accent">Together</span></h2>
+      <a href="mailto:hello@alexmorgan.design" class="contact-email">hello@alexmorgan.design</a>
+      <div class="social-links">
+        <!-- Dribbble -->
+        <a href="#" aria-label="Dribbble">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72M19.13 5.09C15.22 9.14 10.93 10.44 2.04 10.97M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32"/>
+          </svg>
+        </a>
+        <!-- Behance -->
+        <a href="#" aria-label="Behance">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7.5 11c1.93 0 3.5-1.07 3.5-3s-1.57-3-3.5-3H2v12h5.5c2.21 0 4-1.29 4-3.5S9.71 11 7.5 11zM4.5 7h2.75c.83 0 1.5.57 1.5 1.25S8.08 9.5 7.25 9.5H4.5V7zm3 8H4.5v-2.75h3c.93 0 1.75.6 1.75 1.38S8.43 15 7.5 15zM16.5 6.5h5v1.5h-5zM19 10c-2.76 0-5 2.24-5 5s2.24 5 5 5c1.95 0 3.64-1.12 4.46-2.75h-2.27c-.48.6-1.3 1-2.19 1-1.38 0-2.5-.95-2.8-2.25h7.75c.05-.33.05-.66.05-1C22 12.24 21.76 10 19 10zm-2.75 4c.3-1.15 1.42-2.25 2.75-2.25s2.45 1.1 2.75 2.25h-5.5z"/>
+          </svg>
+        </a>
+        <!-- LinkedIn -->
+        <a href="#" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+        </a>
+        <!-- Instagram -->
+        <a href="#" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5"/>
+            <circle cx="12" cy="12" r="5"/>
+            <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Alex Morgan Creative. All rights reserved.</p>
+  </footer>
+
+  <!-- Cubico Badge -->
+  <a href="https://cubico.tech" target="_blank" rel="noopener" class="cubico-badge">Template by Cubico</a>
+
+  <script>
+    // ---- Nav scroll ----
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // ---- Mobile menu ----
+    const toggle = document.querySelector('.mobile-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        toggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    // ---- Scroll reveal ----
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, i * 80);
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => revealObserver.observe(el));
+
+    // ---- Custom cursor ----
+    const dot = document.querySelector('.cursor-dot');
+    const ring = document.querySelector('.cursor-ring');
+    if (window.matchMedia('(pointer: fine)').matches) {
+      let mx = 0, my = 0, dx = 0, dy = 0;
+      document.addEventListener('mousemove', e => {
+        mx = e.clientX;
+        my = e.clientY;
+        dot.style.transform = `translate(${mx - 4}px, ${my - 4}px)`;
+      });
+      (function animateRing() {
+        dx += (mx - dx) * 0.15;
+        dy += (my - dy) * 0.15;
+        ring.style.transform = `translate(${dx - 18}px, ${dy - 18}px)`;
+        requestAnimationFrame(animateRing);
+      })();
+      document.querySelectorAll('a, button, .project-card, .skill-pill').forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
+      });
+    } else {
+      dot.style.display = 'none';
+      ring.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

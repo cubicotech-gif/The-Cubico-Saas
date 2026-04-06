@@ -8,6 +8,7 @@ import WebDevHero from '@/components/WebDevHero';
 import TechLogoTicker from '@/components/TechLogoTicker';
 import PainPoints from '@/components/PainPoints';
 import ProcessSteps from '@/components/ProcessSteps';
+import TemplatePreview from '@/components/TemplatePreview';
 import PortfolioShowcase from '@/components/PortfolioShowcase';
 import WebsitePricing from '@/components/WebsitePricing';
 import type { Service } from '@/lib/types';
@@ -49,7 +50,10 @@ export default function ServicePageContent({
         {/* 4. Process Steps — 4-step timeline */}
         <ProcessSteps media={media} />
 
-        {/* 5. Portfolio Showcase — device mockups + iframe */}
+        {/* 5. Template Preview — pick a design */}
+        <TemplatePreview />
+
+        {/* 6. Portfolio Showcase — device mockups + iframe */}
         <PortfolioShowcase media={media} />
 
         {/* 5. Pricing — geo-dynamic */}

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flavor House — Crafted Flavors, Curated Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --burgundy:#5C1A1B;
+  --cream:#FFF8F0;
+  --gold:#C9A227;
+  --gold-light:#d4b34e;
+  --dark:#1a0a0a;
+  --text:#3d2020;
+  --text-light:#6b4c4c;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Source Sans 3',sans-serif;color:var(--text);background:var(--cream);line-height:1.7;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:700;line-height:1.25}
+
+/* ---- Animations ---- */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ---- Nav ---- */
+nav{position:fixed;top:0;left:0;width:100%;z-index:100;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;transition:background .35s,box-shadow .35s}
+nav.scrolled{background:rgba(92,26,27,.97);box-shadow:0 2px 20px rgba(0,0,0,.25)}
+nav .logo{font-family:'Playfair Display',serif;font-size:1.35rem;color:#fff;font-weight:700;letter-spacing:.5px;text-decoration:none}
+nav .logo span{color:var(--gold)}
+nav ul{list-style:none;display:flex;gap:2rem}
+nav ul li a{color:rgba(255,255,255,.85);text-decoration:none;font-size:.95rem;font-weight:500;letter-spacing:.3px;position:relative;transition:color .3s}
+nav ul li a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--gold);transition:width .3s}
+nav ul li a:hover{color:#fff}
+nav ul li a:hover::after{width:100%}
+.menu-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.menu-toggle span{width:24px;height:2px;background:#fff;border-radius:2px;transition:transform .3s,opacity .3s}
+@media(max-width:768px){
+  nav ul{position:fixed;top:0;right:-100%;width:260px;height:100vh;flex-direction:column;background:var(--burgundy);padding:5rem 2rem 2rem;gap:1.5rem;transition:right .35s ease;box-shadow:-4px 0 30px rgba(0,0,0,.3)}
+  nav ul.open{right:0}
+  .menu-toggle{display:flex;z-index:101}
+}
+
+/* ---- Hero ---- */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#5C1A1B 0%,#832424 25%,#a0522d 50%,#c9a227 80%,#5C1A1B 100%);background-size:300% 300%;animation:heroShift 12s ease infinite;position:relative;padding:2rem}
+@keyframes heroShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.hero::after{content:'';position:absolute;inset:0;background:rgba(26,10,10,.55)}
+.hero-content{position:relative;z-index:1;max-width:700px}
+.hero-content h1{font-size:clamp(2.8rem,6vw,5rem);color:#fff;margin-bottom:.5rem}
+.hero-content h1 span{color:var(--gold)}
+.hero-content .tagline{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.1rem,2.5vw,1.5rem);color:rgba(255,255,255,.85);margin-bottom:2rem;font-weight:400}
+.hero-content .cta-btn{display:inline-block;padding:.85rem 2.4rem;border:2px solid var(--gold);color:var(--gold);font-family:'Source Sans 3',sans-serif;font-size:1rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;border-radius:2px;transition:all .3s}
+.hero-content .cta-btn:hover{background:var(--gold);color:var(--dark)}
+
+/* ---- Section Common ---- */
+section{padding:5rem 2rem}
+.section-title{text-align:center;margin-bottom:3rem}
+.section-title h2{font-size:clamp(1.8rem,4vw,2.6rem);color:var(--burgundy);margin-bottom:.5rem}
+.section-title .divider{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem}
+.section-title .divider span{width:40px;height:2px;background:var(--gold)}
+.section-title .divider .diamond{width:8px;height:8px;background:var(--gold);transform:rotate(45deg);flex-shrink:0}
+.container{max-width:1100px;margin:0 auto}
+
+/* ---- Menu ---- */
+#menu{background:#fff}
+.menu-tabs{display:flex;justify-content:center;gap:1rem;margin-bottom:2.5rem;flex-wrap:wrap}
+.menu-tabs button{padding:.55rem 1.8rem;border:2px solid var(--burgundy);background:transparent;color:var(--burgundy);font-family:'Source Sans 3',sans-serif;font-size:.9rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .3s}
+.menu-tabs button.active,
+.menu-tabs button:hover{background:var(--burgundy);color:var(--cream)}
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+.menu-card{background:var(--cream);border-radius:6px;padding:1.6rem 1.8rem;border:1px solid #f0e6da;transition:transform .3s,box-shadow .3s}
+.menu-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(92,26,27,.1)}
+.menu-card .card-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.4rem}
+.menu-card h4{font-size:1.15rem;color:var(--burgundy)}
+.menu-card .price{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;font-weight:600;white-space:nowrap}
+.menu-card p{font-size:.92rem;color:var(--text-light);line-height:1.6}
+.menu-category{display:none}
+.menu-category.active{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+
+/* ---- About ---- */
+#about{background:var(--burgundy);color:rgba(255,255,255,.9)}
+#about .section-title h2{color:var(--cream)}
+.about-content{max-width:780px;margin:0 auto;text-align:center;font-size:1.08rem}
+.about-content p{margin-bottom:1.2rem}
+.about-content .signature{font-family:'Playfair Display',serif;font-style:italic;color:var(--gold);font-size:1.2rem;margin-top:1.5rem}
+
+/* ---- Reservation ---- */
+#reserve{background:#fff}
+.reserve-wrapper{max-width:600px;margin:0 auto}
+.reserve-wrapper form{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.reserve-wrapper label{display:flex;flex-direction:column;font-size:.85rem;font-weight:600;color:var(--burgundy);text-transform:uppercase;letter-spacing:.5px}
+.reserve-wrapper label.full{grid-column:1/-1}
+.reserve-wrapper input,
+.reserve-wrapper select{margin-top:.4rem;padding:.75rem 1rem;border:1.5px solid #ddd5cc;border-radius:4px;font-family:'Source Sans 3',sans-serif;font-size:1rem;color:var(--text);background:var(--cream);transition:border-color .3s,box-shadow .3s;outline:none}
+.reserve-wrapper input:focus,
+.reserve-wrapper select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.15)}
+.reserve-wrapper .submit-btn{grid-column:1/-1;padding:.9rem;background:var(--burgundy);color:#fff;border:none;border-radius:4px;font-family:'Source Sans 3',sans-serif;font-size:1rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:background .3s,transform .15s}
+.reserve-wrapper .submit-btn:hover{background:#7a2526}
+.reserve-wrapper .submit-btn:active{transform:scale(.98)}
+@media(max-width:500px){.reserve-wrapper form{grid-template-columns:1fr}}
+
+/* ---- Contact / Footer ---- */
+footer{background:var(--dark);color:rgba(255,255,255,.7);padding:3.5rem 2rem 1.5rem;text-align:center}
+.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;max-width:900px;margin:0 auto 2.5rem}
+.footer-col h4{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.05rem;margin-bottom:.7rem}
+.footer-col p,.footer-col a{font-size:.93rem;line-height:1.8;color:rgba(255,255,255,.65);text-decoration:none}
+.footer-col a:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:1.2rem;font-size:.82rem;color:rgba(255,255,255,.35)}
+
+/* ---- Badge ---- */
+.cubico-badge{position:fixed;bottom:1rem;right:1rem;background:rgba(26,10,10,.65);backdrop-filter:blur(6px);color:rgba(255,255,255,.7);font-size:.72rem;padding:.4rem .8rem;border-radius:3px;text-decoration:none;transition:background .3s,color .3s;z-index:99;letter-spacing:.3px}
+.cubico-badge:hover{background:rgba(26,10,10,.85);color:#fff}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav id="navbar">
+  <a href="#home" class="logo"><span>F</span>lavor House</a>
+  <ul id="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#reserve">Reserve</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <h1><span>Flavor</span> House</h1>
+    <p class="tagline">Crafted Flavors, Curated Experience</p>
+    <a href="#reserve" class="cta-btn">Reserve a Table</a>
+  </div>
+</section>
+
+<!-- Menu -->
+<section id="menu">
+  <div class="container">
+    <div class="section-title reveal">
+      <h2>Our Menu</h2>
+      <div class="divider"><span></span><div class="diamond"></div><span></span></div>
+    </div>
+    <div class="menu-tabs reveal">
+      <button class="active" data-cat="starters">Starters</button>
+      <button data-cat="mains">Mains</button>
+      <button data-cat="desserts">Desserts</button>
+    </div>
+
+    <!-- Starters -->
+    <div class="menu-category active" id="cat-starters">
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Truffle Burrata</h4><span class="price">Rs. 1,850</span></div>
+        <p>Creamy burrata draped in black truffle oil, heirloom tomatoes, and micro basil on toasted sourdough.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Seared Scallops</h4><span class="price">Rs. 2,200</span></div>
+        <p>Pan-seared diver scallops with cauliflower puree, crispy capers, and brown butter emulsion.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Lamb Seekh Sliders</h4><span class="price">Rs. 1,450</span></div>
+        <p>Charcoal-grilled lamb seekh on brioche buns with pickled onion, mint chutney, and sumac aioli.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Smoked Salmon Tartare</h4><span class="price">Rs. 1,950</span></div>
+        <p>Hand-chopped salmon with avocado mousse, yuzu dressing, and wasabi-sesame tuile.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Crispy Calamari</h4><span class="price">Rs. 1,350</span></div>
+        <p>Lightly dusted calamari rings with sriracha mayo, charred lemon, and fresh herbs.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Wild Mushroom Soup</h4><span class="price">Rs. 950</span></div>
+        <p>Velvety blend of porcini, shiitake, and oyster mushrooms finished with truffle cream.</p>
+      </div>
+    </div>
+
+    <!-- Mains -->
+    <div class="menu-category" id="cat-mains">
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Wagyu Ribeye</h4><span class="price">Rs. 6,500</span></div>
+        <p>12 oz dry-aged wagyu with roasted bone marrow butter, charred broccolini, and red wine jus.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Herb-Crusted Rack of Lamb</h4><span class="price">Rs. 4,800</span></div>
+        <p>New Zealand lamb rack with rosemary-dijon crust, pomme puree, and minted pea sauce.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Pan-Roasted Sea Bass</h4><span class="price">Rs. 3,950</span></div>
+        <p>Chilean sea bass on saffron risotto with asparagus, cherry tomatoes, and beurre blanc.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Chicken Tikka Roulade</h4><span class="price">Rs. 2,850</span></div>
+        <p>Sous-vide chicken stuffed with tikka mousse, served with cumin-spiced potatoes and raita.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Lobster Linguine</h4><span class="price">Rs. 4,200</span></div>
+        <p>Fresh lobster tail tossed in saffron-tomato cream sauce with handmade linguine and basil oil.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Grilled Lamb Chops</h4><span class="price">Rs. 3,600</span></div>
+        <p>Tandoori-marinated lamb chops with roasted root vegetables, pomegranate glaze, and herb salad.</p>
+      </div>
+    </div>
+
+    <!-- Desserts -->
+    <div class="menu-category" id="cat-desserts">
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Molten Chocolate Fondant</h4><span class="price">Rs. 1,400</span></div>
+        <p>Dark Valrhona chocolate cake with a liquid center, vanilla bean ice cream, and gold leaf.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Rose Panna Cotta</h4><span class="price">Rs. 1,100</span></div>
+        <p>Delicate rose-infused panna cotta with pistachio crumble, raspberry coulis, and edible petals.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Saffron Crème Brûlée</h4><span class="price">Rs. 1,250</span></div>
+        <p>Classic French custard elevated with Kashmiri saffron and a perfectly caramelized sugar crust.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Pistachio Tiramisu</h4><span class="price">Rs. 1,350</span></div>
+        <p>Layers of espresso-soaked ladyfingers, pistachio mascarpone cream, and cocoa dust.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Mango Cheesecake</h4><span class="price">Rs. 1,200</span></div>
+        <p>Baked New York-style cheesecake with Sindhri mango compote and coconut shortbread base.</p>
+      </div>
+      <div class="menu-card reveal">
+        <div class="card-top"><h4>Gulab Jamun Brûlée</h4><span class="price">Rs. 1,150</span></div>
+        <p>A fusion twist — warm gulab jamun set in cardamom custard with a torched sugar crown.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about">
+  <div class="container">
+    <div class="section-title reveal">
+      <h2>Our Story</h2>
+      <div class="divider"><span></span><div class="diamond"></div><span></span></div>
+    </div>
+    <div class="about-content reveal">
+      <p>Nestled in the heart of Karachi, Flavor House was born from a simple belief: that extraordinary dining is where culinary artistry meets heartfelt hospitality. Since 2018, we have been crafting dishes that honor tradition while embracing the bold flavors of modern gastronomy.</p>
+      <p>Our kitchen is led by Chef Ayesha Malik, whose journeys through Istanbul, Marrakech, and Lyon have shaped a menu that tells a story with every plate. We source locally wherever we can — from the freshest catch at the harbor to organic herbs grown on our rooftop garden.</p>
+      <p>The ambiance at Flavor House is designed to feel like home, yet unlike any home you have visited. Warm terracotta walls, soft candlelight, and curated jazz create an atmosphere where time slows down and conversations come alive.</p>
+      <p class="signature">— Chef Ayesha Malik, Founder</p>
+    </div>
+  </div>
+</section>
+
+<!-- Reservation -->
+<section id="reserve">
+  <div class="container">
+    <div class="section-title reveal">
+      <h2>Reserve a Table</h2>
+      <div class="divider"><span></span><div class="diamond"></div><span></span></div>
+    </div>
+    <div class="reserve-wrapper reveal">
+      <form id="reserveForm" onsubmit="return handleReserve(event)">
+        <label>Name
+          <input type="text" placeholder="Your full name" required>
+        </label>
+        <label>Phone
+          <input type="tel" placeholder="+92 3XX XXXXXXX" required>
+        </label>
+        <label>Date
+          <input type="date" required>
+        </label>
+        <label>Guests
+          <select required>
+            <option value="" disabled selected>Select</option>
+            <option>1 Guest</option>
+            <option>2 Guests</option>
+            <option>3 Guests</option>
+            <option>4 Guests</option>
+            <option>5 Guests</option>
+            <option>6 Guests</option>
+            <option>7+ Guests</option>
+          </select>
+        </label>
+        <label class="full">Special Requests
+          <input type="text" placeholder="Allergies, celebrations, seating preference...">
+        </label>
+        <button type="submit" class="submit-btn">Confirm Reservation</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Footer / Contact -->
+<footer id="contact">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>Hours</h4>
+      <p>Mon — Sat: 11:00 AM – 11:00 PM</p>
+      <p>Sunday: 12:00 PM – 10:00 PM</p>
+    </div>
+    <div class="footer-col">
+      <h4>Location</h4>
+      <p>123 Gourmet Lane<br>Karachi, Pakistan</p>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <p><a href="tel:+923001234567">+92 300 1234567</a></p>
+      <p><a href="mailto:hello@flavorhouse.pk">hello@flavorhouse.pk</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2026 Flavor House. All rights reserved.</div>
+</footer>
+
+<!-- Badge -->
+<a href="https://cubico.tech" target="_blank" rel="noopener" class="cubico-badge">Template by Cubico</a>
+
+<script>
+// Sticky nav background
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Mobile menu toggle
+const toggle = document.getElementById('menuToggle');
+const links = document.getElementById('nav-links');
+toggle.addEventListener('click', () => links.classList.toggle('open'));
+links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+
+// Menu category tabs
+document.querySelectorAll('.menu-tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.menu-tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.menu-category').forEach(c => c.classList.remove('active'));
+    document.getElementById('cat-' + btn.dataset.cat).classList.add('active');
+    // Re-trigger reveal for newly visible cards
+    document.querySelectorAll('#cat-' + btn.dataset.cat + ' .reveal:not(.visible)').forEach(el => {
+      observer.observe(el);
+    });
+  });
+});
+
+// Scroll reveal with IntersectionObserver
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Reservation handler
+function handleReserve(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.submit-btn');
+  btn.textContent = 'Reservation Confirmed!';
+  btn.style.background = '#2e7d32';
+  setTimeout(() => {
+    btn.textContent = 'Confirm Reservation';
+    btn.style.background = '';
+    e.target.reset();
+  }, 3000);
+  return false;
+}
+
+// Set min date for reservation to today
+const dateInput = document.querySelector('#reserveForm input[type="date"]');
+if (dateInput) dateInput.min = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
