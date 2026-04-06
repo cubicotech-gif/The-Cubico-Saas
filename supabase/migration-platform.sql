@@ -53,6 +53,20 @@ CREATE TABLE public.profiles (
 -- Enable RLS
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
+-- Helper function to check user role without triggering RLS (avoids infinite recursion)
+CREATE OR REPLACE FUNCTION public.get_user_role()
+RETURNS TEXT
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+  SELECT role FROM public.profiles WHERE id = auth.uid();
+$$;
+
+GRANT EXECUTE ON FUNCTION public.get_user_role() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.get_user_role() TO anon;
+
 -- Policies
 CREATE POLICY "Users can read own profile"
   ON public.profiles FOR SELECT
@@ -69,10 +83,7 @@ CREATE POLICY "Users can insert own profile"
 CREATE POLICY "Staff can read all profiles"
   ON public.profiles FOR SELECT
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role IN ('admin', 'developer')
-    )
+    public.get_user_role() IN ('admin', 'developer')
   );
 
 
@@ -166,23 +177,17 @@ CREATE POLICY "Customers can update own orders"
   ON public.orders FOR UPDATE
   USING (auth.uid() = customer_id);
 
--- Staff
+-- Staff (uses get_user_role() to avoid infinite recursion through profiles RLS)
 CREATE POLICY "Staff can read all orders"
   ON public.orders FOR SELECT
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role IN ('admin', 'developer')
-    )
+    public.get_user_role() IN ('admin', 'developer')
   );
 
 CREATE POLICY "Staff can update all orders"
   ON public.orders FOR UPDATE
   USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles p
-      WHERE p.id = auth.uid() AND p.role IN ('admin', 'developer')
-    )
+    public.get_user_role() IN ('admin', 'developer')
   );
 
 -- Indexes
@@ -215,9 +220,7 @@ CREATE POLICY "Participants can read order messages"
       WHERE o.id = order_messages.order_id
         AND (o.customer_id = auth.uid() OR o.developer_id = auth.uid())
     )
-    OR EXISTS (
-      SELECT 1 FROM public.profiles p WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
+    OR public.get_user_role() = 'admin'
   );
 
 CREATE POLICY "Participants can send messages"
@@ -230,9 +233,7 @@ CREATE POLICY "Participants can send messages"
         WHERE o.id = order_messages.order_id
           AND (o.customer_id = auth.uid() OR o.developer_id = auth.uid())
       )
-      OR EXISTS (
-        SELECT 1 FROM public.profiles p WHERE p.id = auth.uid() AND p.role = 'admin'
-      )
+      OR public.get_user_role() = 'admin'
     )
   );
 
