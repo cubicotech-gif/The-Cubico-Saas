@@ -1,217 +1,271 @@
--- ═══════════════════════════════════════════════════════════════════
--- CUBICO PLATFORM — Orders, Profiles, Messages
--- Run this in Supabase SQL Editor after enabling Auth
--- ═══════════════════════════════════════════════════════════════════
+-- ═══════════════════════════════════════════════════════════════════════
+-- CUBICO PLATFORM — COMPLETE SETUP (run once in Supabase SQL Editor)
+--
+-- This script is IDEMPOTENT — safe to run multiple times.
+-- It will drop and recreate everything cleanly.
+--
+-- BEFORE RUNNING:
+--   1. Go to Supabase Dashboard → Authentication → Users
+--   2. Delete any stuck/failed users
+--   3. Then paste this entire script into SQL Editor and click "Run"
+-- ═══════════════════════════════════════════════════════════════════════
 
--- ── Profiles (extends Supabase Auth users) ──────────────────────
 
-CREATE TABLE IF NOT EXISTS profiles (
-  id          UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  full_name   TEXT NOT NULL DEFAULT '',
-  phone       TEXT DEFAULT '',
+-- ╔═══════════════════════════════════════════════════════════════════╗
+-- ║  STEP 0: CLEAN SLATE — drop old tables, triggers, functions     ║
+-- ╚═══════════════════════════════════════════════════════════════════╝
+
+-- Drop triggers first (they reference functions)
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+DROP TRIGGER IF EXISTS profiles_updated_at ON profiles;
+DROP TRIGGER IF EXISTS orders_updated_at ON orders;
+
+-- Drop tables in dependency order (messages → orders → profiles)
+DROP TABLE IF EXISTS order_messages CASCADE;
+DROP TABLE IF EXISTS orders CASCADE;
+DROP TABLE IF EXISTS profiles CASCADE;
+
+-- Drop functions
+DROP FUNCTION IF EXISTS handle_new_user() CASCADE;
+DROP FUNCTION IF EXISTS update_updated_at() CASCADE;
+
+-- Drop storage policies (ignore errors if they don't exist)
+DROP POLICY IF EXISTS "Authenticated users can upload order assets" ON storage.objects;
+DROP POLICY IF EXISTS "Public can read order assets" ON storage.objects;
+
+
+-- ╔═══════════════════════════════════════════════════════════════════╗
+-- ║  STEP 1: PROFILES TABLE                                         ║
+-- ╚═══════════════════════════════════════════════════════════════════╝
+
+CREATE TABLE public.profiles (
+  id            UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name     TEXT NOT NULL DEFAULT '',
+  phone         TEXT DEFAULT '',
   business_name TEXT DEFAULT '',
-  role        TEXT NOT NULL DEFAULT 'customer' CHECK (role IN ('customer', 'developer', 'admin')),
-  avatar_url  TEXT DEFAULT '',
-  created_at  TIMESTAMPTZ DEFAULT now(),
-  updated_at  TIMESTAMPTZ DEFAULT now()
+  role          TEXT NOT NULL DEFAULT 'customer'
+                  CHECK (role IN ('customer', 'developer', 'admin')),
+  avatar_url    TEXT DEFAULT '',
+  created_at    TIMESTAMPTZ DEFAULT now(),
+  updated_at    TIMESTAMPTZ DEFAULT now()
 );
 
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+-- Enable RLS
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
--- Users can read their own profile
+-- Policies
 CREATE POLICY "Users can read own profile"
-  ON profiles FOR SELECT
+  ON public.profiles FOR SELECT
   USING (auth.uid() = id);
 
--- Users can update their own profile
 CREATE POLICY "Users can update own profile"
-  ON profiles FOR UPDATE
+  ON public.profiles FOR UPDATE
   USING (auth.uid() = id);
 
--- Admins/devs can read all profiles
+CREATE POLICY "Users can insert own profile"
+  ON public.profiles FOR INSERT
+  WITH CHECK (auth.uid() = id);
+
 CREATE POLICY "Staff can read all profiles"
-  ON profiles FOR SELECT
+  ON public.profiles FOR SELECT
   USING (
     EXISTS (
-      SELECT 1 FROM profiles WHERE id = auth.uid() AND role IN ('admin', 'developer')
+      SELECT 1 FROM public.profiles p
+      WHERE p.id = auth.uid() AND p.role IN ('admin', 'developer')
     )
   );
 
--- Auto-create profile on signup
-CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER AS $$
+
+-- ╔═══════════════════════════════════════════════════════════════════╗
+-- ║  STEP 2: AUTO-CREATE PROFILE ON SIGNUP (trigger)                ║
+-- ╚═══════════════════════════════════════════════════════════════════╝
+
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
-  INSERT INTO profiles (id, full_name, phone)
+  INSERT INTO public.profiles (id, full_name, phone)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data ->> 'full_name', ''),
     COALESCE(NEW.raw_user_meta_data ->> 'phone', '')
-  );
+  )
+  ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 
--- ── Orders ──────────────────────────────────────────────────────
+-- ╔═══════════════════════════════════════════════════════════════════╗
+-- ║  STEP 3: ORDERS TABLE                                           ║
+-- ╚═══════════════════════════════════════════════════════════════════╝
 
-CREATE TABLE IF NOT EXISTS orders (
-  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  customer_id     UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  developer_id    UUID REFERENCES profiles(id) ON DELETE SET NULL,
+CREATE TABLE public.orders (
+  id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  customer_id          UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  developer_id         UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
 
   -- Template & business info
-  template_key    TEXT NOT NULL,                     -- e.g. 'restaurant', 'clinic'
-  business_name   TEXT NOT NULL DEFAULT '',
-  business_industry TEXT DEFAULT '',
+  template_key         TEXT NOT NULL,
+  business_name        TEXT NOT NULL DEFAULT '',
+  business_industry    TEXT DEFAULT '',
   business_description TEXT DEFAULT '',
 
-  -- Customer-provided assets
-  logo_url        TEXT DEFAULT '',                   -- uploaded logo
-  content_notes   TEXT DEFAULT '',                   -- what they want on the site
-  color_preferences TEXT DEFAULT '',
-  domain_info     TEXT DEFAULT '',                   -- "I have a domain" / "buy for me"
-  extra_notes     TEXT DEFAULT '',
+  -- Customer-provided assets & preferences
+  logo_url             TEXT DEFAULT '',
+  content_notes        TEXT DEFAULT '',
+  color_preferences    TEXT DEFAULT '',
+  domain_info          TEXT DEFAULT '',
+  domain_name          TEXT DEFAULT '',
+  extra_notes          TEXT DEFAULT '',
 
   -- Status tracking
-  status          TEXT NOT NULL DEFAULT 'pending'
+  status               TEXT NOT NULL DEFAULT 'pending'
     CHECK (status IN (
-      'pending',        -- just submitted
-      'accepted',       -- dev assigned, working on it
-      'preview_ready',  -- live preview link available
-      'revision',       -- customer requested changes
-      'completed',      -- site is live
-      'delivered',      -- paid and ownership transferred
+      'pending',
+      'accepted',
+      'preview_ready',
+      'revision',
+      'completed',
+      'delivered',
       'cancelled'
     )),
 
   -- Preview & delivery
-  preview_url     TEXT DEFAULT '',                   -- cubico.dev/preview/xxx
-  live_url        TEXT DEFAULT '',                   -- www.customer-domain.com
-  domain_name     TEXT DEFAULT '',
+  preview_url          TEXT DEFAULT '',
+  live_url             TEXT DEFAULT '',
 
-  -- Pricing (set by admin/dev)
-  price_amount    INTEGER DEFAULT 0,                 -- in smallest unit (PKR)
-  price_currency  TEXT DEFAULT 'PKR',
-  is_paid         BOOLEAN DEFAULT FALSE,
+  -- Pricing
+  price_amount         INTEGER DEFAULT 0,
+  price_currency       TEXT DEFAULT 'PKR',
+  is_paid              BOOLEAN DEFAULT FALSE,
 
-  created_at      TIMESTAMPTZ DEFAULT now(),
-  updated_at      TIMESTAMPTZ DEFAULT now()
+  created_at           TIMESTAMPTZ DEFAULT now(),
+  updated_at           TIMESTAMPTZ DEFAULT now()
 );
 
-ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 
--- Customers can see their own orders
+-- Customers
 CREATE POLICY "Customers can read own orders"
-  ON orders FOR SELECT
+  ON public.orders FOR SELECT
   USING (auth.uid() = customer_id);
 
--- Customers can create orders
 CREATE POLICY "Customers can create orders"
-  ON orders FOR INSERT
+  ON public.orders FOR INSERT
   WITH CHECK (auth.uid() = customer_id);
 
--- Customers can update their own orders (limited fields handled in app)
 CREATE POLICY "Customers can update own orders"
-  ON orders FOR UPDATE
+  ON public.orders FOR UPDATE
   USING (auth.uid() = customer_id);
 
--- Staff can read all orders
+-- Staff
 CREATE POLICY "Staff can read all orders"
-  ON orders FOR SELECT
+  ON public.orders FOR SELECT
   USING (
     EXISTS (
-      SELECT 1 FROM profiles WHERE id = auth.uid() AND role IN ('admin', 'developer')
+      SELECT 1 FROM public.profiles p
+      WHERE p.id = auth.uid() AND p.role IN ('admin', 'developer')
     )
   );
 
--- Staff can update all orders
 CREATE POLICY "Staff can update all orders"
-  ON orders FOR UPDATE
+  ON public.orders FOR UPDATE
   USING (
     EXISTS (
-      SELECT 1 FROM profiles WHERE id = auth.uid() AND role IN ('admin', 'developer')
+      SELECT 1 FROM public.profiles p
+      WHERE p.id = auth.uid() AND p.role IN ('admin', 'developer')
     )
   );
 
-CREATE INDEX IF NOT EXISTS idx_orders_customer ON orders(customer_id);
-CREATE INDEX IF NOT EXISTS idx_orders_developer ON orders(developer_id);
-CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+-- Indexes
+CREATE INDEX idx_orders_customer ON public.orders(customer_id);
+CREATE INDEX idx_orders_developer ON public.orders(developer_id);
+CREATE INDEX idx_orders_status ON public.orders(status);
 
 
--- ── Order Messages (chat between customer & developer) ──────────
+-- ╔═══════════════════════════════════════════════════════════════════╗
+-- ║  STEP 4: ORDER MESSAGES TABLE (chat)                            ║
+-- ╚═══════════════════════════════════════════════════════════════════╝
 
-CREATE TABLE IF NOT EXISTS order_messages (
-  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_id    UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-  sender_id   UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  body        TEXT NOT NULL DEFAULT '',
-  attachment_url TEXT DEFAULT '',                    -- optional file/image
-  is_read     BOOLEAN DEFAULT FALSE,
-  created_at  TIMESTAMPTZ DEFAULT now()
+CREATE TABLE public.order_messages (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id        UUID NOT NULL REFERENCES public.orders(id) ON DELETE CASCADE,
+  sender_id       UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  body            TEXT NOT NULL DEFAULT '',
+  attachment_url  TEXT DEFAULT '',
+  is_read         BOOLEAN DEFAULT FALSE,
+  created_at      TIMESTAMPTZ DEFAULT now()
 );
 
-ALTER TABLE order_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.order_messages ENABLE ROW LEVEL SECURITY;
 
--- Participants can read messages for their orders
 CREATE POLICY "Participants can read order messages"
-  ON order_messages FOR SELECT
+  ON public.order_messages FOR SELECT
   USING (
     EXISTS (
-      SELECT 1 FROM orders
-      WHERE orders.id = order_messages.order_id
-        AND (orders.customer_id = auth.uid() OR orders.developer_id = auth.uid())
+      SELECT 1 FROM public.orders o
+      WHERE o.id = order_messages.order_id
+        AND (o.customer_id = auth.uid() OR o.developer_id = auth.uid())
     )
     OR EXISTS (
-      SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'
+      SELECT 1 FROM public.profiles p WHERE p.id = auth.uid() AND p.role = 'admin'
     )
   );
 
--- Participants can send messages
-CREATE POLICY "Participants can send order messages"
-  ON order_messages FOR INSERT
+CREATE POLICY "Participants can send messages"
+  ON public.order_messages FOR INSERT
   WITH CHECK (
     auth.uid() = sender_id
     AND (
       EXISTS (
-        SELECT 1 FROM orders
-        WHERE orders.id = order_messages.order_id
-          AND (orders.customer_id = auth.uid() OR orders.developer_id = auth.uid())
+        SELECT 1 FROM public.orders o
+        WHERE o.id = order_messages.order_id
+          AND (o.customer_id = auth.uid() OR o.developer_id = auth.uid())
       )
       OR EXISTS (
-        SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'
+        SELECT 1 FROM public.profiles p WHERE p.id = auth.uid() AND p.role = 'admin'
       )
     )
   );
 
-CREATE INDEX IF NOT EXISTS idx_messages_order ON order_messages(order_id);
-CREATE INDEX IF NOT EXISTS idx_messages_created ON order_messages(created_at);
+CREATE INDEX idx_messages_order ON public.order_messages(order_id);
+CREATE INDEX idx_messages_created ON public.order_messages(created_at);
 
 
--- ── Updated_at triggers ─────────────────────────────────────────
+-- ╔═══════════════════════════════════════════════════════════════════╗
+-- ║  STEP 5: UPDATED_AT AUTO-TRIGGER                                ║
+-- ╚═══════════════════════════════════════════════════════════════════╝
 
-CREATE OR REPLACE FUNCTION update_updated_at()
-RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION public.update_updated_at()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
 BEGIN
   NEW.updated_at = now();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
-DROP TRIGGER IF EXISTS profiles_updated_at ON profiles;
 CREATE TRIGGER profiles_updated_at
-  BEFORE UPDATE ON profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  BEFORE UPDATE ON public.profiles
+  FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
-DROP TRIGGER IF EXISTS orders_updated_at ON orders;
 CREATE TRIGGER orders_updated_at
-  BEFORE UPDATE ON orders FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  BEFORE UPDATE ON public.orders
+  FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
--- ── Storage bucket for order assets (logos, attachments) ────────
+-- ╔═══════════════════════════════════════════════════════════════════╗
+-- ║  STEP 6: STORAGE BUCKET (for logo uploads)                      ║
+-- ╚═══════════════════════════════════════════════════════════════════╝
 
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
@@ -223,7 +277,6 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
--- Storage policies
 CREATE POLICY "Authenticated users can upload order assets"
   ON storage.objects FOR INSERT
   WITH CHECK (bucket_id = 'order-assets' AND auth.role() = 'authenticated');
@@ -231,3 +284,34 @@ CREATE POLICY "Authenticated users can upload order assets"
 CREATE POLICY "Public can read order assets"
   ON storage.objects FOR SELECT
   USING (bucket_id = 'order-assets');
+
+
+-- ╔═══════════════════════════════════════════════════════════════════╗
+-- ║  STEP 7: ENABLE REALTIME (for live chat & notifications)        ║
+-- ╚═══════════════════════════════════════════════════════════════════╝
+
+ALTER PUBLICATION supabase_realtime ADD TABLE public.orders;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.order_messages;
+
+
+-- ╔═══════════════════════════════════════════════════════════════════╗
+-- ║  STEP 8: GRANT PERMISSIONS                                      ║
+-- ╚═══════════════════════════════════════════════════════════════════╝
+
+-- Make sure the anon and authenticated roles can access the tables
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL ROUTINES IN SCHEMA public TO anon, authenticated;
+
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- DONE! You can now sign up at your Cubico website.
+--
+-- To make yourself an admin, run this AFTER signing up:
+--
+--   UPDATE public.profiles
+--   SET role = 'admin'
+--   WHERE id = (SELECT id FROM auth.users WHERE email = 'YOUR_EMAIL_HERE');
+--
+-- ═══════════════════════════════════════════════════════════════════════
