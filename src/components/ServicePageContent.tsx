@@ -5,11 +5,8 @@ import Link from 'next/link';
 import { ArrowLeft, Check, MessageCircle } from 'lucide-react';
 import DynamicIcon from '@/components/ui/DynamicIcon';
 import WebDevHero from '@/components/WebDevHero';
-import TechLogoTicker from '@/components/TechLogoTicker';
-import PainPoints from '@/components/PainPoints';
-import ProcessSteps from '@/components/ProcessSteps';
 import TemplatePreview from '@/components/TemplatePreview';
-import PortfolioShowcase from '@/components/PortfolioShowcase';
+import ProcessSteps from '@/components/ProcessSteps';
 import WebsitePricing from '@/components/WebsitePricing';
 import type { Service } from '@/lib/types';
 import type { MediaAsset } from '@/lib/media';
@@ -41,22 +38,13 @@ export default function ServicePageContent({
           media={media}
         />
 
-        {/* 2. Tech Logo Ticker — trust bar */}
-        <TechLogoTicker media={media} />
-
-        {/* 3. Pain Points — agitation */}
-        <PainPoints media={media} />
-
-        {/* 4. Process Steps — 4-step timeline */}
-        <ProcessSteps media={media} />
-
-        {/* 5. Template Preview — pick a design */}
+        {/* 2. Templates — browse and pick */}
         <TemplatePreview />
 
-        {/* 6. Portfolio Showcase — device mockups + iframe */}
-        <PortfolioShowcase media={media} />
+        {/* 3. Process — 4 simple steps */}
+        <ProcessSteps media={media} />
 
-        {/* 5. Pricing — geo-dynamic */}
+        {/* 4. Pricing — geo-dynamic */}
         <WebsitePricing waNumber={waNumber} serviceTitle={service.title} />
 
         {/* 6. Final CTA */}
