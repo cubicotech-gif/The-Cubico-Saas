@@ -27,11 +27,27 @@ export async function GET(request: NextRequest) {
     },
   );
 
+  // Helper: check role and redirect accordingly
+  async function redirectByRole(fallback: string) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      if (profile?.role === 'admin') {
+        return NextResponse.redirect(`${origin}/admin`);
+      }
+    }
+    return NextResponse.redirect(`${origin}${fallback}`);
+  }
+
   // Handle PKCE / OAuth code exchange
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      return redirectByRole(next);
     }
   }
 
@@ -42,7 +58,7 @@ export async function GET(request: NextRequest) {
       type: type as 'signup' | 'email' | 'recovery' | 'invite',
     });
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      return redirectByRole(next);
     }
   }
 
