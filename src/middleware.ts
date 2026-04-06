@@ -30,17 +30,18 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const pathname = request.nextUrl.pathname;
+
   // Protected routes — redirect to login if not authenticated
-  const isProtected = request.nextUrl.pathname.startsWith('/dashboard');
-  if (isProtected && !user) {
+  if ((pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) && !user) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
-    url.searchParams.set('next', request.nextUrl.pathname);
+    url.searchParams.set('next', pathname);
     return NextResponse.redirect(url);
   }
 
-  // If logged in user visits /login, redirect to dashboard
-  if (request.nextUrl.pathname === '/login' && user) {
+  // If logged in user visits /login, redirect appropriately
+  if (pathname === '/login' && user) {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard';
     return NextResponse.redirect(url);
@@ -50,5 +51,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/login'],
+  matcher: ['/dashboard/:path*', '/admin/:path*', '/login'],
 };
