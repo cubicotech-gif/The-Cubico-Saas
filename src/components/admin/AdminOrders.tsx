@@ -20,6 +20,12 @@ import {
   CheckCircle,
   Rocket,
   XCircle,
+  UserPlus,
+  Link as LinkIcon,
+  ArrowRight,
+  Key,
+  Server,
+  FileDown,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { TEMPLATES } from '@/components/TemplatePreview';
@@ -47,7 +53,6 @@ interface Order {
   is_paid: boolean;
   created_at: string;
   updated_at: string;
-  // joined
   customer?: { full_name: string; phone: string; business_name: string };
 }
 
@@ -69,13 +74,12 @@ const STATUS_OPTIONS = [
 
 const FILTER_OPTIONS = [
   { value: 'all', label: 'All' },
-  { value: 'pending', label: 'Pending' },
+  { value: 'pending', label: 'New' },
   { value: 'accepted', label: 'In Progress' },
-  { value: 'preview_ready', label: 'Preview Ready' },
-  { value: 'revision', label: 'Revision' },
+  { value: 'preview_ready', label: 'Review' },
+  { value: 'revision', label: 'Revisions' },
   { value: 'completed', label: 'Completed' },
   { value: 'delivered', label: 'Delivered' },
-  { value: 'cancelled', label: 'Cancelled' },
 ];
 
 export default function AdminOrders({ hasSupabase, currentUserId }: { hasSupabase: boolean; currentUserId: string }) {
@@ -89,12 +93,8 @@ export default function AdminOrders({ hasSupabase, currentUserId }: { hasSupabas
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (hasSupabase) {
-      loadOrders();
-      loadDevelopers();
-    } else {
-      setLoading(false);
-    }
+    if (hasSupabase) { loadOrders(); loadDevelopers(); }
+    else setLoading(false);
   }, [hasSupabase]);
 
   async function loadOrders() {
@@ -104,21 +104,13 @@ export default function AdminOrders({ hasSupabase, currentUserId }: { hasSupabas
       .from('orders')
       .select('*, customer:profiles!orders_customer_id_fkey(full_name, phone, business_name)')
       .order('created_at', { ascending: false });
-
-    if (fetchError) {
-      setError('Failed to load orders. Make sure you are logged in as admin.');
-      setOrders([]);
-    } else {
-      setOrders((data as Order[]) || []);
-    }
+    if (fetchError) { setError('Failed to load orders.'); setOrders([]); }
+    else setOrders((data as Order[]) || []);
     setLoading(false);
   }
 
   async function loadDevelopers() {
-    const { data } = await supabase
-      .from('profiles')
-      .select('id, full_name, role')
-      .in('role', ['developer', 'admin']);
+    const { data } = await supabase.from('profiles').select('id, full_name, role').in('role', ['developer', 'admin']);
     setDevelopers(data || []);
   }
 
@@ -126,43 +118,27 @@ export default function AdminOrders({ hasSupabase, currentUserId }: { hasSupabas
     if (filter !== 'all' && o.status !== filter) return false;
     if (search) {
       const q = search.toLowerCase();
-      return (
-        o.business_name?.toLowerCase().includes(q) ||
-        o.template_key.toLowerCase().includes(q) ||
-        o.customer?.full_name?.toLowerCase().includes(q) ||
-        o.id.toLowerCase().includes(q)
-      );
+      return o.business_name?.toLowerCase().includes(q) || o.template_key.toLowerCase().includes(q) || o.customer?.full_name?.toLowerCase().includes(q) || o.id.toLowerCase().includes(q);
     }
     return true;
   });
 
-  const statusCounts = orders.reduce<Record<string, number>>((acc, o) => {
-    acc[o.status] = (acc[o.status] || 0) + 1;
-    return acc;
-  }, {});
+  const statusCounts = orders.reduce<Record<string, number>>((acc, o) => { acc[o.status] = (acc[o.status] || 0) + 1; return acc; }, {});
 
   if (!hasSupabase) {
     return (
       <div className="p-8 text-center rounded-xl bg-surface-900 border border-surface-800">
         <AlertCircle size={28} className="text-amber-400 mx-auto mb-3" />
-        <p className="text-sm text-surface-300 font-body mb-1">
-          Connect Supabase to manage orders
-        </p>
-        <p className="text-xs text-surface-500 font-body">
-          Orders are stored in Supabase and require a connection to view.
-        </p>
+        <p className="text-sm text-surface-300 font-body mb-1">Connect Supabase to manage orders</p>
       </div>
     );
   }
 
   return (
     <div>
-      {/* Header with stats */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-lg font-display font-semibold text-white">
-            Orders ({orders.length})
-          </h2>
+          <h2 className="text-lg font-display font-semibold text-white">Orders ({orders.length})</h2>
           {orders.length > 0 && (
             <div className="flex gap-3 mt-1">
               {STATUS_OPTIONS.filter((s) => statusCounts[s.value]).map((s) => (
@@ -173,11 +149,7 @@ export default function AdminOrders({ hasSupabase, currentUserId }: { hasSupabas
             </div>
           )}
         </div>
-        <button
-          onClick={loadOrders}
-          disabled={loading}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-800 hover:bg-surface-700 text-surface-300 text-xs rounded-lg transition-colors font-body"
-        >
+        <button onClick={loadOrders} disabled={loading} className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-800 hover:bg-surface-700 text-surface-300 text-xs rounded-lg transition-colors font-body">
           {loading ? <Loader2 size={12} className="animate-spin" /> : 'Refresh'}
         </button>
       </div>
@@ -189,60 +161,33 @@ export default function AdminOrders({ hasSupabase, currentUserId }: { hasSupabas
         </div>
       )}
 
-      {/* Search + Filter */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500" />
-          <input
-            type="text"
-            placeholder="Search by name, template, customer, or ID..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-surface-900 border border-surface-700 rounded-lg text-sm text-white font-body placeholder:text-surface-600 focus:outline-none focus:border-brand-600 transition-colors"
-          />
+          <input type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 bg-surface-900 border border-surface-700 rounded-lg text-sm text-white font-body placeholder:text-surface-600 focus:outline-none focus:border-brand-600 transition-colors" />
         </div>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="px-3 py-2 bg-surface-900 border border-surface-700 rounded-lg text-sm text-white font-body focus:outline-none focus:border-brand-600 transition-colors"
-        >
+        <select value={filter} onChange={(e) => setFilter(e.target.value)}
+          className="px-3 py-2 bg-surface-900 border border-surface-700 rounded-lg text-sm text-white font-body focus:outline-none focus:border-brand-600">
           {FILTER_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-              {opt.value !== 'all' && statusCounts[opt.value] ? ` (${statusCounts[opt.value]})` : ''}
-            </option>
+            <option key={opt.value} value={opt.value}>{opt.label}{opt.value !== 'all' && statusCounts[opt.value] ? ` (${statusCounts[opt.value]})` : ''}</option>
           ))}
         </select>
       </div>
 
-      {/* Orders list */}
       {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 size={24} className="text-surface-500 animate-spin" />
-        </div>
+        <div className="flex items-center justify-center py-12"><Loader2 size={24} className="text-surface-500 animate-spin" /></div>
       ) : filtered.length === 0 ? (
         <div className="p-8 text-center rounded-xl bg-surface-900 border border-surface-800">
           <Package size={28} className="text-surface-600 mx-auto mb-3" />
-          <p className="text-sm text-surface-400 font-body">
-            {orders.length === 0 ? 'No orders yet.' : 'No orders match your filter.'}
-          </p>
+          <p className="text-sm text-surface-400 font-body">{orders.length === 0 ? 'No orders yet.' : 'No orders match.'}</p>
         </div>
       ) : (
         <div className="space-y-2">
           {filtered.map((order) => (
-            <OrderRow
-              key={order.id}
-              order={order}
-              developers={developers}
-              currentUserId={currentUserId}
-              expanded={expandedId === order.id}
-              onToggle={() => setExpandedId(expandedId === order.id ? null : order.id)}
-              onUpdate={(updated) => {
-                setOrders((prev) =>
-                  prev.map((o) => (o.id === updated.id ? { ...o, ...updated } : o)),
-                );
-              }}
-            />
+            <OrderRow key={order.id} order={order} developers={developers} currentUserId={currentUserId}
+              expanded={expandedId === order.id} onToggle={() => setExpandedId(expandedId === order.id ? null : order.id)}
+              onUpdate={(updated) => setOrders((prev) => prev.map((o) => o.id === updated.id ? { ...o, ...updated } : o))} />
           ))}
         </div>
       )}
@@ -250,22 +195,11 @@ export default function AdminOrders({ hasSupabase, currentUserId }: { hasSupabas
   );
 }
 
-// ── Single Order Row ────────────────────────────────────────────────
+// ── Single Order Row ────────────────────────────────────────────
 
-function OrderRow({
-  order,
-  developers,
-  currentUserId,
-  expanded,
-  onToggle,
-  onUpdate,
-}: {
-  order: Order;
-  developers: Profile[];
-  currentUserId: string;
-  expanded: boolean;
-  onToggle: () => void;
-  onUpdate: (updated: Partial<Order> & { id: string }) => void;
+function OrderRow({ order, developers, currentUserId, expanded, onToggle, onUpdate }: {
+  order: Order; developers: Profile[]; currentUserId: string;
+  expanded: boolean; onToggle: () => void; onUpdate: (updated: Partial<Order> & { id: string }) => void;
 }) {
   const supabase = createClient();
   const template = TEMPLATES.find((t) => t.key === order.template_key);
@@ -280,10 +214,18 @@ function OrderRow({
   const [editPrice, setEditPrice] = useState(order.price_amount?.toString() || '0');
   const [editCurrency, setEditCurrency] = useState(order.price_currency || 'PKR');
   const [editPaid, setEditPaid] = useState(order.is_paid || false);
+  const [editDomainName, setEditDomainName] = useState(order.domain_name || '');
+
+  // Delivery details (stored in extra_notes as JSON appendix for now)
+  const [domainCreds, setDomainCreds] = useState('');
+  const [hostingDetails, setHostingDetails] = useState('');
+  const [assetLinks, setAssetLinks] = useState('');
+
+  const [actionLoading, setActionLoading] = useState('');
 
   async function handleSave() {
     setSaving(true);
-    const updates = {
+    const updates: Record<string, unknown> = {
       status: editStatus,
       preview_url: editPreviewUrl.trim(),
       live_url: editLiveUrl.trim(),
@@ -291,86 +233,111 @@ function OrderRow({
       price_amount: parseInt(editPrice, 10) || 0,
       price_currency: editCurrency,
       is_paid: editPaid,
+      domain_name: editDomainName.trim(),
     };
-
-    const { error } = await supabase
-      .from('orders')
-      .update(updates)
-      .eq('id', order.id);
-
+    const { error } = await supabase.from('orders').update(updates).eq('id', order.id);
     setSaving(false);
     if (!error) {
-      onUpdate({ id: order.id, ...updates });
+      onUpdate({ id: order.id, ...updates } as Partial<Order> & { id: string });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     }
   }
 
+  // Quick actions
+  async function quickAction(action: string) {
+    setActionLoading(action);
+    let updates: Record<string, unknown> = {};
+
+    switch (action) {
+      case 'claim':
+        updates = { developer_id: currentUserId, status: order.status === 'pending' ? 'accepted' : order.status };
+        setEditDeveloper(currentUserId);
+        setEditStatus(updates.status as string);
+        break;
+      case 'share_preview':
+        if (!editPreviewUrl.trim()) { setActionLoading(''); return; }
+        updates = { preview_url: editPreviewUrl.trim(), status: 'preview_ready' };
+        setEditStatus('preview_ready');
+        break;
+      case 'mark_review':
+        updates = { status: 'preview_ready' };
+        setEditStatus('preview_ready');
+        break;
+      case 'deliver': {
+        const deliveryInfo = [
+          domainCreds && `Domain: ${domainCreds}`,
+          hostingDetails && `Hosting: ${hostingDetails}`,
+          assetLinks && `Assets: ${assetLinks}`,
+        ].filter(Boolean).join('\n');
+        updates = {
+          status: 'delivered',
+          live_url: editLiveUrl.trim(),
+          domain_name: editDomainName.trim(),
+          extra_notes: deliveryInfo ? `${order.extra_notes || ''}\n[Delivery]\n${deliveryInfo}` : order.extra_notes,
+        };
+        setEditStatus('delivered');
+        break;
+      }
+      case 'close':
+        updates = { status: 'delivered' };
+        setEditStatus('delivered');
+        break;
+    }
+
+    const { error } = await supabase.from('orders').update(updates).eq('id', order.id);
+    if (!error) onUpdate({ id: order.id, ...updates } as Partial<Order> & { id: string });
+    setActionLoading('');
+  }
+
   return (
     <div className="rounded-xl bg-surface-900 border border-surface-800 overflow-hidden">
       {/* Summary row */}
-      <button
-        onClick={onToggle}
-        className="w-full flex items-center gap-3 p-4 text-left hover:bg-surface-800/50 transition-colors"
-      >
-        <div
-          className="w-9 h-9 rounded-lg flex-shrink-0"
-          style={{
-            background: template?.gradient || 'linear-gradient(135deg, #0F1D32, #1a3a5c)',
-          }}
-        />
+      <button onClick={onToggle} className="w-full flex items-center gap-3 p-4 text-left hover:bg-surface-800/50 transition-colors">
+        <div className="w-9 h-9 rounded-lg flex-shrink-0" style={{ background: template?.gradient || 'linear-gradient(135deg, #0F1D32, #1a3a5c)' }} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <span className="text-sm font-body font-medium text-white truncate">
-              {order.business_name || order.template_key}
-            </span>
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-body font-medium flex-shrink-0 ${status.color}`}>
-              {status.label}
-            </span>
-            {order.is_paid && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-body font-medium bg-emerald-500/20 text-emerald-400 flex-shrink-0">
-                Paid
-              </span>
-            )}
+            <span className="text-sm font-body font-medium text-white truncate">{order.business_name || order.template_key}</span>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-body font-medium flex-shrink-0 ${status.color}`}>{status.label}</span>
+            {order.is_paid && <span className="px-2 py-0.5 rounded-full text-[10px] font-body font-medium bg-emerald-500/20 text-emerald-400 flex-shrink-0">Paid</span>}
+            {!order.developer_id && order.status === 'pending' && <span className="px-2 py-0.5 rounded-full text-[10px] font-body font-medium bg-amber-500/20 text-amber-400 flex-shrink-0">Unassigned</span>}
           </div>
           <div className="flex items-center gap-2 text-[11px] text-surface-500 font-body">
-            <span className="flex items-center gap-1">
-              <User size={10} />
-              {order.customer?.full_name || 'Unknown'}
-            </span>
+            <span className="flex items-center gap-1"><User size={10} />{order.customer?.full_name || 'Unknown'}</span>
             <span>&middot;</span>
             <span>{template?.name || order.template_key}</span>
             <span>&middot;</span>
-            <span>
-              {new Date(order.created_at).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-              })}
-            </span>
+            <span>{new Date(order.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          {order.preview_url && (
-            <span className="hidden sm:inline px-2 py-0.5 text-[10px] text-purple-400 border border-purple-400/20 rounded font-body">
-              Preview
-            </span>
-          )}
-          {order.live_url && (
-            <span className="hidden sm:inline px-2 py-0.5 text-[10px] text-green-400 border border-green-400/20 rounded font-body">
-              Live
-            </span>
-          )}
-          {expanded ? (
-            <ChevronUp size={14} className="text-surface-500" />
-          ) : (
-            <ChevronDown size={14} className="text-surface-500" />
-          )}
+          {order.preview_url && <span className="hidden sm:inline px-2 py-0.5 text-[10px] text-purple-400 border border-purple-400/20 rounded font-body">Preview</span>}
+          {order.live_url && <span className="hidden sm:inline px-2 py-0.5 text-[10px] text-green-400 border border-green-400/20 rounded font-body">Live</span>}
+          {expanded ? <ChevronUp size={14} className="text-surface-500" /> : <ChevronDown size={14} className="text-surface-500" />}
         </div>
       </button>
 
-      {/* Expanded detail */}
       {expanded && (
         <div className="border-t border-surface-800 p-4 space-y-5">
+          {/* Quick Actions Bar */}
+          <div className="flex flex-wrap gap-2">
+            {!order.developer_id && (
+              <QuickBtn icon={<UserPlus size={12} />} label="Claim Order" onClick={() => quickAction('claim')} loading={actionLoading === 'claim'} color="bg-blue-600 hover:bg-blue-500" />
+            )}
+            {['accepted', 'revision'].includes(order.status) && (
+              <QuickBtn icon={<Eye size={12} />} label="Share Preview" onClick={() => quickAction('share_preview')} loading={actionLoading === 'share_preview'} color="bg-purple-600 hover:bg-purple-500" disabled={!editPreviewUrl.trim()} />
+            )}
+            {order.status === 'revision' && (
+              <QuickBtn icon={<RefreshCw size={12} />} label="Mark Ready for Review" onClick={() => quickAction('mark_review')} loading={actionLoading === 'mark_review'} color="bg-purple-600 hover:bg-purple-500" />
+            )}
+            {order.status === 'completed' && order.is_paid && (
+              <QuickBtn icon={<Rocket size={12} />} label="Complete & Deliver" onClick={() => quickAction('deliver')} loading={actionLoading === 'deliver'} color="bg-emerald-600 hover:bg-emerald-500" />
+            )}
+            {['completed', 'delivered'].includes(order.status) && order.status !== 'delivered' && (
+              <QuickBtn icon={<CheckCircle size={12} />} label="Close Order" onClick={() => quickAction('close')} loading={actionLoading === 'close'} color="bg-emerald-600 hover:bg-emerald-500" />
+            )}
+          </div>
+
           {/* Customer info */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <InfoBlock label="Customer" value={order.customer?.full_name || '—'} />
@@ -381,194 +348,92 @@ function OrderRow({
           {/* Business details */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <InfoBlock label="Industry" value={order.business_industry || '—'} />
-            <InfoBlock label="Domain" value={order.domain_info || order.domain_name || '—'} />
-            {order.business_description && (
-              <div className="sm:col-span-2">
-                <InfoBlock label="Description" value={order.business_description} />
-              </div>
-            )}
-            {order.color_preferences && (
-              <InfoBlock label="Color Preferences" value={order.color_preferences} />
-            )}
-            {(order.content_notes || order.extra_notes) && (
-              <InfoBlock label="Notes" value={order.content_notes || order.extra_notes || ''} />
-            )}
+            <InfoBlock label="Domain Info" value={order.domain_info || order.domain_name || '—'} />
+            {order.business_description && <div className="sm:col-span-2"><InfoBlock label="Description" value={order.business_description} /></div>}
+            {order.color_preferences && <InfoBlock label="Colors" value={order.color_preferences} />}
+            {order.content_notes && <InfoBlock label="References/Notes" value={order.content_notes} />}
+            {order.extra_notes && <InfoBlock label="Extra Notes" value={order.extra_notes} />}
           </div>
 
-          {/* Logo */}
           {order.logo_url && (
             <div>
               <p className="text-[10px] text-surface-500 font-body uppercase tracking-wider mb-1">Logo</p>
-              <a
-                href={order.logo_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-brand-400 hover:text-brand-300 font-body transition-colors"
-              >
-                <ExternalLink size={12} />
-                View uploaded logo
+              <a href={order.logo_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-brand-400 hover:text-brand-300 font-body transition-colors">
+                <ExternalLink size={12} />View uploaded logo
               </a>
             </div>
           )}
 
-          {/* Editable fields */}
+          {/* ── Manage Order ── */}
           <div className="border-t border-surface-800 pt-4">
-            <p className="text-xs font-display font-semibold text-white mb-3">
-              Manage Order
-            </p>
-
+            <p className="text-xs font-display font-semibold text-white mb-3">Manage Order</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Status */}
-              <div>
-                <label className="block text-[10px] text-surface-500 font-body uppercase tracking-wider mb-1">
-                  Status
-                </label>
-                <select
-                  value={editStatus}
-                  onChange={(e) => setEditStatus(e.target.value)}
-                  className="w-full px-3 py-2 bg-surface-800 border border-surface-700 rounded-lg text-sm text-white font-body focus:outline-none focus:border-brand-600 transition-colors"
-                >
-                  {STATUS_OPTIONS.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
+              <AdminField label="Status">
+                <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className={SEL_CLASS}>
+                  {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
                 </select>
-              </div>
-
-              {/* Assign developer */}
-              <div>
-                <label className="block text-[10px] text-surface-500 font-body uppercase tracking-wider mb-1">
-                  Assign Developer
-                </label>
-                <select
-                  value={editDeveloper}
-                  onChange={(e) => setEditDeveloper(e.target.value)}
-                  className="w-full px-3 py-2 bg-surface-800 border border-surface-700 rounded-lg text-sm text-white font-body focus:outline-none focus:border-brand-600 transition-colors"
-                >
+              </AdminField>
+              <AdminField label="Assign Developer">
+                <select value={editDeveloper} onChange={(e) => setEditDeveloper(e.target.value)} className={SEL_CLASS}>
                   <option value="">Unassigned</option>
-                  {developers.map((dev) => (
-                    <option key={dev.id} value={dev.id}>
-                      {dev.full_name || dev.id.slice(0, 8)} ({dev.role})
-                    </option>
-                  ))}
+                  {developers.map((dev) => <option key={dev.id} value={dev.id}>{dev.full_name || dev.id.slice(0, 8)} ({dev.role})</option>)}
                 </select>
-              </div>
-
-              {/* Preview URL */}
-              <div>
-                <label className="block text-[10px] text-surface-500 font-body uppercase tracking-wider mb-1">
-                  Preview URL
-                </label>
-                <input
-                  type="url"
-                  value={editPreviewUrl}
-                  onChange={(e) => setEditPreviewUrl(e.target.value)}
-                  placeholder="https://preview.cubico.dev/..."
-                  className="w-full px-3 py-2 bg-surface-800 border border-surface-700 rounded-lg text-sm text-white font-body placeholder:text-surface-600 focus:outline-none focus:border-brand-600 transition-colors"
-                />
-              </div>
-
-              {/* Live URL */}
-              <div>
-                <label className="block text-[10px] text-surface-500 font-body uppercase tracking-wider mb-1">
-                  Live URL
-                </label>
-                <input
-                  type="url"
-                  value={editLiveUrl}
-                  onChange={(e) => setEditLiveUrl(e.target.value)}
-                  placeholder="https://www.client-site.com"
-                  className="w-full px-3 py-2 bg-surface-800 border border-surface-700 rounded-lg text-sm text-white font-body placeholder:text-surface-600 focus:outline-none focus:border-brand-600 transition-colors"
-                />
-              </div>
-
-              {/* Price */}
-              <div>
-                <label className="block text-[10px] text-surface-500 font-body uppercase tracking-wider mb-1">
-                  Price
-                </label>
+              </AdminField>
+              <AdminField label="Preview URL">
+                <input type="url" value={editPreviewUrl} onChange={(e) => setEditPreviewUrl(e.target.value)} placeholder="https://preview.cubico.dev/..." className={INP_CLASS} />
+              </AdminField>
+              <AdminField label="Live URL">
+                <input type="url" value={editLiveUrl} onChange={(e) => setEditLiveUrl(e.target.value)} placeholder="https://www.client-site.com" className={INP_CLASS} />
+              </AdminField>
+              <AdminField label="Price">
                 <div className="flex gap-2">
-                  <input
-                    type="number"
-                    value={editPrice}
-                    onChange={(e) => setEditPrice(e.target.value)}
-                    placeholder="0"
-                    className="flex-1 px-3 py-2 bg-surface-800 border border-surface-700 rounded-lg text-sm text-white font-body focus:outline-none focus:border-brand-600 transition-colors"
-                  />
-                  <select
-                    value={editCurrency}
-                    onChange={(e) => setEditCurrency(e.target.value)}
-                    className="w-20 px-2 py-2 bg-surface-800 border border-surface-700 rounded-lg text-sm text-white font-body focus:outline-none focus:border-brand-600 transition-colors"
-                  >
-                    <option value="PKR">PKR</option>
-                    <option value="USD">USD</option>
+                  <input type="number" value={editPrice} onChange={(e) => setEditPrice(e.target.value)} placeholder="0" className={INP_CLASS + ' flex-1'} />
+                  <select value={editCurrency} onChange={(e) => setEditCurrency(e.target.value)} className={SEL_CLASS + ' w-20'}>
+                    <option value="PKR">PKR</option><option value="USD">USD</option>
                   </select>
                 </div>
-              </div>
-
-              {/* Paid toggle */}
+              </AdminField>
               <div className="flex items-end">
                 <label className="flex items-center gap-2 cursor-pointer py-2">
-                  <input
-                    type="checkbox"
-                    checked={editPaid}
-                    onChange={(e) => setEditPaid(e.target.checked)}
-                    className="w-4 h-4 rounded border-surface-600 bg-surface-800 text-brand-600 focus:ring-brand-600 focus:ring-offset-0"
-                  />
-                  <span className="text-sm text-white font-body">Marked as Paid</span>
+                  <input type="checkbox" checked={editPaid} onChange={(e) => setEditPaid(e.target.checked)} className="w-4 h-4 rounded border-surface-600 bg-surface-800 text-brand-600 focus:ring-brand-600 focus:ring-offset-0" />
+                  <span className="text-sm text-white font-body">Paid</span>
                 </label>
               </div>
             </div>
 
-            {/* Save button */}
-            <div className="mt-4 flex items-center gap-3">
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="inline-flex items-center gap-2 px-5 py-2 bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-body font-medium text-sm rounded-lg transition-all"
-              >
-                {saving ? (
-                  <>
-                    <Loader2 size={14} className="animate-spin" />
-                    Saving...
-                  </>
-                ) : saved ? (
-                  <>
-                    <Check size={14} />
-                    Saved!
-                  </>
-                ) : (
-                  <>
-                    <Save size={14} />
-                    Save Changes
-                  </>
-                )}
+            {/* Save + links */}
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-body font-medium text-sm rounded-lg transition-all">
+                {saving ? <><Loader2 size={14} className="animate-spin" />Saving...</> : saved ? <><Check size={14} />Saved!</> : <><Save size={14} />Save Changes</>}
               </button>
-              {order.preview_url && (
-                <a
-                  href={order.preview_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs text-purple-400 hover:text-purple-300 font-body transition-colors"
-                >
-                  <Eye size={12} />
-                  Open Preview
-                </a>
-              )}
-              {order.live_url && (
-                <a
-                  href={order.live_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs text-green-400 hover:text-green-300 font-body transition-colors"
-                >
-                  <Globe size={12} />
-                  Open Live Site
-                </a>
-              )}
+              {order.preview_url && <a href={order.preview_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 text-xs text-purple-400 hover:text-purple-300 font-body"><Eye size={12} />Preview</a>}
+              {order.live_url && <a href={order.live_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 text-xs text-green-400 hover:text-green-300 font-body"><Globe size={12} />Live</a>}
             </div>
           </div>
+
+          {/* ── Delivery Details (for completed/delivered) ── */}
+          {['completed', 'delivered'].includes(order.status) && (
+            <div className="border-t border-surface-800 pt-4">
+              <p className="text-xs font-display font-semibold text-white mb-3 flex items-center gap-2">
+                <Rocket size={12} className="text-emerald-400" />
+                Delivery Details
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <AdminField label="Domain Name">
+                  <input type="text" value={editDomainName} onChange={(e) => setEditDomainName(e.target.value)} placeholder="www.client-business.com" className={INP_CLASS} />
+                </AdminField>
+                <AdminField label="Domain Credentials">
+                  <input type="text" value={domainCreds} onChange={(e) => setDomainCreds(e.target.value)} placeholder="Registrar login, nameserver info..." className={INP_CLASS} />
+                </AdminField>
+                <AdminField label="Hosting Details">
+                  <input type="text" value={hostingDetails} onChange={(e) => setHostingDetails(e.target.value)} placeholder="Hosting provider, cPanel access..." className={INP_CLASS} />
+                </AdminField>
+                <AdminField label="Asset/File Links">
+                  <input type="text" value={assetLinks} onChange={(e) => setAssetLinks(e.target.value)} placeholder="Drive link, zip download URL..." className={INP_CLASS} />
+                </AdminField>
+              </div>
+            </div>
+          )}
 
           {/* Chat */}
           <div className="border-t border-surface-800 pt-4">
@@ -580,15 +445,40 @@ function OrderRow({
   );
 }
 
+// ── Shared UI ──
+
+const INP_CLASS = 'w-full px-3 py-2 bg-surface-800 border border-surface-700 rounded-lg text-sm text-white font-body placeholder:text-surface-600 focus:outline-none focus:border-brand-600 transition-colors';
+const SEL_CLASS = 'w-full px-3 py-2 bg-surface-800 border border-surface-700 rounded-lg text-sm text-white font-body focus:outline-none focus:border-brand-600 transition-colors';
+
+function AdminField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="block text-[10px] text-surface-500 font-body uppercase tracking-wider mb-1">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+function QuickBtn({ icon, label, onClick, loading, color, disabled }: {
+  icon: React.ReactNode; label: string; onClick: () => void; loading: boolean; color: string; disabled?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={loading || disabled}
+      className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${color} disabled:opacity-40 text-white text-xs font-body font-medium rounded-lg transition-all`}
+    >
+      {loading ? <Loader2 size={12} className="animate-spin" /> : icon}
+      {label}
+    </button>
+  );
+}
+
 function InfoBlock({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div>
-      <p className="text-[10px] text-surface-500 font-body uppercase tracking-wider mb-0.5">
-        {label}
-      </p>
-      <p className={`text-sm text-white ${mono ? 'font-mono' : 'font-body'}`}>
-        {value}
-      </p>
+      <p className="text-[10px] text-surface-500 font-body uppercase tracking-wider mb-0.5">{label}</p>
+      <p className={`text-sm text-white ${mono ? 'font-mono' : 'font-body'}`}>{value}</p>
     </div>
   );
 }
