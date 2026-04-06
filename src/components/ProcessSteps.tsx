@@ -818,8 +818,8 @@ export default function ProcessSteps({ media = {} }: ProcessStepsProps) {
           transition={{ duration: 0.5 }}
         >
           <p className="text-lg sm:text-xl font-display font-semibold text-white">
-            Still not convinced?{' '}
-            <span className="text-[#FF6B4A]">See how we compare.</span>
+            Simple pricing.{' '}
+            <span className="text-[#FF6B4A]">No surprises.</span>
           </p>
           <div className="mt-4 flex justify-center">
             <motion.div
