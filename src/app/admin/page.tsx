@@ -16,11 +16,13 @@ import {
   Check,
   Loader2,
   Film,
+  Package,
 } from 'lucide-react';
 import { seedServices, seedSettings } from '@/data/seeds';
 import { MEDIA_SLOTS, getSlotsBySection } from '@/lib/media';
 import type { MediaSlot, MediaAsset } from '@/lib/media';
 import type { Service, SiteSettings } from '@/lib/types';
+import AdminOrders from '@/components/admin/AdminOrders';
 
 const ADMIN_PASSWORD =
   process.env.NEXT_PUBLIC_ADMIN_PASSWORD ?? 'cubico-admin-2026';
@@ -182,7 +184,7 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [tab, setTab] = useState<'services' | 'media' | 'settings'>('services');
+  const [tab, setTab] = useState<'orders' | 'services' | 'media' | 'settings'>('orders');
   const [services] = useState<Service[]>(seedServices);
   const [settings] = useState<SiteSettings>(seedSettings);
   const [hasSupabase, setHasSupabase] = useState(false);
@@ -368,6 +370,17 @@ export default function AdminPage() {
         {/* Tabs */}
         <div className="flex gap-1 mb-6 p-1 bg-surface-900 rounded-xl w-fit">
           <button
+            onClick={() => setTab('orders')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors font-body ${
+              tab === 'orders'
+                ? 'bg-surface-800 text-white'
+                : 'text-surface-500 hover:text-white'
+            }`}
+          >
+            <Package size={14} />
+            Orders
+          </button>
+          <button
             onClick={() => setTab('services')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors font-body ${
               tab === 'services'
@@ -401,6 +414,9 @@ export default function AdminPage() {
             Settings
           </button>
         </div>
+
+        {/* ── Orders Tab ── */}
+        {tab === 'orders' && <AdminOrders hasSupabase={hasSupabase} />}
 
         {/* ── Services Tab ── */}
         {tab === 'services' && (
