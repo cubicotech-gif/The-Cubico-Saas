@@ -43,6 +43,21 @@ export default function DraftOrderSubmitter() {
       setSubmitting(true);
 
       try {
+        // Ensure profile exists (signup trigger may have failed)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', user.id)
+          .single();
+
+        if (!profile) {
+          await supabase.from('profiles').upsert({
+            id: user.id,
+            full_name: user.user_metadata?.full_name || '',
+            phone: user.user_metadata?.phone || '',
+          }, { onConflict: 'id' });
+        }
+
         const { error } = await supabase.from('orders').insert({
           customer_id: user.id,
           template_key: form.templateKey,

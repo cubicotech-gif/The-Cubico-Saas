@@ -227,6 +227,27 @@ function OrderFlow() {
         throw new Error('Your session has expired. Please log in again.');
       }
 
+      // Ensure profile exists (the signup trigger may have failed)
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userId)
+        .single();
+
+      if (!profile) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: userId,
+            full_name: session.user.user_metadata?.full_name || '',
+            phone: session.user.user_metadata?.phone || '',
+          }, { onConflict: 'id' });
+        if (profileError) {
+          console.error('Profile creation error:', profileError);
+          throw new Error('Could not create your profile. Please try again.');
+        }
+      }
+
       // Upload logo if provided
       let logoUrl = '';
       if (logoFile) {
