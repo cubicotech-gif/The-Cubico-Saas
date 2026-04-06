@@ -1,19 +1,17 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
   Package,
   Clock,
   CheckCircle,
-  ExternalLink,
   ArrowRight,
+  Loader2,
 } from 'lucide-react';
+import { createClient } from '@/lib/supabase-browser';
 import { TEMPLATES } from '@/components/TemplatePreview';
-
-interface Profile {
-  full_name: string;
-}
 
 interface Order {
   id: string;
@@ -37,12 +35,32 @@ const STATUS_MAP: Record<string, { label: string; color: string }> = {
 
 export default function DashboardOverview({
   profile,
-  orders,
 }: {
-  profile: Profile | null;
-  orders: Order[];
+  profile: { full_name: string } | null;
+  orders?: Order[];
 }) {
   const firstName = profile?.full_name?.split(' ')[0] || 'there';
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch orders client-side to avoid server-side session/RLS issues
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase
+        .from('orders')
+        .select('*')
+        .eq('customer_id', user.id)
+        .order('created_at', { ascending: false })
+        .then(({ data, error }) => {
+          if (error) console.error('Orders fetch error:', error);
+          setOrders(data ?? []);
+          setLoading(false);
+        });
+    });
+  }, []);
+
   const activeOrders = orders.filter(
     (o) => !['delivered', 'cancelled'].includes(o.status),
   );
@@ -97,7 +115,7 @@ export default function DashboardOverview({
           >
             <stat.icon size={16} className={`${stat.color} mb-2`} />
             <p className="text-2xl font-display font-bold text-white">
-              {stat.value}
+              {loading ? '—' : stat.value}
             </p>
             <p className="text-[11px] text-surface-500 font-body">{stat.label}</p>
           </motion.div>
@@ -119,7 +137,11 @@ export default function DashboardOverview({
         )}
       </div>
 
-      {orders.length === 0 ? (
+      {loading ? (
+        <div className="rounded-xl border border-white/10 bg-[#0F1D32] p-8 flex justify-center">
+          <Loader2 size={24} className="text-surface-600 animate-spin" />
+        </div>
+      ) : orders.length === 0 ? (
         <div className="rounded-xl border border-white/10 bg-[#0F1D32] p-8 text-center">
           <Package size={32} className="text-surface-600 mx-auto mb-3" />
           <p className="text-surface-400 font-body text-sm mb-4">
@@ -149,7 +171,6 @@ export default function DashboardOverview({
                   className="flex items-center justify-between p-4 rounded-xl border border-white/10 bg-[#0F1D32] hover:border-white/20 transition-colors group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    {/* Template color dot */}
                     <div
                       className="w-9 h-9 rounded-lg flex-shrink-0"
                       style={{

@@ -221,6 +221,12 @@ function OrderFlow() {
     setLoading(true);
     setError('');
     try {
+      // Verify we actually have a valid session before inserting
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Your session has expired. Please log in again.');
+      }
+
       // Upload logo if provided
       let logoUrl = '';
       if (logoFile) {
@@ -236,28 +242,41 @@ function OrderFlow() {
         logoUrl = urlData.publicUrl;
       }
 
-      const { error: insertError } = await supabase.from('orders').insert({
-        customer_id: userId,
-        template_key: form.templateKey,
-        business_name: form.businessName.trim(),
-        business_industry: form.businessIndustry.trim(),
-        business_description: form.businessDescription.trim(),
-        content_notes: form.referenceUrls.trim(),
-        color_preferences: form.letTeamDecideColors
-          ? 'Let the team decide'
-          : form.colorPreferences.trim(),
-        domain_info: '',
-        extra_notes: `Language: ${form.preferredLanguage}. WhatsApp: ${form.whatsapp}. Email: ${form.contactEmail}`,
-        logo_url: logoUrl,
-        status: 'pending',
-      });
+      // Use .select() to verify the row was actually created
+      const { data: inserted, error: insertError } = await supabase
+        .from('orders')
+        .insert({
+          customer_id: userId,
+          template_key: form.templateKey,
+          business_name: form.businessName.trim(),
+          business_industry: form.businessIndustry.trim(),
+          business_description: form.businessDescription.trim(),
+          content_notes: form.referenceUrls.trim(),
+          color_preferences: form.letTeamDecideColors
+            ? 'Let the team decide'
+            : form.colorPreferences.trim(),
+          domain_info: '',
+          extra_notes: `Language: ${form.preferredLanguage}. WhatsApp: ${form.whatsapp}. Email: ${form.contactEmail}`,
+          logo_url: logoUrl,
+          status: 'pending',
+        })
+        .select()
+        .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error('Order insert error:', insertError);
+        throw new Error(insertError.message || 'Failed to create order');
+      }
+
+      if (!inserted) {
+        throw new Error('Order was not created. This may be a permissions issue — please contact support.');
+      }
+
+      console.log('Order created successfully:', inserted.id);
       clearDraft();
-      // Use window.location for a full page load so the server component
-      // re-fetches orders fresh (router.push uses cached RSC payload)
       window.location.href = '/dashboard?new_order=true';
     } catch (err: unknown) {
+      console.error('Order submission failed:', err);
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
       setLoading(false);

@@ -15,16 +15,9 @@ export default async function DashboardPage() {
     .eq('id', user.id)
     .single();
 
-  const { data: orders } = await supabase
-    .from('orders')
-    .select('*')
-    .eq('customer_id', user.id)
-    .order('created_at', { ascending: false });
-
   return (
     <DashboardOverview
       profile={profile}
-      orders={orders ?? []}
     />
   );
 }
