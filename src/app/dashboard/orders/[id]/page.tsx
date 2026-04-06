@@ -20,5 +20,5 @@ export default async function OrderDetailPage({
 
   if (!order) notFound();
 
-  return <OrderDetail order={order} />;
+  return <OrderDetail order={order} currentUserId={user.id} />;
 }

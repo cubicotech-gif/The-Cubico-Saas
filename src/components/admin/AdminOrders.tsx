@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { TEMPLATES } from '@/components/TemplatePreview';
+import OrderChat from '@/components/dashboard/OrderChat';
 
 interface Order {
   id: string;
@@ -77,7 +78,7 @@ const FILTER_OPTIONS = [
   { value: 'cancelled', label: 'Cancelled' },
 ];
 
-export default function AdminOrders({ hasSupabase }: { hasSupabase: boolean }) {
+export default function AdminOrders({ hasSupabase, currentUserId }: { hasSupabase: boolean; currentUserId: string }) {
   const supabase = createClient();
   const [orders, setOrders] = useState<Order[]>([]);
   const [developers, setDevelopers] = useState<Profile[]>([]);
@@ -233,6 +234,7 @@ export default function AdminOrders({ hasSupabase }: { hasSupabase: boolean }) {
               key={order.id}
               order={order}
               developers={developers}
+              currentUserId={currentUserId}
               expanded={expandedId === order.id}
               onToggle={() => setExpandedId(expandedId === order.id ? null : order.id)}
               onUpdate={(updated) => {
@@ -253,12 +255,14 @@ export default function AdminOrders({ hasSupabase }: { hasSupabase: boolean }) {
 function OrderRow({
   order,
   developers,
+  currentUserId,
   expanded,
   onToggle,
   onUpdate,
 }: {
   order: Order;
   developers: Profile[];
+  currentUserId: string;
   expanded: boolean;
   onToggle: () => void;
   onUpdate: (updated: Partial<Order> & { id: string }) => void;
@@ -564,6 +568,11 @@ function OrderRow({
                 </a>
               )}
             </div>
+          </div>
+
+          {/* Chat */}
+          <div className="border-t border-surface-800 pt-4">
+            <OrderChat orderId={order.id} currentUserId={currentUserId} variant="admin" />
           </div>
         </div>
       )}
