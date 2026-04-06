@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Urban Threads - Modern Fashion Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #FFFFFF;
+  color: #0A0A0A;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+button, input { font-family: inherit; border: none; outline: none; }
+
+/* ===== UTILITY ===== */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* ===== FADE-IN ANIMATION ===== */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: #0A0A0A;
+  transition: box-shadow 0.3s ease;
+}
+.navbar.scrolled { box-shadow: 0 2px 30px rgba(0,0,0,0.4); }
+.navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  color: #FFFFFF;
+  letter-spacing: 3px;
+}
+.nav-logo span { color: #FF6B4A; }
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 36px;
+}
+.nav-links a {
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  position: relative;
+  transition: color 0.3s;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #FF6B4A;
+  transition: width 0.3s ease;
+}
+.nav-links a:hover { color: #FF6B4A; }
+.nav-links a:hover::after { width: 100%; }
+.nav-cart {
+  color: #FFFFFF;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.nav-cart-count {
+  background: #FF6B4A;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mobile-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+}
+.mobile-toggle span {
+  width: 24px;
+  height: 2px;
+  background: #fff;
+  transition: 0.3s;
+}
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: #0A0A0A;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 30%, #0f3460 60%, #0A0A0A 100%);
+  opacity: 0.6;
+}
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+.hero .container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  padding-top: 70px;
+}
+.hero-content { padding: 40px 0; }
+.hero-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #FF6B4A;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255,107,74,0.3);
+  padding: 6px 16px;
+  border-radius: 30px;
+}
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(56px, 8vw, 96px);
+  line-height: 0.95;
+  color: #FFFFFF;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+}
+.hero-title span { color: #FF6B4A; }
+.hero-desc {
+  font-size: 16px;
+  color: rgba(255,255,255,0.6);
+  max-width: 420px;
+  margin-bottom: 40px;
+  font-weight: 300;
+  line-height: 1.8;
+}
+.hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn-primary {
+  background: #FF6B4A;
+  color: #FFFFFF;
+  padding: 16px 40px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+.btn-primary:hover {
+  background: #e8593a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(255,107,74,0.35);
+}
+.btn-outline {
+  background: transparent;
+  color: #FFFFFF;
+  padding: 16px 40px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.25);
+  transition: border-color 0.3s, color 0.3s;
+}
+.btn-outline:hover {
+  border-color: #FF6B4A;
+  color: #FF6B4A;
+}
+.hero-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-image-placeholder {
+  width: 100%;
+  aspect-ratio: 3/4;
+  max-height: 560px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #FF6B4A 0%, #e8593a 25%, #1a1a2e 60%, #0f3460 100%);
+  position: relative;
+  overflow: hidden;
+}
+.hero-image-placeholder::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(10,10,10,0.5));
+}
+.hero-image-label {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  z-index: 2;
+  color: #fff;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+/* ===== FEATURED PRODUCTS ===== */
+.products {
+  padding: 120px 0;
+}
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.section-tag {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #FF6B4A;
+  margin-bottom: 12px;
+  display: block;
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(40px, 5vw, 64px);
+  letter-spacing: 2px;
+  line-height: 1;
+}
+.section-subtitle {
+  font-size: 15px;
+  color: #777;
+  margin-top: 16px;
+  font-weight: 300;
+}
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+.product-card {
+  background: #FFFFFF;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+  border: 1px solid #f0f0f0;
+}
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+}
+.product-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  position: relative;
+  overflow: hidden;
+}
+.product-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  transition: background 0.3s;
+}
+.product-card:hover .product-img::after {
+  background: rgba(0,0,0,0.05);
+}
+.product-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #FF6B4A;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 3px;
+  z-index: 2;
+}
+.product-info { padding: 20px; }
+.product-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.product-category {
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.product-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.product-price {
+  font-size: 18px;
+  font-weight: 700;
+}
+.product-price .old-price {
+  font-size: 13px;
+  color: #bbb;
+  text-decoration: line-through;
+  font-weight: 400;
+  margin-left: 8px;
+}
+.btn-add-cart {
+  background: #0A0A0A;
+  color: #FFFFFF;
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.btn-add-cart:hover { background: #FF6B4A; }
+
+/* Gradient placeholders for products */
+.grad-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+.grad-2 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.grad-3 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.grad-4 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.grad-5 { background: linear-gradient(135deg, #fa709a, #fee140); }
+.grad-6 { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+
+/* ===== CATEGORIES ===== */
+.categories {
+  padding: 80px 0;
+  background: #f8f8f8;
+}
+.categories-scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 20px 0;
+  scrollbar-width: none;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.categories-scroll::-webkit-scrollbar { display: none; }
+.cat-pill {
+  flex-shrink: 0;
+  padding: 16px 40px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid #0A0A0A;
+  background: transparent;
+  color: #0A0A0A;
+}
+.cat-pill:hover, .cat-pill.active {
+  background: #0A0A0A;
+  color: #FFFFFF;
+}
+.cat-pill.accent {
+  border-color: #FF6B4A;
+  color: #FF6B4A;
+}
+.cat-pill.accent:hover, .cat-pill.accent.active {
+  background: #FF6B4A;
+  color: #FFFFFF;
+}
+
+/* ===== BRAND STORY ===== */
+.story {
+  padding: 120px 0;
+}
+.story .container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.story-image {
+  width: 100%;
+  aspect-ratio: 4/5;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #0A0A0A 0%, #1a1a2e 40%, #FF6B4A 100%);
+  position: relative;
+  overflow: hidden;
+}
+.story-image::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  right: 40px;
+  bottom: 40px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+}
+.story-content {}
+.story-content .section-tag { text-align: left; }
+.story-content .section-title {
+  text-align: left;
+  margin-bottom: 24px;
+}
+.story-text {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.9;
+  margin-bottom: 20px;
+  font-weight: 300;
+}
+.story-stats {
+  display: flex;
+  gap: 48px;
+  margin-top: 40px;
+  padding-top: 40px;
+  border-top: 1px solid #eee;
+}
+.stat-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  color: #0A0A0A;
+  line-height: 1;
+}
+.stat-number span { color: #FF6B4A; }
+.stat-label {
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 4px;
+}
+
+/* ===== NEWSLETTER ===== */
+.newsletter {
+  padding: 100px 0;
+  background: #0A0A0A;
+  color: #FFFFFF;
+}
+.newsletter .container {
+  text-align: center;
+  max-width: 640px;
+}
+.newsletter .section-title {
+  color: #FFFFFF;
+  margin-bottom: 16px;
+}
+.newsletter-desc {
+  color: rgba(255,255,255,0.5);
+  font-size: 15px;
+  font-weight: 300;
+  margin-bottom: 40px;
+}
+.newsletter-form {
+  display: flex;
+  gap: 12px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.newsletter-input {
+  flex: 1;
+  padding: 16px 24px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+.newsletter-input::placeholder { color: rgba(255,255,255,0.35); }
+.newsletter-input:focus { border-color: #FF6B4A; }
+.newsletter-btn {
+  background: #FF6B4A;
+  color: #fff;
+  padding: 16px 32px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  white-space: nowrap;
+}
+.newsletter-btn:hover {
+  background: #e8593a;
+  transform: translateY(-2px);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  padding: 80px 0 40px;
+  background: #0A0A0A;
+  color: #FFFFFF;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 60px;
+}
+.footer-brand .nav-logo { font-size: 32px; margin-bottom: 16px; }
+.footer-desc {
+  color: rgba(255,255,255,0.4);
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 24px;
+  font-weight: 300;
+}
+.footer-socials { display: flex; gap: 16px; }
+.footer-socials a {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s, background 0.3s;
+}
+.footer-socials a:hover {
+  border-color: #FF6B4A;
+  background: rgba(255,107,74,0.1);
+}
+.footer-socials a svg { width: 16px; height: 16px; fill: #fff; }
+.footer-heading {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  color: #FFFFFF;
+}
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 12px; }
+.footer-links a {
+  color: rgba(255,255,255,0.4);
+  font-size: 14px;
+  transition: color 0.3s;
+}
+.footer-links a:hover { color: #FF6B4A; }
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 40px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-copy {
+  color: rgba(255,255,255,0.3);
+  font-size: 13px;
+}
+.footer-payments {
+  display: flex;
+  gap: 20px;
+}
+.footer-payments span {
+  color: rgba(255,255,255,0.3);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 3px;
+}
+
+/* ===== CUBICO BADGE ===== */
+.cubico-badge {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #0A0A0A;
+  color: rgba(255,255,255,0.7);
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  z-index: 999;
+  transition: background 0.3s, color 0.3s, transform 0.3s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.cubico-badge:hover {
+  background: #FF6B4A;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .hero .container { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+  .hero-desc { margin: 0 auto 40px; }
+  .hero-buttons { justify-content: center; }
+  .hero-image-placeholder { max-height: 400px; aspect-ratio: 16/9; }
+  .story .container { grid-template-columns: 1fr; gap: 40px; }
+  .story-content .section-tag, .story-content .section-title { text-align: center; }
+  .story-text { text-align: center; }
+  .story-stats { justify-content: center; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: #0A0A0A;
+    padding: 24px;
+    gap: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .mobile-toggle { display: flex; }
+  .products-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+  .newsletter-form { flex-direction: column; }
+  .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .hero-title { font-size: 48px; }
+  .hero-buttons { flex-direction: column; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <a href="#home" class="nav-logo">URBAN<span>.</span>THREADS</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#shop">Shop</a></li>
+      <li><a href="#categories">Categories</a></li>
+      <li><a href="#story">Story</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-cart">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="nav-cart-count">0</span>
+    </div>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grain"></div>
+  <div class="container">
+    <div class="hero-content">
+      <span class="hero-tag">Spring / Summer 2026</span>
+      <h1 class="hero-title">NEW COLLECTION<br>OUT <span>NOW</span></h1>
+      <p class="hero-desc">Discover pieces that blend streetwear edge with timeless minimalism. Crafted for those who dress with intention.</p>
+      <div class="hero-buttons">
+        <a href="#shop" class="btn-primary">Shop Now</a>
+        <a href="#story" class="btn-outline">Our Story</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="hero-image-placeholder">
+        <span class="hero-image-label">SS26 Lookbook</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURED PRODUCTS ===== -->
+<section class="products" id="shop">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-tag">Curated Picks</span>
+      <h2 class="section-title">Featured Products</h2>
+      <p class="section-subtitle">Handpicked essentials from our latest drop</p>
+    </div>
+    <div class="products-grid">
+
+      <div class="product-card fade-in">
+        <div class="product-img grad-1">
+          <span class="product-badge">New</span>
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">Classic Denim Jacket</h3>
+          <p class="product-category">Outerwear</p>
+          <div class="product-bottom">
+            <span class="product-price">$89</span>
+            <button class="btn-add-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card fade-in">
+        <div class="product-img grad-2"></div>
+        <div class="product-info">
+          <h3 class="product-name">Minimal White Tee</h3>
+          <p class="product-category">Tops</p>
+          <div class="product-bottom">
+            <span class="product-price">$35</span>
+            <button class="btn-add-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card fade-in">
+        <div class="product-img grad-3">
+          <span class="product-badge">Trending</span>
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">Cargo Utility Pants</h3>
+          <p class="product-category">Bottoms</p>
+          <div class="product-bottom">
+            <span class="product-price">$72</span>
+            <button class="btn-add-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card fade-in">
+        <div class="product-img grad-4"></div>
+        <div class="product-info">
+          <h3 class="product-name">Oversized Hoodie</h3>
+          <p class="product-category">Streetwear</p>
+          <div class="product-bottom">
+            <span class="product-price">$64</span>
+            <button class="btn-add-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card fade-in">
+        <div class="product-img grad-5">
+          <span class="product-badge">Sale</span>
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">Leather Crossbody Bag</h3>
+          <p class="product-category">Accessories</p>
+          <div class="product-bottom">
+            <span class="product-price">$49 <span class="old-price">$78</span></span>
+            <button class="btn-add-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card fade-in">
+        <div class="product-img grad-6"></div>
+        <div class="product-info">
+          <h3 class="product-name">Ribbed Knit Beanie</h3>
+          <p class="product-category">Accessories</p>
+          <div class="product-bottom">
+            <span class="product-price">$24</span>
+            <button class="btn-add-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== CATEGORIES ===== -->
+<section class="categories" id="categories">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-tag">Browse</span>
+      <h2 class="section-title">Shop by Category</h2>
+    </div>
+    <div class="categories-scroll fade-in">
+      <button class="cat-pill active">All</button>
+      <button class="cat-pill">Men</button>
+      <button class="cat-pill">Women</button>
+      <button class="cat-pill">Accessories</button>
+      <button class="cat-pill">Streetwear</button>
+      <button class="cat-pill">Essentials</button>
+      <button class="cat-pill accent">Sale</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BRAND STORY ===== -->
+<section class="story" id="story">
+  <div class="container">
+    <div class="story-image fade-in"></div>
+    <div class="story-content fade-in">
+      <span class="section-tag">Since 2019</span>
+      <h2 class="section-title">Our Story</h2>
+      <p class="story-text">Urban Threads was born from a simple idea: fashion should be intentional, not disposable. We partner with ethical manufacturers and source only sustainable materials to create pieces that last beyond seasons.</p>
+      <p class="story-text">Every stitch carries our commitment to responsible craftsmanship. From organic cotton tees to recycled-fabric outerwear, we prove that looking good and doing good aren't mutually exclusive.</p>
+      <div class="story-stats">
+        <div>
+          <div class="stat-number">50<span>K+</span></div>
+          <div class="stat-label">Happy Customers</div>
+        </div>
+        <div>
+          <div class="stat-number">98<span>%</span></div>
+          <div class="stat-label">Sustainable Materials</div>
+        </div>
+        <div>
+          <div class="stat-number">12<span>+</span></div>
+          <div class="stat-label">Countries Shipped</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== NEWSLETTER ===== -->
+<section class="newsletter" id="contact">
+  <div class="container fade-in">
+    <span class="section-tag">Stay in the Loop</span>
+    <h2 class="section-title">Join the Thread</h2>
+    <p class="newsletter-desc">Be the first to know about new drops, exclusive deals, and behind-the-scenes stories. No spam, ever.</p>
+    <form class="newsletter-form" onsubmit="event.preventDefault(); this.querySelector('.newsletter-btn').textContent='Subscribed!'; this.querySelector('.newsletter-input').value='';">
+      <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
+      <button type="submit" class="newsletter-btn">Subscribe</button>
+    </form>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo">URBAN<span>.</span>THREADS</div>
+        <p class="footer-desc">Modern fashion rooted in sustainability. Designed for the conscious individual who values style, quality, and purpose.</p>
+        <div class="footer-socials">
+          <a href="#" aria-label="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          <a href="#" aria-label="Twitter">
+            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" aria-label="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-heading">Shop</h4>
+        <ul class="footer-links">
+          <li><a href="#">New Arrivals</a></li>
+          <li><a href="#">Best Sellers</a></li>
+          <li><a href="#">Sale</a></li>
+          <li><a href="#">Gift Cards</a></li>
+          <li><a href="#">Lookbook</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-heading">Support</h4>
+        <ul class="footer-links">
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Shipping Info</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">Size Guide</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-heading">Legal</h4>
+        <ul class="footer-links">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Accessibility</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2026 Urban Threads. All rights reserved.</p>
+      <div class="footer-payments">
+        <span>Visa</span>
+        <span>Mastercard</span>
+        <span>JazzCash</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== CUBICO BADGE ===== -->
+<a href="https://cubico.tech" target="_blank" rel="noopener" class="cubico-badge">Template by Cubico</a>
+
+<script>
+// Mobile menu toggle
+const mobileToggle = document.getElementById('mobileToggle');
+const navLinks = document.getElementById('navLinks');
+mobileToggle.addEventListener('click', () => {
+  navLinks.classList.toggle('open');
+});
+
+// Close mobile menu on link click
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => navLinks.classList.remove('open'));
+});
+
+// Navbar shadow on scroll
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Fade-in on scroll (Intersection Observer)
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Category pill toggle
+document.querySelectorAll('.cat-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+  });
+});
+
+// Cart count bump on "Add to Cart"
+let cartCount = 0;
+const cartBadge = document.querySelector('.nav-cart-count');
+document.querySelectorAll('.btn-add-cart').forEach(btn => {
+  btn.addEventListener('click', () => {
+    cartCount++;
+    cartBadge.textContent = cartCount;
+    btn.textContent = 'Added!';
+    btn.style.background = '#FF6B4A';
+    setTimeout(() => {
+      btn.textContent = 'Add to Cart';
+      btn.style.background = '';
+    }, 1200);
+  });
+});
+</script>
+</body>
+</html>
