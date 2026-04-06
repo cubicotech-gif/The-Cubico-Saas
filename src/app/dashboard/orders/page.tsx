@@ -1,17 +1,11 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase-server';
-import DashboardOverview from '@/components/dashboard/DashboardOverview';
+import OrdersList from '@/components/dashboard/OrdersList';
 
-export default async function DashboardPage() {
+export default async function OrdersPage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
 
   const { data: orders } = await supabase
     .from('orders')
@@ -19,10 +13,5 @@ export default async function DashboardPage() {
     .eq('customer_id', user.id)
     .order('created_at', { ascending: false });
 
-  return (
-    <DashboardOverview
-      profile={profile}
-      orders={orders ?? []}
-    />
-  );
+  return <OrdersList orders={orders ?? []} />;
 }
