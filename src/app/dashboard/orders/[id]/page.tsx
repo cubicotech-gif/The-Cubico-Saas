@@ -2,6 +2,8 @@ import { redirect, notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase-server';
 import OrderDetail from '@/components/dashboard/OrderDetail';
 
+export const dynamic = 'force-dynamic';
+
 export default async function OrderDetailPage({
   params,
 }: {
