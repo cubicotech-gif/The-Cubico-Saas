@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Menu, X, User, LayoutDashboard, Package, Settings, LogOut, LogIn, UserPlus } from 'lucide-react';
+import { Menu, X, User, LayoutDashboard, Package, Settings, LogOut, LogIn, UserPlus, Shield } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 
 export default function Navbar() {
@@ -14,8 +14,11 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
+  const [role, setRole] = useState<string>('customer');
   const [initials, setInitials] = useState('');
   const profileRef = useRef<HTMLDivElement>(null);
+
+  const isAdmin = role === 'admin';
 
   // Scroll detection
   useEffect(() => {
@@ -44,6 +47,15 @@ export default function Navbar() {
         } else if (data.user.email) {
           setInitials(data.user.email.slice(0, 2).toUpperCase());
         }
+        // Fetch role
+        supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single()
+          .then(({ data: profile }) => {
+            if (profile?.role) setRole(profile.role);
+          });
       }
     });
   }, []);
@@ -116,26 +128,44 @@ export default function Navbar() {
                   <p className="px-3 py-1.5 text-[10px] text-surface-500 font-body truncate">
                     {user.email}
                   </p>
+                  {isAdmin && (
+                    <p className="px-3 pb-1 text-[10px] text-[#FF6B4A] font-body font-medium">
+                      Admin
+                    </p>
+                  )}
                   <div className="border-t border-white/5 my-1" />
 
-                  <DropdownLink
-                    href="/dashboard"
-                    icon={<LayoutDashboard size={14} />}
-                    label="Dashboard"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownLink
-                    href="/dashboard/orders"
-                    icon={<Package size={14} />}
-                    label="My Orders"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownLink
-                    href="/dashboard/profile"
-                    icon={<Settings size={14} />}
-                    label="Account Settings"
-                    onClick={() => setProfileOpen(false)}
-                  />
+                  {isAdmin ? (
+                    <>
+                      <DropdownLink
+                        href="/admin"
+                        icon={<Shield size={14} />}
+                        label="Admin Panel"
+                        onClick={() => setProfileOpen(false)}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <DropdownLink
+                        href="/dashboard"
+                        icon={<LayoutDashboard size={14} />}
+                        label="Dashboard"
+                        onClick={() => setProfileOpen(false)}
+                      />
+                      <DropdownLink
+                        href="/dashboard/orders"
+                        icon={<Package size={14} />}
+                        label="My Orders"
+                        onClick={() => setProfileOpen(false)}
+                      />
+                      <DropdownLink
+                        href="/dashboard/profile"
+                        icon={<Settings size={14} />}
+                        label="Account Settings"
+                        onClick={() => setProfileOpen(false)}
+                      />
+                    </>
+                  )}
 
                   <div className="border-t border-white/5 my-1" />
                   <button
@@ -173,7 +203,7 @@ export default function Navbar() {
         <div className="md:hidden flex items-center gap-3">
           {user && (
             <Link
-              href="/dashboard"
+              href={isAdmin ? '/admin' : '/dashboard'}
               className="w-8 h-8 rounded-full bg-[#FF6B4A] flex items-center justify-center text-white text-[10px] font-body font-bold"
             >
               {initials || <User size={14} />}
@@ -210,27 +240,40 @@ export default function Navbar() {
           {user ? (
             <>
               <div className="border-t border-white/5 my-2" />
-              <Link
-                href="/dashboard"
-                className="block py-2 text-surface-300 hover:text-white"
-                onClick={() => setMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/dashboard/orders"
-                className="block py-2 text-surface-300 hover:text-white"
-                onClick={() => setMenuOpen(false)}
-              >
-                My Orders
-              </Link>
-              <Link
-                href="/dashboard/profile"
-                className="block py-2 text-surface-300 hover:text-white"
-                onClick={() => setMenuOpen(false)}
-              >
-                Account Settings
-              </Link>
+              {isAdmin ? (
+                <Link
+                  href="/admin"
+                  className="flex items-center gap-2 py-2 text-surface-300 hover:text-white"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <Shield size={14} />
+                  Admin Panel
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="block py-2 text-surface-300 hover:text-white"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/dashboard/orders"
+                    className="block py-2 text-surface-300 hover:text-white"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    My Orders
+                  </Link>
+                  <Link
+                    href="/dashboard/profile"
+                    className="block py-2 text-surface-300 hover:text-white"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Account Settings
+                  </Link>
+                </>
+              )}
               <button
                 onClick={() => { handleSignOut(); setMenuOpen(false); }}
                 className="block py-2 text-red-400"

@@ -53,13 +53,27 @@ function LoginForm() {
         setSuccess('Account created! Check your email to confirm, then log in.');
         setMode('login');
       } else {
-        const { error: signInError } = await supabase.auth.signInWithPassword({
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (signInError) throw signInError;
-        router.push(next);
-        router.refresh();
+
+        // Check user role to redirect admin vs customer
+        if (signInData.user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', signInData.user.id)
+            .single();
+
+          if (profile?.role === 'admin') {
+            window.location.href = '/admin';
+            return;
+          }
+        }
+
+        window.location.href = next;
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Something went wrong';

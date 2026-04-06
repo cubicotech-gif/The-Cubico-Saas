@@ -20,6 +20,9 @@ export default async function DashboardLayout({
     .eq('id', user.id)
     .single();
 
+  // Admin users belong in /admin, not the customer dashboard
+  if (profile?.role === 'admin') redirect('/admin');
+
   return (
     <DashboardProviders userId={user.id}>
       <DraftOrderSubmitter />
