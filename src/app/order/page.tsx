@@ -253,7 +253,9 @@ function OrderFlow() {
 
       if (insertError) throw insertError;
       clearDraft();
-      router.push('/dashboard?new_order=true');
+      // Use window.location for a full page load so the server component
+      // re-fetches orders fresh (router.push uses cached RSC payload)
+      window.location.href = '/dashboard?new_order=true';
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
