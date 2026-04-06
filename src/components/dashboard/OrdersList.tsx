@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
   Package,
   ArrowRight,
-  Filter,
   Search,
+  Loader2,
 } from 'lucide-react';
+import { createClient } from '@/lib/supabase-browser';
 import { TEMPLATES } from '@/components/TemplatePreview';
 
 interface Order {
@@ -38,9 +39,29 @@ const FILTER_OPTIONS = [
   { value: 'cancelled', label: 'Cancelled' },
 ];
 
-export default function OrdersList({ orders }: { orders: Order[] }) {
+export default function OrdersList() {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
+
+  // Fetch orders client-side to avoid server-side session/RLS issues
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase
+        .from('orders')
+        .select('*')
+        .eq('customer_id', user.id)
+        .order('created_at', { ascending: false })
+        .then(({ data, error }) => {
+          if (error) console.error('Orders fetch error:', error);
+          setOrders(data ?? []);
+          setLoading(false);
+        });
+    });
+  }, []);
 
   const filtered = orders.filter((order) => {
     if (filter === 'active') return !['delivered', 'cancelled'].includes(order.status);
@@ -74,7 +95,6 @@ export default function OrdersList({ orders }: { orders: Order[] }) {
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        {/* Search */}
         <div className="relative flex-1">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500" />
           <input
@@ -85,7 +105,6 @@ export default function OrdersList({ orders }: { orders: Order[] }) {
             className="w-full pl-9 pr-4 py-2.5 bg-[#0F1D32] border border-white/10 rounded-lg text-sm text-white font-body placeholder:text-surface-600 focus:outline-none focus:border-[#FF6B4A]/50 transition-colors"
           />
         </div>
-        {/* Filter tabs */}
         <div className="flex gap-1 p-1 bg-[#0F1D32] border border-white/10 rounded-lg">
           {FILTER_OPTIONS.map((opt) => (
             <button
@@ -104,7 +123,11 @@ export default function OrdersList({ orders }: { orders: Order[] }) {
       </div>
 
       {/* Orders list */}
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div className="rounded-xl border border-white/10 bg-[#0F1D32] p-8 flex justify-center">
+          <Loader2 size={24} className="text-surface-600 animate-spin" />
+        </div>
+      ) : filtered.length === 0 ? (
         <div className="rounded-xl border border-white/10 bg-[#0F1D32] p-8 text-center">
           <Package size={32} className="text-surface-600 mx-auto mb-3" />
           <p className="text-surface-400 font-body text-sm mb-4">
