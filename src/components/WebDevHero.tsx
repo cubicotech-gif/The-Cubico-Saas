@@ -72,7 +72,7 @@ export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevH
       <div
         className="hidden lg:block absolute inset-0 z-10"
         style={{
-          clipPath: 'polygon(0 0, 65% 0, 50% 100%, 0 100%)',
+          clipPath: 'polygon(0 0, 50% 0, 38% 100%, 0 100%)',
           background: 'linear-gradient(160deg, #0A1628 0%, #0d1f3c 50%, #0A1628 100%)',
         }}
       >
@@ -93,7 +93,7 @@ export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevH
       {/* ── TEXT CONTENT ── */}
       <div className="relative z-20 h-full flex items-center">
         <div className="w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
-          <div className="lg:max-w-[55%]">
+          <div className="lg:max-w-[42%]">
 
             {/* Back link */}
             <motion.div
