@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Menu, X, User, LayoutDashboard, Package, Settings, LogOut } from 'lucide-react';
+import { Menu, X, User, LayoutDashboard, Package, Settings, LogOut, LogIn, UserPlus } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 
 export default function Navbar() {
@@ -150,14 +150,22 @@ export default function Navbar() {
             </div>
           ) : (
             /* ── Not logged in ── */
-            <a
-              href="https://wa.me/923001234567"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-1.5 bg-brand-600 hover:bg-brand-500 text-white rounded-full text-sm font-medium transition-colors"
-            >
-              Contact Us
-            </a>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/login"
+                className="flex items-center gap-1.5 px-4 py-1.5 text-surface-300 hover:text-white text-sm font-medium transition-colors"
+              >
+                <LogIn size={14} />
+                Log In
+              </Link>
+              <Link
+                href="/login?mode=signup"
+                className="flex items-center gap-1.5 px-4 py-1.5 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white rounded-full text-sm font-medium transition-colors"
+              >
+                <UserPlus size={14} />
+                Sign Up
+              </Link>
+            </div>
           )}
         </div>
 
@@ -231,14 +239,25 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <a
-              href="https://wa.me/923001234567"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block py-2 text-brand-400 font-medium"
-            >
-              Contact Us
-            </a>
+            <>
+              <div className="border-t border-white/5 my-2" />
+              <Link
+                href="/login"
+                className="flex items-center gap-2 py-2 text-surface-300 hover:text-white"
+                onClick={() => setMenuOpen(false)}
+              >
+                <LogIn size={14} />
+                Log In
+              </Link>
+              <Link
+                href="/login?mode=signup"
+                className="flex items-center gap-2 py-2 text-[#FF6B4A] font-medium"
+                onClick={() => setMenuOpen(false)}
+              >
+                <UserPlus size={14} />
+                Sign Up
+              </Link>
+            </>
           )}
         </div>
       )}

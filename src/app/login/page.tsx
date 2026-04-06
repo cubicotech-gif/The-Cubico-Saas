@@ -19,7 +19,8 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const next = searchParams.get('next') || '/dashboard';
 
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const initialMode = searchParams.get('mode') === 'signup' ? 'signup' : 'login';
+  const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');

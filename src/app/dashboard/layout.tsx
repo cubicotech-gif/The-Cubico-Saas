@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase-server';
 import DashboardNav from '@/components/dashboard/DashboardNav';
 import DashboardProviders from '@/components/dashboard/DashboardProviders';
+import DraftOrderSubmitter from '@/components/dashboard/DraftOrderSubmitter';
 
 export default async function DashboardLayout({
   children,
@@ -21,6 +22,7 @@ export default async function DashboardLayout({
 
   return (
     <DashboardProviders userId={user.id}>
+      <DraftOrderSubmitter />
       <div className="min-h-screen bg-surface-950">
         <DashboardNav
           user={user}
