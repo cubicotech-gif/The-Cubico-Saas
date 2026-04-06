@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Send, Loader2, MessageSquare } from 'lucide-react';
+import { Send, Loader2, MessageSquare, Paperclip, Image as ImageIcon, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 
 interface Message {
@@ -29,55 +29,40 @@ export default function OrderChat({
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [attachment, setAttachment] = useState<File | null>(null);
+  const [attachPreview, setAttachPreview] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  // Colors based on variant
   const bg = variant === 'admin' ? 'bg-surface-800' : 'bg-[#0A1628]';
   const border = variant === 'admin' ? 'border-surface-700' : 'border-white/10';
   const cardBg = variant === 'admin' ? 'bg-surface-900' : 'bg-[#0F1D32]';
   const inputBg = variant === 'admin' ? 'bg-surface-800' : 'bg-[#0A1628]';
 
-  // Load messages
   useEffect(() => {
     loadMessages();
 
-    // Real-time subscription
     const channel = supabase
       .channel(`order-messages-${orderId}`)
       .on(
         'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'order_messages',
-          filter: `order_id=eq.${orderId}`,
-        },
+        { event: 'INSERT', schema: 'public', table: 'order_messages', filter: `order_id=eq.${orderId}` },
         async (payload) => {
-          // Fetch the full message with sender info
           const { data } = await supabase
             .from('order_messages')
             .select('*, sender:profiles!order_messages_sender_id_fkey(full_name, role)')
             .eq('id', payload.new.id)
             .single();
-
           if (data) {
-            setMessages((prev) => {
-              // Avoid duplicates (we might have already added it optimistically)
-              if (prev.some((m) => m.id === data.id)) return prev;
-              return [...prev, data as Message];
-            });
+            setMessages((prev) => prev.some((m) => m.id === data.id) ? prev : [...prev, data as Message]);
           }
         },
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [orderId]);
 
-  // Auto-scroll on new messages
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -89,40 +74,71 @@ export default function OrderChat({
       .select('*, sender:profiles!order_messages_sender_id_fkey(full_name, role)')
       .eq('order_id', orderId)
       .order('created_at', { ascending: true });
-
     setMessages((data as Message[]) || []);
     setLoading(false);
+  }
+
+  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAttachment(file);
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = () => setAttachPreview(reader.result as string);
+      reader.readAsDataURL(file);
+    } else {
+      setAttachPreview('');
+    }
+    e.target.value = '';
+  }
+
+  function clearAttachment() {
+    setAttachment(null);
+    setAttachPreview('');
   }
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
     const body = newMessage.trim();
-    if (!body || sending) return;
+    if ((!body && !attachment) || sending) return;
 
     setSending(true);
     setNewMessage('');
+
+    let attachmentUrl = '';
+
+    // Upload attachment if provided
+    if (attachment) {
+      const ext = attachment.name.split('.').pop();
+      const path = `${orderId}/${Date.now()}-${Math.random().toString(36).slice(2, 6)}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from('order-assets')
+        .upload(path, attachment);
+
+      if (!uploadError) {
+        const { data: urlData } = supabase.storage
+          .from('order-assets')
+          .getPublicUrl(path);
+        attachmentUrl = urlData.publicUrl;
+      }
+      clearAttachment();
+    }
 
     const { data, error } = await supabase
       .from('order_messages')
       .insert({
         order_id: orderId,
         sender_id: currentUserId,
-        body,
+        body: body || (attachment ? `[Attachment: ${attachment.name}]` : ''),
+        attachment_url: attachmentUrl,
       })
       .select('*, sender:profiles!order_messages_sender_id_fkey(full_name, role)')
       .single();
 
     if (data) {
-      setMessages((prev) => {
-        if (prev.some((m) => m.id === data.id)) return prev;
-        return [...prev, data as Message];
-      });
+      setMessages((prev) => prev.some((m) => m.id === data.id) ? prev : [...prev, data as Message]);
     }
-
-    if (error) {
-      // Restore message on failure
-      setNewMessage(body);
-    }
+    if (error) setNewMessage(body);
 
     setSending(false);
   }
@@ -131,10 +147,8 @@ export default function OrderChat({
     const d = new Date(dateStr);
     const now = new Date();
     const isToday = d.toDateString() === now.toDateString();
-
     const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
     if (isToday) return time;
-
     return `${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${time}`;
   }
 
@@ -145,17 +159,14 @@ export default function OrderChat({
         <MessageSquare size={14} className="text-[#FF6B4A]" />
         <h3 className="text-sm font-display font-semibold text-white">Messages</h3>
         {messages.length > 0 && (
-          <span className="text-[10px] text-surface-500 font-body">
-            ({messages.length})
-          </span>
+          <span className="text-[10px] text-surface-500 font-body">({messages.length})</span>
         )}
       </div>
 
       {/* Messages area */}
       <div
-        ref={containerRef}
         className={`flex-1 overflow-y-auto px-4 py-3 space-y-3 ${bg}`}
-        style={{ maxHeight: '360px', minHeight: '200px' }}
+        style={{ maxHeight: '400px', minHeight: '200px' }}
       >
         {loading ? (
           <div className="flex items-center justify-center py-8">
@@ -173,12 +184,10 @@ export default function OrderChat({
             const isMe = msg.sender_id === currentUserId;
             const senderName = msg.sender?.full_name || 'Unknown';
             const isStaff = msg.sender?.role === 'admin' || msg.sender?.role === 'developer';
+            const hasImage = msg.attachment_url && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(msg.attachment_url);
 
             return (
-              <div
-                key={msg.id}
-                className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
-              >
+              <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                 <div
                   className={`max-w-[80%] rounded-xl px-3.5 py-2.5 ${
                     isMe
@@ -187,23 +196,38 @@ export default function OrderChat({
                   }`}
                 >
                   {!isMe && (
-                    <p className={`text-[10px] font-body font-medium mb-0.5 ${
-                      isMe ? 'text-white/70' : isStaff ? 'text-blue-400' : 'text-[#FF6B4A]'
-                    }`}>
+                    <p className={`text-[10px] font-body font-medium mb-0.5 ${isStaff ? 'text-blue-400' : 'text-[#FF6B4A]'}`}>
                       {senderName}
-                      {isStaff && (
-                        <span className="ml-1 opacity-60">
-                          ({msg.sender?.role})
-                        </span>
-                      )}
+                      {isStaff && <span className="ml-1 opacity-60">({msg.sender?.role})</span>}
                     </p>
                   )}
-                  <p className="text-sm font-body whitespace-pre-wrap break-words">
-                    {msg.body}
-                  </p>
-                  <p className={`text-[9px] mt-1 ${
-                    isMe ? 'text-white/50' : 'text-surface-500'
-                  }`}>
+
+                  {/* Attachment image */}
+                  {hasImage && (
+                    <a href={msg.attachment_url} target="_blank" rel="noopener noreferrer" className="block mb-2">
+                      <img
+                        src={msg.attachment_url}
+                        alt="Attachment"
+                        className="rounded-lg max-h-48 w-auto border border-white/10"
+                      />
+                    </a>
+                  )}
+
+                  {/* Non-image attachment */}
+                  {msg.attachment_url && !hasImage && (
+                    <a
+                      href={msg.attachment_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-1.5 text-xs mb-1 ${isMe ? 'text-white/80' : 'text-[#FF6B4A]'} hover:underline`}
+                    >
+                      <Paperclip size={11} />
+                      View attachment
+                    </a>
+                  )}
+
+                  <p className="text-sm font-body whitespace-pre-wrap break-words">{msg.body}</p>
+                  <p className={`text-[9px] mt-1 ${isMe ? 'text-white/50' : 'text-surface-500'}`}>
                     {formatTime(msg.created_at)}
                   </p>
                 </div>
@@ -214,8 +238,40 @@ export default function OrderChat({
         <div ref={bottomRef} />
       </div>
 
+      {/* Attachment preview */}
+      {attachment && (
+        <div className={`px-3 pt-2 border-t ${border} flex items-center gap-2`}>
+          {attachPreview ? (
+            <img src={attachPreview} alt="Preview" className="w-12 h-12 rounded-lg object-cover border border-white/10" />
+          ) : (
+            <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center">
+              <Paperclip size={14} className="text-surface-500" />
+            </div>
+          )}
+          <span className="text-xs text-surface-400 font-body flex-1 truncate">{attachment.name}</span>
+          <button onClick={clearAttachment} className="p-1 text-surface-500 hover:text-white transition-colors">
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
       {/* Input */}
       <form onSubmit={handleSend} className={`px-3 py-3 border-t ${border} flex gap-2`}>
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          className="p-2 text-surface-500 hover:text-white transition-colors flex-shrink-0"
+          title="Attach file or screenshot"
+        >
+          <Paperclip size={16} />
+        </button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*,.pdf,.doc,.docx"
+          className="hidden"
+          onChange={handleFileSelect}
+        />
         <input
           type="text"
           value={newMessage}
@@ -225,14 +281,10 @@ export default function OrderChat({
         />
         <button
           type="submit"
-          disabled={!newMessage.trim() || sending}
+          disabled={(!newMessage.trim() && !attachment) || sending}
           className="px-3.5 py-2 bg-[#FF6B4A] hover:bg-[#ff7f61] disabled:opacity-40 disabled:hover:bg-[#FF6B4A] text-white rounded-lg transition-all flex items-center gap-1.5"
         >
-          {sending ? (
-            <Loader2 size={14} className="animate-spin" />
-          ) : (
-            <Send size={14} />
-          )}
+          {sending ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
         </button>
       </form>
     </div>
