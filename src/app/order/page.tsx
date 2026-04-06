@@ -176,6 +176,7 @@ function OrderFlow() {
           password: authPassword,
           options: {
             data: { full_name: authName, phone: form.whatsapp },
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
           },
         });
         if (signUpError) throw signUpError;
