@@ -18,6 +18,7 @@ import {
   Film,
   Package,
 } from 'lucide-react';
+import { createClient } from '@/lib/supabase-browser';
 import { seedServices, seedSettings } from '@/data/seeds';
 import { MEDIA_SLOTS, getSlotsBySection } from '@/lib/media';
 import type { MediaSlot, MediaAsset } from '@/lib/media';
@@ -188,13 +189,21 @@ export default function AdminPage() {
   const [services] = useState<Service[]>(seedServices);
   const [settings] = useState<SiteSettings>(seedSettings);
   const [hasSupabase, setHasSupabase] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState('');
   const [mediaAssets, setMediaAssets] = useState<Record<string, MediaAsset>>({});
   const [mediaLoading, setMediaLoading] = useState(false);
 
   useEffect(() => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
-    setHasSupabase(Boolean(url && key));
+    const connected = Boolean(url && key);
+    setHasSupabase(connected);
+    if (connected) {
+      const supabase = createClient();
+      supabase.auth.getUser().then(({ data }) => {
+        if (data.user) setCurrentUserId(data.user.id);
+      });
+    }
   }, []);
 
   // Load media assets when media tab opens
@@ -416,7 +425,7 @@ export default function AdminPage() {
         </div>
 
         {/* ── Orders Tab ── */}
-        {tab === 'orders' && <AdminOrders hasSupabase={hasSupabase} />}
+        {tab === 'orders' && <AdminOrders hasSupabase={hasSupabase} currentUserId={currentUserId} />}
 
         {/* ── Services Tab ── */}
         {tab === 'services' && (

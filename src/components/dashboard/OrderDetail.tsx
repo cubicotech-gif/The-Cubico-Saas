@@ -20,6 +20,7 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import { TEMPLATES } from '@/components/TemplatePreview';
+import OrderChat from '@/components/dashboard/OrderChat';
 
 interface Order {
   id: string;
@@ -60,7 +61,7 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: 'text-red-400 border-red-400 bg-red-400',
 };
 
-export default function OrderDetail({ order }: { order: Order }) {
+export default function OrderDetail({ order, currentUserId }: { order: Order; currentUserId: string }) {
   const template = TEMPLATES.find((t) => t.key === order.template_key);
   const currentStatusIndex = STATUSES.findIndex((s) => s.key === order.status);
   const isCancelled = order.status === 'cancelled';
@@ -326,20 +327,13 @@ export default function OrderDetail({ order }: { order: Order }) {
         </motion.div>
       )}
 
-      {/* Chat placeholder */}
+      {/* Chat */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
-        className="rounded-xl border border-white/10 bg-[#0F1D32] p-8 text-center"
       >
-        <MessageSquare size={28} className="text-surface-600 mx-auto mb-3" />
-        <p className="text-sm font-body font-medium text-surface-400 mb-1">
-          Messages coming soon
-        </p>
-        <p className="text-xs text-surface-600 font-body">
-          You&apos;ll be able to chat directly with your developer here.
-        </p>
+        <OrderChat orderId={order.id} currentUserId={currentUserId} variant="customer" />
       </motion.div>
     </div>
   );
