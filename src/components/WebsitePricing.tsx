@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Check, MessageCircle, Loader2, Info } from 'lucide-react';
+import Link from 'next/link';
+import { Check, ArrowRight, Loader2, Info } from 'lucide-react';
 import { useCurrency } from '@/hooks/useCurrency';
 
 interface PricingTier {
@@ -81,14 +82,11 @@ const tiers: PricingTier[] = [
 ];
 
 interface WebsitePricingProps {
-  waNumber: string;
-  serviceTitle: string;
+  waNumber?: string;
+  serviceTitle?: string;
 }
 
-export default function WebsitePricing({
-  waNumber,
-  serviceTitle,
-}: WebsitePricingProps) {
+export default function WebsitePricing(_props: WebsitePricingProps) {
   const { format, loading, isPakistan } = useCurrency();
 
   return (
@@ -204,19 +202,17 @@ export default function WebsitePricing({
                 ))}
               </ul>
 
-              <a
-                href={`https://wa.me/${waNumber}?text=Hi, I'd like to know more about the ${encodeURIComponent(tier.name)} website plan`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors font-body ${
+              <Link
+                href={`/order?plan=${encodeURIComponent(tier.name)}`}
+                className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors font-body ${
                   tier.is_featured
-                    ? 'bg-brand-600 hover:bg-brand-500 text-white'
+                    ? 'bg-[#FF6B4A] hover:bg-[#ff7f61] text-white'
                     : 'bg-surface-800 hover:bg-surface-700 text-white'
                 }`}
               >
-                <MessageCircle size={14} />
-                Get Started
-              </a>
+                Pick {tier.name}
+                <ArrowRight size={14} />
+              </Link>
             </motion.div>
           ))}
         </div>
