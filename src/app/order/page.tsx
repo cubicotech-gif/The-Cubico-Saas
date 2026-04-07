@@ -16,6 +16,7 @@ import {
 import { createClient } from '@/lib/supabase-browser';
 import { TEMPLATES, type Template } from '@/data/templates';
 import TemplateThumb from '@/components/TemplateThumb';
+import { useCurrency } from '@/hooks/useCurrency';
 
 const STORAGE_KEY = 'cubico_order_draft';
 
@@ -65,13 +66,30 @@ const defaultForm: FormData = {
   planName: '',
 };
 
-const PLANS = [
+interface OrderPlan {
+  name: string;
+  subtitle: string;
+  tagline: string;
+  bullets: string[];
+  featured: boolean;
+  /** One-time development cost in PKR (base currency). */
+  devCostPKR: number;
+  /** Recurring monthly cost in PKR (0 for one-time-only plans). */
+  monthlyPKR: number;
+  /** Extra one-time fee added if e-commerce is requested. */
+  ecommerceExtraPKR: number;
+}
+
+const PLANS: OrderPlan[] = [
   {
     name: 'Starter',
     subtitle: 'You bring domain & hosting',
     tagline: 'No monthly fees',
     bullets: ['Up to 4 pages', 'Mobile responsive', 'Contact form', '3 mo. free adjustments'],
     featured: false,
+    devCostPKR: 12000,
+    monthlyPKR: 0,
+    ecommerceExtraPKR: 5000,
   },
   {
     name: 'Growth',
@@ -79,6 +97,9 @@ const PLANS = [
     tagline: 'Most Popular',
     bullets: ['Up to 4 pages', 'Brand-aligned design', 'Managed hosting + SSL', 'WhatsApp widget'],
     featured: true,
+    devCostPKR: 10000,
+    monthlyPKR: 1000,
+    ecommerceExtraPKR: 5000,
   },
   {
     name: 'Professional',
@@ -86,6 +107,9 @@ const PLANS = [
     tagline: 'Full Service',
     bullets: ['Domain + hosting included', 'Advanced SEO', 'Continuous support', 'Monthly reports'],
     featured: false,
+    devCostPKR: 8000,
+    monthlyPKR: 1500,
+    ecommerceExtraPKR: 5000,
   },
 ];
 
@@ -97,6 +121,7 @@ function OrderFlow() {
   const returnedFromAuth = searchParams.get('authed') === '1';
 
   const supabase = createClient();
+  const { format: formatPrice, loading: currencyLoading, isPakistan } = useCurrency();
 
   // Try restoring form from localStorage (for post-auth return)
   const restoredData = typeof window !== 'undefined'
@@ -309,7 +334,17 @@ function OrderFlow() {
             ? 'Let the team decide'
             : form.colorPreferences.trim(),
           domain_info: '',
-          extra_notes: `Plan: ${form.planName}. Language: ${form.preferredLanguage}. WhatsApp: ${form.whatsapp}. Email: ${form.contactEmail}`,
+          extra_notes: (() => {
+            const picked = PLANS.find((p) => p.name === form.planName);
+            const priceLine = picked
+              ? ` Price: ${formatPrice(picked.devCostPKR)} one-time${
+                  picked.monthlyPKR > 0
+                    ? ` + ${formatPrice(picked.monthlyPKR)}/mo`
+                    : ''
+                }.`
+              : '';
+            return `Plan: ${form.planName}.${priceLine} Language: ${form.preferredLanguage}. WhatsApp: ${form.whatsapp}. Email: ${form.contactEmail}`;
+          })(),
           logo_url: logoUrl,
           status: 'pending',
         })
@@ -645,9 +680,23 @@ function OrderFlow() {
               <h1 className="text-2xl font-display font-bold text-white mb-2">
                 Pick Your Plan
               </h1>
-              <p className="text-surface-500 font-body text-sm mb-6">
+              <p className="text-surface-500 font-body text-sm mb-3">
                 Choose what fits — you can upgrade anytime later.
               </p>
+
+              <div className="mb-6">
+                {currencyLoading ? (
+                  <span className="inline-flex items-center gap-1.5 text-[11px] text-surface-500 font-body">
+                    <Loader2 size={11} className="animate-spin" />
+                    Detecting your location…
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0F1D32] border border-white/10 text-[11px] text-surface-400 font-body">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                    Prices in {isPakistan ? 'PKR (Pakistan)' : 'USD (International)'}
+                  </span>
+                )}
+              </div>
 
               <div className="grid sm:grid-cols-3 gap-3">
                 {PLANS.map((p) => {
@@ -674,6 +723,32 @@ function OrderFlow() {
                       <p className="text-[11px] text-surface-500 font-body mb-3">
                         {p.subtitle}
                       </p>
+
+                      {/* Price block */}
+                      <div className="mb-3 pb-3 border-b border-white/5">
+                        <p className="text-xl font-display font-bold text-white leading-tight">
+                          {formatPrice(p.devCostPKR)}
+                        </p>
+                        <p className="text-[10px] text-surface-500 font-body">
+                          one-time development
+                        </p>
+                        {p.monthlyPKR > 0 ? (
+                          <p className="mt-1.5 text-[12px] font-display font-semibold text-[#FF6B4A]">
+                            + {formatPrice(p.monthlyPKR)}
+                            <span className="text-surface-500 font-body font-normal">
+                              {' '}/ month
+                            </span>
+                          </p>
+                        ) : (
+                          <p className="mt-1.5 text-[11px] text-green-400 font-body font-semibold">
+                            No monthly fees
+                          </p>
+                        )}
+                        <p className="mt-1 text-[10px] text-surface-500 font-body">
+                          E-commerce add-on: +{formatPrice(p.ecommerceExtraPKR)}
+                        </p>
+                      </div>
+
                       <ul className="space-y-1">
                         {p.bullets.map((b) => (
                           <li
@@ -695,6 +770,11 @@ function OrderFlow() {
                   );
                 })}
               </div>
+
+              <p className="text-[11px] text-surface-500 font-body mt-4 leading-relaxed">
+                International pricing is auto-converted from PKR. Final invoice
+                will match the currency shown above.
+              </p>
 
               <StepActions
                 onBack={() => setStep(3)}
@@ -755,7 +835,29 @@ function OrderFlow() {
 
                 {/* Plan */}
                 <ReviewCard title="Plan">
-                  <Row label="Selected" value={form.planName || 'Not picked'} />
+                  {(() => {
+                    const picked = PLANS.find((p) => p.name === form.planName);
+                    if (!picked) {
+                      return <Row label="Selected" value="Not picked" />;
+                    }
+                    return (
+                      <>
+                        <Row label="Selected" value={picked.name} />
+                        <Row
+                          label="Development"
+                          value={`${formatPrice(picked.devCostPKR)} one-time`}
+                        />
+                        <Row
+                          label="Monthly"
+                          value={
+                            picked.monthlyPKR > 0
+                              ? `${formatPrice(picked.monthlyPKR)} / month`
+                              : 'No monthly fees'
+                          }
+                        />
+                      </>
+                    );
+                  })()}
                 </ReviewCard>
 
                 {/* What happens next */}
