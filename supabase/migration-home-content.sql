@@ -31,7 +31,23 @@ alter table site_settings
     {"icon":"Zap","text":"Blazing fast"},
     {"icon":"Shield","text":"Secure & maintained"},
     {"icon":"BarChart2","text":"Data-driven"}
+  ]'::jsonb,
+  add column if not exists hero_morph_words jsonb not null    default '[
+    "websites",
+    "client portals",
+    "CRMs",
+    "marketing engines"
   ]'::jsonb;
+
+-- Switch the hero title to use a {morph} placeholder so the cycling word
+-- renders in the new Hero component. Only updates rows that still have the
+-- original schema defaults — custom titles set by the admin are left alone.
+update site_settings
+   set hero_title = 'We build {morph} that grow your business'
+ where hero_title in (
+   'Technology That Moves You Forward',
+   'We Build Digital Products That Grow Businesses'
+ );
 
 -- ── Extend services ──────────────────────────────────────────────────────────
 alter table services

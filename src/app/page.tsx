@@ -3,20 +3,23 @@ import Hero from '@/components/Hero';
 import HomeServicesBento from '@/components/HomeServicesBento';
 import AboutSection from '@/components/AboutSection';
 import Footer from '@/components/Footer';
-import { getSiteSettings } from '@/lib/data';
+import { getSiteSettings, getHomeServices } from '@/lib/data';
 
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const settings = await getSiteSettings();
+  const [settings, homeServices] = await Promise.all([
+    getSiteSettings(),
+    getHomeServices(),
+  ]);
 
   return (
     <>
       <Navbar />
       <main>
         <Hero settings={settings} />
-        <HomeServicesBento />
-        <AboutSection />
+        <HomeServicesBento services={homeServices} settings={settings} />
+        <AboutSection settings={settings} />
       </main>
       <Footer settings={settings} />
     </>
