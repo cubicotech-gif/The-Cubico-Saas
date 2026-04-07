@@ -119,7 +119,50 @@ export default function AdminSettings({ hasSupabase }: { hasSupabase: boolean })
 
       <Section title="Hero">
         <Field label="Eyebrow" value={settings.hero_eyebrow} onChange={(v) => update('hero_eyebrow', v)} />
-        <Field label="Title" value={settings.hero_title} onChange={(v) => update('hero_title', v)} />
+        <Field
+          label="Title (use {morph} as a placeholder for the cycling word)"
+          value={settings.hero_title}
+          onChange={(v) => update('hero_title', v)}
+        />
+        <div>
+          <Label>Morph Words (cycle through this list)</Label>
+          <div className="space-y-2">
+            {settings.hero_morph_words.map((word, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <input
+                  className={inputCls + ' flex-1'}
+                  placeholder="websites"
+                  value={word}
+                  onChange={(e) => {
+                    const next = [...settings.hero_morph_words];
+                    next[i] = e.target.value;
+                    update('hero_morph_words', next);
+                  }}
+                />
+                <button
+                  onClick={() =>
+                    update(
+                      'hero_morph_words',
+                      settings.hero_morph_words.filter((_, j) => j !== i)
+                    )
+                  }
+                  className="p-2 text-surface-500 hover:text-rose-400 transition-colors"
+                  title="Remove"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() =>
+              update('hero_morph_words', [...settings.hero_morph_words, 'new word'])
+            }
+            className="mt-2 flex items-center gap-1 text-xs text-brand-400 hover:text-brand-300 font-body"
+          >
+            <Plus size={12} /> Add word
+          </button>
+        </div>
         <Field
           label="Subtitle"
           value={settings.hero_subtitle}

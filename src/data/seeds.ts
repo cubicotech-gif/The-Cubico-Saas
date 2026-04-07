@@ -1,10 +1,11 @@
 import type { Service, SiteSettings } from '@/lib/types';
 
 export const seedSettings: SiteSettings = {
-  hero_title: 'We Build Digital Products That Grow Businesses',
+  hero_title: 'We build {morph} that grow your business',
   hero_subtitle:
-    'Websites, portals, CRMs, and marketing — engineered with brand psychology, clean code, and conversion science. Globally.',
+    'Engineered with brand psychology, clean code, and conversion science — for businesses worldwide.',
   hero_eyebrow: 'Web · Portals · CRM · Marketing',
+  hero_morph_words: ['websites', 'client portals', 'CRMs', 'marketing engines'],
   hero_cta_primary_label: 'Explore Services',
   hero_cta_primary_url: '#services',
   hero_cta_secondary_label: 'Talk to Us',

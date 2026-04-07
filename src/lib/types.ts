@@ -70,6 +70,7 @@ export interface SiteSettings {
   hero_title: string;
   hero_subtitle: string;
   hero_eyebrow: string;
+  hero_morph_words: string[];
   hero_cta_primary_label: string;
   hero_cta_primary_url: string;
   hero_cta_secondary_label: string;
