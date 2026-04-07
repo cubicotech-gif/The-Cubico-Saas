@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumière Beauty — Soft luxury, quiet confidence</title>
+<link rel="stylesheet" href="/templates/_shared/inner.css">
+<style>
+:root { --brand:#EC4899; --brand-dark:#db2777; --brand-light:#f9a8d4; --accent:#500724; }
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
+body { background:#fdf2f8; font-family:'Inter',sans-serif }
+h1, h2, .display { font-family:'Cormorant Garamond', serif; font-weight:600; letter-spacing:-.01em }
+
+.tpl-nav { background:rgba(253,242,248,.92); border-color:rgba(80,7,36,.08) }
+.tpl-logo { color:#500724; font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600 }
+.tpl-logo span { color:#EC4899 }
+
+.hero {
+  position:relative; min-height:88vh;
+  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%);
+  overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-20%; right:-10%; width:60%; height:80%;
+  background: radial-gradient(circle, rgba(236,72,153,.18), transparent 60%);
+  border-radius:50%;
+}
+.hero-inner {
+  position:relative; max-width:1180px; margin:0 auto;
+  padding:8rem 1.5rem 4rem; display:grid; grid-template-columns:1.1fr 1fr; gap:3rem; align-items:center;
+}
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr; padding-top:7rem}}
+.hero .eyebrow {
+  display:inline-block; padding:.4rem 1rem; background:rgba(236,72,153,.12);
+  color:#EC4899; border-radius:999px; font-size:.78rem; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase; margin-bottom:1.4rem;
+}
+.hero h1 {
+  font-family:'Cormorant Garamond',serif; font-weight:500;
+  font-size:clamp(3rem, 6vw, 5rem); line-height:1.05; color:#500724;
+}
+.hero h1 em { font-style:italic; color:#EC4899 }
+.hero p { margin-top:1.2rem; max-width:480px; color:#831843; font-size:1.1rem; line-height:1.7 }
+.hero .actions { margin-top:2.2rem; display:flex; gap:1rem; flex-wrap:wrap }
+.hero .tpl-btn { padding:1rem 2rem }
+.hero-img {
+  aspect-ratio:4/5; border-radius:24px;
+  background: linear-gradient(135deg,#EC4899,#500724);
+  position:relative; overflow:hidden;
+  box-shadow: 0 30px 80px rgba(236,72,153,.3);
+}
+.hero-img::after {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), transparent 50%);
+}
+.hero-img .badge {
+  position:absolute; bottom:1.5rem; left:1.5rem; right:1.5rem;
+  background:rgba(255,255,255,.92); backdrop-filter:blur(12px);
+  padding:1rem 1.4rem; border-radius:14px;
+}
+.hero-img .badge .stars { color:#EC4899; font-size:.9rem; letter-spacing:.2em }
+.hero-img .badge p { color:#500724; font-size:.85rem; margin-top:.3rem; font-style:italic }
+
+.services { padding:6rem 1.5rem; background:#fff }
+.s-inner { max-width:1180px; margin:0 auto }
+.s-head { text-align:center; margin-bottom:3.5rem }
+.s-head .eyebrow { display:inline-block; color:#EC4899; font-size:.8rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase; margin-bottom:1rem }
+.s-head h2 { font-size:3rem; color:#500724 }
+.s-head h2 em { font-style:italic; color:#EC4899 }
+.s-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.4rem }
+@media(max-width:900px){.s-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.s-grid{grid-template-columns:1fr}}
+.s-card {
+  text-align:center; padding:2.4rem 1.5rem; border-radius:18px;
+  background:#fdf2f8; border:1px solid rgba(236,72,153,.12);
+  transition: transform .25s, box-shadow .25s;
+}
+.s-card:hover { transform:translateY(-4px); box-shadow:0 20px 50px rgba(236,72,153,.15) }
+.s-card .icon { font-size:2.6rem; margin-bottom:1rem }
+.s-card h3 { font-family:'Cormorant Garamond',serif; font-size:1.5rem; color:#500724; margin-bottom:.4rem }
+.s-card p { color:#831843; font-size:.9rem; line-height:1.6 }
+.s-card .price { display:block; margin-top:1rem; color:#EC4899; font-weight:600; font-size:.92rem }
+
+.testimonials { padding:6rem 1.5rem; background:#fdf2f8 }
+.t-inner { max-width:900px; margin:0 auto; text-align:center }
+.t-inner h2 { font-size:2.6rem; color:#500724; margin-bottom:.6rem }
+.t-quote { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-style:italic; color:#831843; line-height:1.5; margin:2rem auto; max-width:680px }
+.t-author { color:#EC4899; font-weight:600; letter-spacing:.05em }
+
+.cta { padding:5rem 1.5rem; background:linear-gradient(135deg,#EC4899,#500724); text-align:center }
+.cta h2 { font-size:2.8rem; color:#fff; max-width:680px; margin:0 auto }
+.cta p { margin:1rem auto 2rem; color:rgba(255,255,255,.85); max-width:480px }
+.cta .tpl-btn { background:#fff; color:#500724 }
+.cta .tpl-btn:hover { background:#fce7f3 }
+
+.tpl-footer { background:#500724 }
+</style>
+</head>
+<body>
+
+<nav class="tpl-nav">
+  <div class="tpl-nav-inner">
+    <a href="index.html" class="tpl-logo">Lumière<span>.</span></a>
+    <div class="tpl-nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="services.html">Services</a>
+      <a href="about.html">About</a>
+      <a href="contact.html" class="tpl-nav-cta">Book Now</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="eyebrow">Beauty Atelier · Karachi</span>
+      <h1>Soft luxury.<br><em>Quiet confidence.</em></h1>
+      <p>An intimate beauty atelier where every appointment is unhurried, every treatment is considered, and every guest leaves a little more themselves.</p>
+      <div class="actions">
+        <a href="contact.html" class="tpl-btn">Book your visit →</a>
+        <a href="services.html" class="tpl-btn ghost">View services</a>
+      </div>
+    </div>
+    <div class="hero-img">
+      <div class="badge"><div class="stars">★ ★ ★ ★ ★</div><p>"The most relaxing two hours of my month." — Aliya R.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="services">
+  <div class="s-inner">
+    <div class="s-head">
+      <div class="eyebrow">Our Atelier</div>
+      <h2>A complete <em>beauty ritual</em></h2>
+    </div>
+    <div class="s-grid">
+      <div class="s-card"><div class="icon">💇</div><h3>Hair Studio</h3><p>Cut, color, balayage and editorial styling by senior stylists.</p><span class="price">From PKR 4,500</span></div>
+      <div class="s-card"><div class="icon">💅</div><h3>Nail Atelier</h3><p>Gel, structured manicures, nail art and health treatments.</p><span class="price">From PKR 2,800</span></div>
+      <div class="s-card"><div class="icon">✨</div><h3>Skin & Facials</h3><p>Medical-grade facials, peels, and personal skincare consults.</p><span class="price">From PKR 6,500</span></div>
+      <div class="s-card"><div class="icon">🧖</div><h3>Spa & Massage</h3><p>Deep tissue, lymphatic, and signature lumière rituals.</p><span class="price">From PKR 8,000</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <div class="t-inner">
+    <h2>Loved by guests</h2>
+    <div class="t-quote">"I’ve been to a lot of salons in this city. None of them feel like Lumière. Every detail — the music, the light, the way they listen — adds up to something rare."</div>
+    <div class="t-author">— Sara M., visiting since 2022</div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Your moment is waiting.</h2>
+  <p>Book online in under a minute. Walk in to a space that feels like yours.</p>
+  <a href="contact.html" class="tpl-btn">Reserve your time</a>
+</section>
+
+<footer class="tpl-footer">
+  <div class="tpl-logo" style="color:#fff">Lumière Beauty</div>
+  <div><a href="index.html">Home</a><a href="services.html">Services</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+  <div class="tpl-copy">© 2025 Lumière Beauty. Built with Cubico.</div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get in Touch — Iron Forge</title>
+  <link rel="stylesheet" href="/templates/_shared/inner.css">
+  <style>
+    :root {
+      --brand: #22C55E;
+      --brand-dark: #16a34a;
+      --brand-light: #22C55E;
+      --accent: #0A0A0A;
+    }
+  </style>
+</head>
+<body>
+  <nav class="tpl-nav">
+    <div class="tpl-nav-inner">
+      <a href="index.html" class="tpl-logo">Iron<span>.</span></a>
+      <div class="tpl-nav-links">
+        <a href="index.html" class="">Home</a>
+        <a href="classes.html" class="">Classes</a>
+        <a href="about.html" class="">About Us</a>
+        <a href="contact.html" class=" active">Get in Touch</a>
+        <a href="contact.html" class="tpl-nav-cta">Book Now</a>
+      </div>
+    </div>
+  </nav>
+
+  
+  <header class="tpl-page-header">
+    <span class="tpl-eyebrow">Contact</span>
+    <h1>Let’s talk</h1>
+    <p>Tell us what you have in mind. We reply within one business day — usually faster.</p>
+  </header>
+
+  <section class="tpl-section">
+    <div class="tpl-two-col">
+      <div>
+        <h2>Reach out</h2>
+        <p>Whether you’re ready to start or just exploring, drop us a line. No pressure, no hard sell.</p>
+        <ul style="margin-top:2rem;list-style:none;display:grid;gap:1.2rem">
+          <li><strong style="color:var(--accent)">Email</strong><br><a href="mailto:hello@fitness.example">hello@fitness.example</a></li>
+          <li><strong style="color:var(--accent)">Phone</strong><br><a href="tel:+10000000000">+1 (000) 000-0000</a></li>
+          <li><strong style="color:var(--accent)">Studio</strong><br>123 Main Street, Suite 400<br>Karachi, Pakistan</li>
+        </ul>
+      </div>
+      <form class="tpl-form" onsubmit="event.preventDefault();this.querySelector('button').textContent='Sent ✓';">
+        <div class="tpl-field">
+          <label>Your name</label>
+          <input type="text" required placeholder="Jane Doe">
+        </div>
+        <div class="tpl-field">
+          <label>Email</label>
+          <input type="email" required placeholder="you@company.com">
+        </div>
+        <div class="tpl-field">
+          <label>How can we help?</label>
+          <textarea required placeholder="Tell us about your project…"></textarea>
+        </div>
+        <button class="tpl-btn" type="submit">Send message →</button>
+      </form>
+    </div>
+  </section>
+  
+
+  <footer class="tpl-footer">
+    <div class="tpl-logo">Iron Forge</div>
+    <div>
+      <a href="index.html">Home</a><a href="classes.html">Classes</a><a href="about.html">About Us</a><a href="contact.html">Get in Touch</a>
+    </div>
+    <div class="tpl-copy">© 2026 Iron Forge. Built with Cubico.</div>
+  </footer>
+</body>
+</html>

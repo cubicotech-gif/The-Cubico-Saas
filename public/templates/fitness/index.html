@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iron Forge — Train hard. Recover smart.</title>
+<link rel="stylesheet" href="/templates/_shared/inner.css">
+<style>
+:root { --brand:#22C55E; --brand-dark:#16a34a; --brand-light:#4ade80; --accent:#0A0A0A; --text:#fafafa; }
+body { background:#0A0A0A; color:#fafafa }
+.tpl-nav { background:rgba(10,10,10,.85); border-color:rgba(255,255,255,.08) }
+.tpl-logo { color:#fff }
+.tpl-nav-links a { color:rgba(255,255,255,.7) }
+.tpl-nav-links a:hover, .tpl-nav-links a.active { color:#22C55E }
+
+.hero {
+  position:relative; min-height:90vh;
+  background: radial-gradient(circle at 20% 30%, rgba(34,197,94,.18), transparent 50%),
+              radial-gradient(circle at 80% 70%, rgba(34,197,94,.10), transparent 50%),
+              #0A0A0A;
+  display:flex; align-items:center; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(34,197,94,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,197,94,.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(circle at 50% 40%, #000 30%, transparent 70%);
+}
+.hero-inner { position:relative; max-width:1180px; margin:0 auto; padding:8rem 1.5rem 4rem; width:100%; text-align:center }
+.hero .eyebrow {
+  display:inline-block; padding:.4rem 1rem; border:1px solid rgba(34,197,94,.4);
+  border-radius:999px; color:#22C55E; font-size:.78rem; font-weight:700;
+  letter-spacing:.16em; text-transform:uppercase; margin-bottom:1.4rem;
+}
+.hero h1 {
+  font-family:'Inter',sans-serif; font-weight:900;
+  font-size:clamp(2.8rem, 8vw, 6rem); line-height:.95; letter-spacing:-.03em; color:#fff;
+}
+.hero h1 .stroke { -webkit-text-stroke: 2px #22C55E; -webkit-text-fill-color: transparent; font-style:italic }
+.hero p { margin:1.4rem auto 0; max-width:600px; color:rgba(255,255,255,.65); font-size:1.15rem }
+.hero .actions { margin-top:2.4rem; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap }
+.hero .actions .tpl-btn { background:#22C55E; color:#0A0A0A; padding:1.1rem 2rem; font-weight:800 }
+.hero .actions .tpl-btn:hover { background:#4ade80 }
+.hero .actions .tpl-btn.ghost { background:transparent; color:#fff; border-color:rgba(255,255,255,.25) }
+.hero .actions .tpl-btn.ghost:hover { background:rgba(255,255,255,.06); color:#fff }
+
+.stats-band { background:#0f0f0f; border-top:1px solid rgba(255,255,255,.06); border-bottom:1px solid rgba(255,255,255,.06); padding:3rem 1.5rem }
+.stats-inner { max-width:1180px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr); gap:2rem; text-align:center }
+@media(max-width:700px){.stats-inner{grid-template-columns:repeat(2,1fr)}}
+.stat .num { font-size:2.6rem; font-weight:900; color:#22C55E; line-height:1 }
+.stat .label { color:rgba(255,255,255,.5); font-size:.85rem; letter-spacing:.08em; text-transform:uppercase; margin-top:.4rem }
+
+.classes { padding:6rem 1.5rem }
+.c-inner { max-width:1180px; margin:0 auto }
+.c-head { text-align:center; margin-bottom:3rem }
+.c-head h2 { font-size:2.6rem; font-weight:900; color:#fff; letter-spacing:-.02em }
+.c-head h2 span { color:#22C55E }
+.c-head p { color:rgba(255,255,255,.55); margin-top:.8rem; max-width:520px; margin-left:auto; margin-right:auto }
+.c-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.4rem }
+@media(max-width:900px){.c-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.c-grid{grid-template-columns:1fr}}
+.c-card {
+  background:#111; border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:2rem;
+  transition: transform .25s, border-color .25s;
+}
+.c-card:hover { transform:translateY(-4px); border-color:rgba(34,197,94,.4) }
+.c-card .icon { font-size:2.4rem; margin-bottom:1rem }
+.c-card h3 { color:#fff; font-size:1.3rem; font-weight:800; margin-bottom:.5rem }
+.c-card p { color:rgba(255,255,255,.55); font-size:.92rem }
+.c-card .tag { display:inline-block; margin-top:1rem; padding:.3rem .8rem; background:rgba(34,197,94,.12); color:#22C55E; border-radius:999px; font-size:.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase }
+
+.cta { padding:5rem 1.5rem; background:linear-gradient(135deg,#22C55E,#16a34a); text-align:center }
+.cta h2 { font-size:2.4rem; font-weight:900; color:#0A0A0A; max-width:680px; margin:0 auto; letter-spacing:-.02em }
+.cta p { margin:1rem auto 2rem; color:rgba(0,0,0,.7); max-width:480px }
+.cta .tpl-btn { background:#0A0A0A; color:#fff }
+
+.tpl-footer { background:#000; color:rgba(255,255,255,.5) }
+.tpl-footer .tpl-logo { color:#fff }
+.tpl-footer a { color:rgba(255,255,255,.5) }
+.tpl-footer a:hover { color:#22C55E }
+</style>
+</head>
+<body>
+
+<nav class="tpl-nav">
+  <div class="tpl-nav-inner">
+    <a href="index.html" class="tpl-logo">Iron<span>Forge.</span></a>
+    <div class="tpl-nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="classes.html">Classes</a>
+      <a href="about.html">About</a>
+      <a href="contact.html" class="tpl-nav-cta">Free Trial</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">Strength · Conditioning · Recovery</span>
+    <h1>TRAIN HARD.<br><span class="stroke">STAY FORGED.</span></h1>
+    <p>A 24/7 strength-and-conditioning gym built for people who take their training seriously. Coaches, not influencers.</p>
+    <div class="actions">
+      <a href="contact.html" class="tpl-btn">Start free trial →</a>
+      <a href="classes.html" class="tpl-btn ghost">See class schedule</a>
+    </div>
+  </div>
+</section>
+
+<section class="stats-band">
+  <div class="stats-inner">
+    <div class="stat"><div class="num">24/7</div><div class="label">Member access</div></div>
+    <div class="stat"><div class="num">40+</div><div class="label">Classes weekly</div></div>
+    <div class="stat"><div class="num">12</div><div class="label">Certified coaches</div></div>
+    <div class="stat"><div class="num">2000+</div><div class="label">Active members</div></div>
+  </div>
+</section>
+
+<section class="classes">
+  <div class="c-inner">
+    <div class="c-head">
+      <h2>Find your <span>format</span></h2>
+      <p>Whether you’re chasing a PR or just want to feel strong climbing the stairs — we’ve got a class for that.</p>
+    </div>
+    <div class="c-grid">
+      <div class="c-card"><div class="icon">🏋️</div><h3>Strength Lab</h3><p>Powerlifting and Olympic-style training for raw force and technique.</p><span class="tag">All Levels</span></div>
+      <div class="c-card"><div class="icon">🥊</div><h3>Boxing & MMA</h3><p>Striking, conditioning and sparring with credentialed coaches.</p><span class="tag">Intermediate</span></div>
+      <div class="c-card"><div class="icon">🔥</div><h3>HIIT Burn</h3><p>45 minutes. Maximum effort. Functional movements that change you fast.</p><span class="tag">Beginner+</span></div>
+      <div class="c-card"><div class="icon">🧘</div><h3>Mobility & Yoga</h3><p>Recovery flows, breathwork, and joint health to keep you in the gym for life.</p><span class="tag">All Levels</span></div>
+      <div class="c-card"><div class="icon">⚡</div><h3>CrossFit WOD</h3><p>The daily workout. Constantly varied, high intensity, community led.</p><span class="tag">All Levels</span></div>
+      <div class="c-card"><div class="icon">🎯</div><h3>1-on-1 Coaching</h3><p>Personal programs, weekly check-ins, and accountability that works.</p><span class="tag">Custom</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Your first week is on us.</h2>
+  <p>No contracts. No pressure. Walk in, train hard, see if it fits.</p>
+  <a href="contact.html" class="tpl-btn">Claim your free trial</a>
+</section>
+
+<footer class="tpl-footer">
+  <div class="tpl-logo">Iron Forge</div>
+  <div><a href="index.html">Home</a><a href="classes.html">Classes</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+  <div class="tpl-copy">© 2025 Iron Forge. Built with Cubico.</div>
+</footer>
+
+</body>
+</html>
