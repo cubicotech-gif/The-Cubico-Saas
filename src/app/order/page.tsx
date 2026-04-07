@@ -46,6 +46,8 @@ interface FormData {
   whatsapp: string;
   contactEmail: string;
   preferredLanguage: string;
+  // Screen 4 — Plan
+  planName: string;
 }
 
 const defaultForm: FormData = {
@@ -59,12 +61,38 @@ const defaultForm: FormData = {
   whatsapp: '',
   contactEmail: '',
   preferredLanguage: 'English',
+  planName: '',
 };
+
+const PLANS = [
+  {
+    name: 'Starter',
+    subtitle: 'You bring domain & hosting',
+    tagline: 'No monthly fees',
+    bullets: ['Up to 4 pages', 'Mobile responsive', 'Contact form', '3 mo. free adjustments'],
+    featured: false,
+  },
+  {
+    name: 'Growth',
+    subtitle: 'We handle hosting',
+    tagline: 'Most Popular',
+    bullets: ['Up to 4 pages', 'Brand-aligned design', 'Managed hosting + SSL', 'WhatsApp widget'],
+    featured: true,
+  },
+  {
+    name: 'Professional',
+    subtitle: 'We handle domain + hosting',
+    tagline: 'Full Service',
+    bullets: ['Domain + hosting included', 'Advanced SEO', 'Continuous support', 'Monthly reports'],
+    featured: false,
+  },
+];
 
 function OrderFlow() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const templateParam = searchParams.get('template') || '';
+  const planParam = searchParams.get('plan') || '';
   const returnedFromAuth = searchParams.get('authed') === '1';
 
   const supabase = createClient();
@@ -80,10 +108,11 @@ function OrderFlow() {
     : null;
 
   const initialTemplate = restoredData?.templateKey || templateParam;
+  const initialPlan = restoredData?.planName || planParam;
 
-  // Steps: 0 = pick template, 1 = business basics, 2 = assets, 3 = contact, 4 = review
+  // Steps: 0 = template, 1 = business, 2 = assets, 3 = contact, 4 = plan, 5 = review
   const [step, setStep] = useState(() => {
-    if (returnedFromAuth && restoredData) return 4; // jump to review after auth
+    if (returnedFromAuth && restoredData) return 5; // jump to review after auth
     if (initialTemplate) return 1;
     return 0;
   });
@@ -97,6 +126,7 @@ function OrderFlow() {
     ...defaultForm,
     ...(restoredData || {}),
     templateKey: initialTemplate || restoredData?.templateKey || '',
+    planName: initialPlan || restoredData?.planName || '',
   }));
   const [logoFile, setLogoFile] = useState<File | null>(null);
 
@@ -152,6 +182,7 @@ function OrderFlow() {
   // Validate per screen
   const canProceedStep1 = form.businessName.trim().length > 0;
   const canProceedStep3 = form.whatsapp.trim().length > 0 || form.contactEmail.trim().length > 0;
+  const canProceedStep4 = form.planName.trim().length > 0;
 
   const handleSubmitAttempt = async () => {
     if (!user) {
@@ -277,7 +308,7 @@ function OrderFlow() {
             ? 'Let the team decide'
             : form.colorPreferences.trim(),
           domain_info: '',
-          extra_notes: `Language: ${form.preferredLanguage}. WhatsApp: ${form.whatsapp}. Email: ${form.contactEmail}`,
+          extra_notes: `Plan: ${form.planName}. Language: ${form.preferredLanguage}. WhatsApp: ${form.whatsapp}. Email: ${form.contactEmail}`,
           logo_url: logoUrl,
           status: 'pending',
         })
@@ -309,7 +340,7 @@ function OrderFlow() {
     await submitOrderWithUser(user.id);
   };
 
-  const stepLabels = ['Template', 'Business', 'Assets', 'Contact', 'Review'];
+  const stepLabels = ['Template', 'Business', 'Assets', 'Contact', 'Plan', 'Review'];
 
   return (
     <div className="min-h-screen bg-surface-950">
@@ -601,14 +632,82 @@ function OrderFlow() {
                 onBack={() => setStep(2)}
                 onNext={() => { setError(''); setStep(4); }}
                 nextDisabled={!canProceedStep3}
+                nextLabel="Next: Plan"
+              />
+            </StepWrapper>
+          )}
+
+          {/* ── STEP 4: Pick Plan ── */}
+          {step === 4 && (
+            <StepWrapper key="step4">
+              <TemplateBadge template={selectedTemplate} onChangeStep={() => setStep(0)} />
+
+              <h1 className="text-2xl font-display font-bold text-white mb-2">
+                Pick Your Plan
+              </h1>
+              <p className="text-surface-500 font-body text-sm mb-6">
+                Choose what fits — you can upgrade anytime later.
+              </p>
+
+              <div className="grid sm:grid-cols-3 gap-3">
+                {PLANS.map((p) => {
+                  const selected = form.planName === p.name;
+                  return (
+                    <button
+                      key={p.name}
+                      type="button"
+                      onClick={() => updateForm({ planName: p.name })}
+                      className={`relative text-left p-4 rounded-xl border transition-all ${
+                        selected
+                          ? 'border-[#FF6B4A] bg-[#FF6B4A]/5 shadow-lg shadow-[#FF6B4A]/10'
+                          : 'border-white/10 bg-[#0F1D32] hover:border-white/20'
+                      }`}
+                    >
+                      {p.featured && (
+                        <span className="absolute -top-2 left-3 px-2 py-0.5 bg-[#FF6B4A] text-white text-[9px] font-body font-semibold rounded-full uppercase tracking-wider">
+                          {p.tagline}
+                        </span>
+                      )}
+                      <p className="font-display font-bold text-white text-base mb-1">
+                        {p.name}
+                      </p>
+                      <p className="text-[11px] text-surface-500 font-body mb-3">
+                        {p.subtitle}
+                      </p>
+                      <ul className="space-y-1">
+                        {p.bullets.map((b) => (
+                          <li
+                            key={b}
+                            className="flex items-start gap-1.5 text-[11px] text-surface-300 font-body"
+                          >
+                            <Check size={11} className="text-[#FF6B4A] mt-0.5 flex-shrink-0" />
+                            {b}
+                          </li>
+                        ))}
+                      </ul>
+                      {selected && (
+                        <div className="mt-3 flex items-center gap-1 text-[10px] text-[#FF6B4A] font-body font-semibold">
+                          <Check size={11} />
+                          Selected
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <StepActions
+                onBack={() => setStep(3)}
+                onNext={() => { setError(''); setStep(5); }}
+                nextDisabled={!canProceedStep4}
                 nextLabel="Review Order"
               />
             </StepWrapper>
           )}
 
-          {/* ── STEP 4: Review & Submit ── */}
-          {step === 4 && selectedTemplate && (
-            <StepWrapper key="step4">
+          {/* ── STEP 5: Review & Submit ── */}
+          {step === 5 && selectedTemplate && (
+            <StepWrapper key="step5">
               <h1 className="text-2xl font-display font-bold text-white mb-2">
                 Review Your Order
               </h1>
@@ -654,6 +753,11 @@ function OrderFlow() {
                   <Row label="Language" value={form.preferredLanguage} />
                 </ReviewCard>
 
+                {/* Plan */}
+                <ReviewCard title="Plan">
+                  <Row label="Selected" value={form.planName || 'Not picked'} />
+                </ReviewCard>
+
                 {/* What happens next */}
                 <div className="p-4 rounded-xl border border-[#FF6B4A]/20 bg-[#FF6B4A]/5">
                   <p className="text-sm font-display font-semibold text-white mb-2">
@@ -678,7 +782,7 @@ function OrderFlow() {
               {/* Actions */}
               <div className="flex justify-between mt-8">
                 <button
-                  onClick={() => setStep(3)}
+                  onClick={() => setStep(4)}
                   className="flex items-center gap-1.5 px-4 py-2.5 text-sm text-surface-400 hover:text-white font-body transition-colors"
                 >
                   <ArrowLeft size={14} />

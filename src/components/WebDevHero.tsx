@@ -6,6 +6,12 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { MediaAsset } from '@/lib/media';
 
+/*
+ * Hero is intentionally compact (≈70vh) so the background video plays
+ * fully (object-contain) without being zoomed/cropped. The diagonal
+ * left panel still covers any letterboxing on the text side.
+ */
+
 interface WebDevHeroProps {
   title: string;
   subtitle: string;
@@ -26,13 +32,8 @@ export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevH
     }
   }, [heroVideo?.url]);
 
-  const scrollToCta = () => {
-    const el = document.getElementById('webdev-cta');
-    el?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
-    <section className="relative h-screen min-h-[600px] max-h-[1000px] overflow-hidden">
+    <section className="relative h-[72vh] min-h-[540px] max-h-[700px] overflow-hidden bg-[#0A1628]">
 
       {/* ── VIDEO / FALLBACK BACKGROUND (full width, behind everything) ── */}
       <div className="absolute inset-0 z-0">
@@ -41,7 +42,7 @@ export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevH
             initial={{ opacity: 0 }}
             animate={{ opacity: videoLoaded ? 1 : 0 }}
             transition={{ duration: 1, delay: 0.6 }}
-            className="absolute inset-0"
+            className="absolute inset-0 bg-[#0A1628]"
           >
             <video
               ref={videoRef}
@@ -51,10 +52,10 @@ export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevH
               loop
               playsInline
               onLoadedData={() => setVideoLoaded(true)}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain bg-[#0A1628]"
             />
             {/* Opacity overlay — 40% on desktop, 70% on mobile */}
-            <div className="absolute inset-0 bg-[#0A1628]/60 lg:bg-[#0A1628]/40" />
+            <div className="absolute inset-0 bg-[#0A1628]/55 lg:bg-[#0A1628]/35" />
           </motion.div>
         ) : (
           /* Animated gradient mesh fallback */
@@ -139,13 +140,13 @@ export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevH
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.7 }}
             >
-              <button
-                onClick={scrollToCta}
+              <Link
+                href="/order"
                 className="group inline-flex items-center gap-2.5 px-8 py-4 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-semibold rounded-xl transition-all duration-200 hover:scale-[1.03] hover:shadow-xl hover:shadow-[#FF6B4A]/25 font-body text-base sm:text-lg w-full sm:w-auto justify-center sm:justify-start"
               >
                 Get Your Website
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </button>
+              </Link>
             </motion.div>
 
             {/* Micro trust line */}

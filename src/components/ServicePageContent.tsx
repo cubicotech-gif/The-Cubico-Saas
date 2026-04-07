@@ -6,7 +6,6 @@ import { ArrowLeft, Check, MessageCircle } from 'lucide-react';
 import DynamicIcon from '@/components/ui/DynamicIcon';
 import WebDevHero from '@/components/WebDevHero';
 import TemplatePreview from '@/components/TemplatePreview';
-import ProcessSteps from '@/components/ProcessSteps';
 import WebsitePricing from '@/components/WebsitePricing';
 import type { Service } from '@/lib/types';
 import type { MediaAsset } from '@/lib/media';
@@ -38,45 +37,11 @@ export default function ServicePageContent({
           media={media}
         />
 
-        {/* 2. Templates — browse and pick */}
+        {/* 2. Templates — browse and pick (click → /order?template=…) */}
         <TemplatePreview />
 
-        {/* 3. Process — 4 simple steps */}
-        <ProcessSteps media={media} />
-
-        {/* 4. Pricing — geo-dynamic */}
+        {/* 3. Pricing — geo-dynamic, each plan CTA → /order?plan=… */}
         <WebsitePricing waNumber={waNumber} serviceTitle={service.title} />
-
-        {/* 6. Final CTA */}
-        <section id="webdev-cta" className="relative py-20 bg-surface-900/50 border-t border-surface-800 overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-600/8 rounded-full blur-3xl" />
-          </div>
-          <div className="relative max-w-3xl mx-auto px-4 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl sm:text-4xl font-display font-bold text-white mb-4">
-                Let&apos;s build something your customers can&apos;t stop scrolling
-              </h2>
-              <p className="text-surface-400 font-body mb-8 max-w-lg mx-auto">
-                Message us on WhatsApp and we&apos;ll have your project scoped,
-                designed, and in development within days — not months.
-              </p>
-              <a
-                href={`https://wa.me/${waNumber}?text=Hi, I'm interested in Website Development`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-semibold rounded-xl transition-all hover:scale-[1.02] hover:shadow-xl hover:shadow-[#FF6B4A]/25 font-body text-lg"
-              >
-                <MessageCircle size={18} />
-                Start Your Project
-              </a>
-            </motion.div>
-          </div>
-        </section>
       </div>
     );
   }
