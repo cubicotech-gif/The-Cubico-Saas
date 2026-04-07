@@ -62,6 +62,7 @@ export const TEMPLATES: Template[] = [
     description: 'Warm tones, menu cards, reservation form',
     color: '#C9A227',
     gradient: 'linear-gradient(135deg, #5C1A1B 0%, #8B2E2F 50%, #C9A227 100%)',
+    thumb: '/templates/restaurant/thumb.jpg',
     file: '/templates/restaurant/index.html',
     pages: [
       { label: 'Home', file: '/templates/restaurant/index.html' },
@@ -79,6 +80,7 @@ export const TEMPLATES: Template[] = [
     description: 'Clean clinical layout, booking system, doctor profiles',
     color: '#0D9488',
     gradient: 'linear-gradient(135deg, #1E293B 0%, #0D9488 50%, #5EEAD4 100%)',
+    thumb: '/templates/clinic/thumb.jpg',
     file: '/templates/clinic/index.html',
     pages: [
       { label: 'Home', file: '/templates/clinic/index.html' },
@@ -96,6 +98,7 @@ export const TEMPLATES: Template[] = [
     description: 'Product grid, cart UI, newsletter signup',
     color: '#FF6B4A',
     gradient: 'linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 50%, #FF6B4A 100%)',
+    thumb: '/templates/shop/thumb.jpg',
     file: '/templates/shop/index.html',
     pages: [
       { label: 'Home', file: '/templates/shop/index.html' },
@@ -113,6 +116,7 @@ export const TEMPLATES: Template[] = [
     description: 'Programs, facilities, admissions form',
     color: '#FBBF24',
     gradient: 'linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #FBBF24 100%)',
+    thumb: '/templates/school/thumb.jpg',
     file: '/templates/school/index.html',
     pages: [
       { label: 'Home', file: '/templates/school/index.html' },
@@ -130,6 +134,7 @@ export const TEMPLATES: Template[] = [
     description: 'Bold typography, project grid, creative layout',
     color: '#8B5CF6',
     gradient: 'linear-gradient(135deg, #111111 0%, #1A1A1A 50%, #8B5CF6 100%)',
+    thumb: '/templates/portfolio/thumb.jpg',
     file: '/templates/portfolio/index.html',
     pages: [
       { label: 'Home', file: '/templates/portfolio/index.html' },
@@ -147,6 +152,7 @@ export const TEMPLATES: Template[] = [
     description: 'Gradient mesh hero, services, case studies',
     color: '#3B82F6',
     gradient: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #3B82F6 100%)',
+    thumb: '/templates/corporate/thumb.jpg',
     file: '/templates/corporate/index.html',
     pages: [
       { label: 'Home', file: '/templates/corporate/index.html' },
@@ -164,6 +170,7 @@ export const TEMPLATES: Template[] = [
     description: 'Property listings, agent profiles, neighborhood guides',
     color: '#0EA5E9',
     gradient: 'linear-gradient(135deg, #082F49 0%, #075985 50%, #0EA5E9 100%)',
+    thumb: '/templates/realestate/thumb.jpg',
     file: '/templates/realestate/index.html',
     pages: [
       { label: 'Home', file: '/templates/realestate/index.html' },
@@ -181,6 +188,7 @@ export const TEMPLATES: Template[] = [
     description: 'Bold black & neon, class schedule, trainer cards',
     color: '#22C55E',
     gradient: 'linear-gradient(135deg, #0A0A0A 0%, #171717 50%, #22C55E 100%)',
+    thumb: '/templates/fitness/thumb.jpg',
     file: '/templates/fitness/index.html',
     pages: [
       { label: 'Home', file: '/templates/fitness/index.html' },
@@ -198,6 +206,7 @@ export const TEMPLATES: Template[] = [
     description: 'Soft pastels, service menu, online booking',
     color: '#EC4899',
     gradient: 'linear-gradient(135deg, #500724 0%, #831843 50%, #EC4899 100%)',
+    thumb: '/templates/salon/thumb.jpg',
     file: '/templates/salon/index.html',
     pages: [
       { label: 'Home', file: '/templates/salon/index.html' },
@@ -215,6 +224,7 @@ export const TEMPLATES: Template[] = [
     description: 'Editorial typography, case studies, team grid',
     color: '#F59E0B',
     gradient: 'linear-gradient(135deg, #1C1917 0%, #292524 50%, #F59E0B 100%)',
+    thumb: '/templates/agency/thumb.jpg',
     file: '/templates/agency/index.html',
     pages: [
       { label: 'Home', file: '/templates/agency/index.html' },
