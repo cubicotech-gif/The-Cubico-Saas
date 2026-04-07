@@ -1,0 +1,214 @@
+/*
+ * Shared stylesheet for template *sub-pages* (about, services, contact, etc.).
+ * Each sub-page sets its own brand variables in an inline <style>:root{ ... }
+ * block before linking this file. Defaults below are used if not overridden.
+ */
+
+:root {
+  --brand: #FF6B4A;
+  --brand-dark: #cc4f33;
+  --brand-light: #ff8b6f;
+  --accent: #0F1D32;
+  --bg: #ffffff;
+  --bg-soft: #f6f7fb;
+  --bg-dark: #0f172a;
+  --text: #1a202c;
+  --text-soft: #4a5568;
+  --text-mute: #718096;
+  --border: #e2e8f0;
+  --radius: 14px;
+  --shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+  --max: 1180px;
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: var(--brand); text-decoration: none; transition: color .2s; }
+a:hover { color: var(--brand-dark); }
+
+/* ── Nav ─────────────────────────────────────────── */
+.tpl-nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.tpl-nav-inner {
+  max-width: var(--max); margin: 0 auto;
+  padding: 1.1rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tpl-logo {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 1.15rem; color: var(--accent); letter-spacing: -.01em;
+}
+.tpl-logo span { color: var(--brand); }
+.tpl-nav-links { display: flex; gap: 1.75rem; align-items: center; }
+.tpl-nav-links a {
+  font-weight: 500; font-size: .92rem; color: var(--text-soft);
+}
+.tpl-nav-links a.active, .tpl-nav-links a:hover { color: var(--accent); }
+.tpl-nav-cta {
+  background: var(--brand); color: #fff !important;
+  padding: .55rem 1.1rem; border-radius: 10px;
+  font-weight: 600; font-size: .85rem;
+}
+.tpl-nav-cta:hover { background: var(--brand-dark); }
+@media (max-width: 720px) {
+  .tpl-nav-links { gap: 1rem; }
+  .tpl-nav-links a:not(.tpl-nav-cta) { display: none; }
+}
+
+/* ── Page header band ─────────────────────────────── */
+.tpl-page-header {
+  padding: 5rem 1.5rem 4rem;
+  background: linear-gradient(135deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 70%, var(--brand)) 100%);
+  color: #fff;
+  text-align: center;
+}
+.tpl-page-header .tpl-eyebrow {
+  display: inline-block; padding: .35rem .85rem;
+  background: rgba(255,255,255,.12); color: #fff;
+  border-radius: 999px; font-size: .72rem;
+  font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 1.1rem;
+}
+.tpl-page-header h1 {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(2rem, 5vw, 3.3rem); line-height: 1.1; max-width: 800px; margin: 0 auto;
+}
+.tpl-page-header p {
+  margin-top: 1rem; max-width: 640px; margin-left: auto; margin-right: auto;
+  color: rgba(255,255,255,.78); font-size: 1.05rem;
+}
+
+/* ── Section ─────────────────────────────────────── */
+.tpl-section {
+  max-width: var(--max); margin: 0 auto;
+  padding: 5rem 1.5rem;
+}
+.tpl-section.alt { background: var(--bg-soft); max-width: none; }
+.tpl-section.alt > .tpl-inner { max-width: var(--max); margin: 0 auto; padding: 0 1.5rem; }
+.tpl-section h2 {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(1.6rem, 3vw, 2.25rem); color: var(--accent);
+  letter-spacing: -.01em; margin-bottom: 1rem;
+}
+.tpl-section h2 + p { color: var(--text-soft); max-width: 640px; margin-bottom: 2.5rem; }
+
+/* ── Grids ───────────────────────────────────────── */
+.tpl-grid { display: grid; gap: 1.5rem; }
+.tpl-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.tpl-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.tpl-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) {
+  .tpl-grid.cols-3, .tpl-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .tpl-grid.cols-2, .tpl-grid.cols-3, .tpl-grid.cols-4 { grid-template-columns: 1fr; }
+}
+
+/* ── Card ────────────────────────────────────────── */
+.tpl-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.6rem;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s;
+}
+.tpl-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+  border-color: color-mix(in srgb, var(--brand) 30%, var(--border));
+}
+.tpl-card .tpl-icon {
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
+  color: var(--brand); border-radius: 12px;
+  margin-bottom: 1rem; font-size: 1.25rem; font-weight: 700;
+}
+.tpl-card h3 {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 1.1rem; color: var(--accent); margin-bottom: .5rem;
+}
+.tpl-card p { color: var(--text-soft); font-size: .92rem; }
+
+/* ── Two column ──────────────────────────────────── */
+.tpl-two-col {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+}
+@media (max-width: 800px) { .tpl-two-col { grid-template-columns: 1fr; } }
+.tpl-two-col img,
+.tpl-two-col .tpl-illustration {
+  width: 100%; aspect-ratio: 4 / 3; border-radius: var(--radius);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand) 18%, #fff), color-mix(in srgb, var(--accent) 16%, #fff));
+  border: 1px solid var(--border);
+}
+
+/* ── Form ────────────────────────────────────────── */
+.tpl-form {
+  display: grid; gap: 1rem; max-width: 560px;
+  background: #fff; padding: 2rem; border-radius: var(--radius);
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+}
+.tpl-field { display: grid; gap: .35rem; }
+.tpl-field label {
+  font-size: .78rem; font-weight: 600; color: var(--text-soft);
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.tpl-field input, .tpl-field textarea, .tpl-field select {
+  width: 100%; padding: .8rem 1rem;
+  border: 1px solid var(--border); border-radius: 10px;
+  font-family: inherit; font-size: .95rem; color: var(--text);
+  background: #fff; transition: border .2s, box-shadow .2s;
+}
+.tpl-field input:focus, .tpl-field textarea:focus, .tpl-field select:focus {
+  outline: none; border-color: var(--brand);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent);
+}
+.tpl-field textarea { resize: vertical; min-height: 120px; }
+
+.tpl-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  background: var(--brand); color: #fff; border: 0;
+  padding: .9rem 1.6rem; border-radius: 10px;
+  font-family: inherit; font-weight: 600; font-size: .95rem;
+  cursor: pointer; transition: background .2s, transform .15s;
+}
+.tpl-btn:hover { background: var(--brand-dark); transform: translateY(-1px); }
+.tpl-btn.ghost { background: transparent; color: var(--brand); border: 1px solid var(--brand); }
+.tpl-btn.ghost:hover { background: var(--brand); color: #fff; }
+
+/* ── Stats ───────────────────────────────────────── */
+.tpl-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+  text-align: center;
+}
+@media (max-width: 700px) { .tpl-stats { grid-template-columns: repeat(2, 1fr); } }
+.tpl-stat .num {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 2.2rem; color: var(--brand);
+}
+.tpl-stat .label { font-size: .85rem; color: var(--text-mute); }
+
+/* ── Footer ──────────────────────────────────────── */
+.tpl-footer {
+  background: var(--accent); color: rgba(255,255,255,.65);
+  padding: 3rem 1.5rem 2rem; text-align: center;
+  font-size: .9rem; margin-top: 3rem;
+}
+.tpl-footer .tpl-logo { color: #fff; display: block; margin-bottom: .75rem; }
+.tpl-footer a { color: rgba(255,255,255,.65); margin: 0 .8rem; }
+.tpl-footer a:hover { color: #fff; }
+.tpl-footer .tpl-copy { margin-top: 1.5rem; font-size: .78rem; color: rgba(255,255,255,.4); }

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Estates — Find the home that finds you</title>
+<link rel="stylesheet" href="/templates/_shared/inner.css">
+<style>
+:root { --brand:#0EA5E9; --brand-dark:#0284c7; --brand-light:#38bdf8; --accent:#082F49; }
+.hero {
+  position:relative; min-height:88vh;
+  background: linear-gradient(135deg,#082F49 0%, #0c4a6e 50%, #0EA5E9 100%);
+  color:#fff; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background-image: radial-gradient(circle at 25% 30%, rgba(56,189,248,.25), transparent 50%),
+                    radial-gradient(circle at 75% 70%, rgba(255,255,255,.06), transparent 50%);
+}
+.hero-inner {
+  position:relative; max-width:1180px; margin:0 auto;
+  padding:9rem 1.5rem 5rem; display:grid; grid-template-columns:1.1fr 1fr; gap:3rem; align-items:center;
+}
+@media(max-width:900px){ .hero-inner{grid-template-columns:1fr; padding-top:7rem} }
+.hero h1 { font-family:var(--font-display); font-weight:800;
+  font-size:clamp(2.4rem, 5.5vw, 4rem); line-height:1.05; letter-spacing:-.02em }
+.hero h1 .accent { color:#7dd3fc; font-style:italic }
+.hero p { margin-top:1.4rem; max-width:520px; color:rgba(255,255,255,.78); font-size:1.1rem }
+.search {
+  margin-top:2.4rem; background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.18); border-radius:18px;
+  padding:1rem; backdrop-filter: blur(14px);
+  display:grid; grid-template-columns:2fr 1fr 1fr auto; gap:.6rem;
+}
+.search input, .search select {
+  background:transparent; border:0; color:#fff; padding:.7rem .9rem;
+  font:inherit; outline:none; border-radius:10px;
+}
+.search input::placeholder { color:rgba(255,255,255,.5) }
+.search select { background:rgba(255,255,255,.08) }
+.search button {
+  background:#fff; color:#0c4a6e; border:0; padding:.85rem 1.6rem;
+  border-radius:10px; font-weight:700; cursor:pointer;
+}
+@media(max-width:700px){ .search{grid-template-columns:1fr} }
+.hero-card {
+  background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
+  border-radius:24px; padding:1.5rem; backdrop-filter: blur(16px);
+}
+.hero-card .img {
+  aspect-ratio:4/3; border-radius:14px;
+  background: linear-gradient(135deg,#7dd3fc,#0c4a6e);
+  margin-bottom:1.2rem; position:relative; overflow:hidden;
+}
+.hero-card .img::after {
+  content:''; position:absolute; inset:0;
+  background-image: radial-gradient(circle at 30% 40%, rgba(255,255,255,.25), transparent 50%);
+}
+.hero-card .price { font-size:1.7rem; font-weight:800; color:#fff }
+.hero-card .addr { color:rgba(255,255,255,.7); font-size:.9rem; margin-top:.2rem }
+.hero-card .meta { display:flex; gap:1.2rem; margin-top:.9rem; font-size:.85rem; color:rgba(255,255,255,.6) }
+.featured { padding:6rem 1.5rem; background:#fff }
+.f-inner { max-width:1180px; margin:0 auto }
+.f-head { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:2.5rem; flex-wrap:wrap; gap:1rem }
+.f-head h2 { font-family:var(--font-display); font-size:2.4rem; font-weight:800; color:#082F49; letter-spacing:-.01em }
+.f-head p { color:#475569; max-width:480px; margin-top:.5rem }
+.listings { display:grid; grid-template-columns:repeat(3,1fr); gap:1.6rem }
+@media(max-width:900px){.listings{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.listings{grid-template-columns:1fr}}
+.listing {
+  background:#fff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden;
+  transition: transform .25s, box-shadow .25s;
+}
+.listing:hover { transform:translateY(-4px); box-shadow:0 16px 48px rgba(8,47,73,.12) }
+.listing .pic {
+  aspect-ratio:4/3; background: linear-gradient(135deg,#7dd3fc,#0c4a6e); position:relative;
+}
+.listing .pic .badge {
+  position:absolute; top:1rem; left:1rem;
+  background:#fff; color:#0c4a6e; padding:.3rem .8rem; border-radius:999px;
+  font-size:.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+}
+.listing .body { padding:1.4rem }
+.listing .price { font-weight:800; font-size:1.4rem; color:#082F49 }
+.listing .addr { color:#64748b; font-size:.92rem; margin-top:.2rem }
+.listing .meta { display:flex; gap:1rem; margin-top:.9rem; font-size:.82rem; color:#94a3b8 }
+.cta-band {
+  background: linear-gradient(135deg,#082F49,#0c4a6e); color:#fff;
+  padding:5rem 1.5rem; text-align:center;
+}
+.cta-band h2 { font-size:2.2rem; font-weight:800; max-width:680px; margin:0 auto }
+.cta-band p { margin:1rem auto 2rem; color:rgba(255,255,255,.75); max-width:520px }
+.cta-band .tpl-btn { background:#fff; color:#082F49 }
+.cta-band .tpl-btn:hover { background:#e0f2fe }
+</style>
+</head>
+<body>
+
+<nav class="tpl-nav" style="background:rgba(8,47,73,.85);border-color:rgba(255,255,255,.12)">
+  <div class="tpl-nav-inner">
+    <a href="index.html" class="tpl-logo" style="color:#fff">Prime<span>.</span></a>
+    <div class="tpl-nav-links">
+      <a href="index.html" class="active" style="color:rgba(255,255,255,.85)">Home</a>
+      <a href="listings.html" style="color:rgba(255,255,255,.85)">Listings</a>
+      <a href="about.html" style="color:rgba(255,255,255,.85)">About</a>
+      <a href="contact.html" class="tpl-nav-cta">Schedule a Tour</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1>Find the home that <span class="accent">finds you</span>.</h1>
+      <p>Hand-picked listings, neighborhood guides, and an agent who actually picks up the phone. Welcome to a smarter way to move.</p>
+      <div class="search">
+        <input placeholder="City, neighborhood, or ZIP">
+        <select><option>Buy</option><option>Rent</option></select>
+        <select><option>Any price</option><option>$200K+</option><option>$500K+</option><option>$1M+</option></select>
+        <button>Search →</button>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="img"></div>
+      <div class="price">$ 685,000</div>
+      <div class="addr">42 Cedar Ridge, Hillview Park</div>
+      <div class="meta"><span>4 beds</span><span>3 baths</span><span>2,400 sqft</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="featured">
+  <div class="f-inner">
+    <div class="f-head">
+      <div>
+        <h2>Featured listings</h2>
+        <p>Curated by our agents, refreshed weekly. Click any listing to schedule a private tour.</p>
+      </div>
+      <a href="listings.html" class="tpl-btn ghost">Browse all →</a>
+    </div>
+    <div class="listings">
+      <div class="listing"><div class="pic"><div class="badge">New</div></div><div class="body"><div class="price">$ 525,000</div><div class="addr">18 Maple Avenue, Downtown</div><div class="meta"><span>3 beds</span><span>2 baths</span><span>1,750 sqft</span></div></div></div>
+      <div class="listing"><div class="pic"><div class="badge">Open House</div></div><div class="body"><div class="price">$ 1,295,000</div><div class="addr">7 Crestview Drive, North Hills</div><div class="meta"><span>5 beds</span><span>4 baths</span><span>3,800 sqft</span></div></div></div>
+      <div class="listing"><div class="pic"><div class="badge">Just Listed</div></div><div class="body"><div class="price">$ 410,000</div><div class="addr">203 Birch Street, Riverside</div><div class="meta"><span>2 beds</span><span>2 baths</span><span>1,250 sqft</span></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <h2>Thinking of selling? Let’s talk numbers.</h2>
+  <p>Free, no-obligation home valuation in 24 hours from a local expert.</p>
+  <a href="contact.html" class="tpl-btn">Get my home value</a>
+</section>
+
+<footer class="tpl-footer">
+  <div class="tpl-logo">Prime Estates</div>
+  <div><a href="index.html">Home</a><a href="listings.html">Listings</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+  <div class="tpl-copy">© 2025 Prime Estates. Built with Cubico.</div>
+</footer>
+
+</body>
+</html>

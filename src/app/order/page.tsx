@@ -14,7 +14,8 @@ import {
   X,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
-import { TEMPLATES, type Template } from '@/components/TemplatePreview';
+import { TEMPLATES, type Template } from '@/data/templates';
+import TemplateThumb from '@/components/TemplateThumb';
 
 const STORAGE_KEY = 'cubico_order_draft';
 
@@ -423,18 +424,17 @@ function OrderFlow() {
                         : 'border-white/10 hover:border-white/20'
                     }`}
                   >
-                    <div
-                      className="aspect-[16/10] flex items-end p-4"
-                      style={{ background: t.gradient }}
-                    >
-                      <div>
+                    <div className="aspect-[16/10] relative overflow-hidden">
+                      <TemplateThumb template={t} className="absolute inset-0" />
+                      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/40 to-transparent pointer-events-none" />
+                      <div className="absolute bottom-3 left-3 right-3">
                         <span
                           className="inline-block px-2 py-0.5 rounded text-[9px] font-body font-medium uppercase tracking-wider mb-1"
                           style={{ backgroundColor: t.color + '30', color: t.color }}
                         >
                           {t.industry}
                         </span>
-                        <h3 className="font-display font-bold text-white text-base">
+                        <h3 className="font-display font-bold text-white text-base drop-shadow-lg">
                           {t.name}
                         </h3>
                       </div>

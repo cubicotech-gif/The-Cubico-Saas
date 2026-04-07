@@ -106,6 +106,12 @@ export default function Navbar() {
           >
             Services
           </a>
+          <Link
+            href="/templates"
+            className="text-surface-400 hover:text-white transition-colors"
+          >
+            Templates
+          </Link>
           <a
             href="#about"
             className="text-surface-400 hover:text-white transition-colors"
@@ -229,6 +235,13 @@ export default function Navbar() {
           >
             Services
           </a>
+          <Link
+            href="/templates"
+            className="block py-2 text-surface-300 hover:text-white"
+            onClick={() => setMenuOpen(false)}
+          >
+            Templates
+          </Link>
           <a
             href="#about"
             className="block py-2 text-surface-300 hover:text-white"

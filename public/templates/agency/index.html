@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northwind Studio — Brands built with intent</title>
+<link rel="stylesheet" href="/templates/_shared/inner.css">
+<style>
+:root { --brand:#F59E0B; --brand-dark:#d97706; --brand-light:#fbbf24; --accent:#1C1917; }
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&display=swap');
+body { background:#1C1917; color:#fafaf9 }
+h1, h2, .display { font-family:'Fraunces',serif }
+
+.tpl-nav { background:rgba(28,25,23,.85); border-color:rgba(255,255,255,.08) }
+.tpl-logo { color:#fff; font-family:'Fraunces',serif; font-size:1.4rem }
+.tpl-logo span { color:#F59E0B }
+.tpl-nav-links a { color:rgba(255,255,255,.65) }
+.tpl-nav-links a:hover, .tpl-nav-links a.active { color:#F59E0B }
+
+.hero {
+  position:relative; min-height:92vh;
+  background: #1C1917;
+  display:flex; align-items:center; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-30%; left:-10%; width:80%; height:140%;
+  background: radial-gradient(circle, rgba(245,158,11,.14), transparent 55%);
+}
+.hero-inner {
+  position:relative; max-width:1280px; margin:0 auto;
+  padding:9rem 2rem 5rem; width:100%;
+}
+.hero .eyebrow {
+  display:inline-block; font-size:.78rem; font-weight:700;
+  letter-spacing:.22em; text-transform:uppercase; color:#F59E0B;
+  padding-left:3rem; position:relative; margin-bottom:2rem;
+}
+.hero .eyebrow::before {
+  content:''; position:absolute; left:0; top:50%; width:2.4rem; height:1px; background:#F59E0B;
+}
+.hero h1 {
+  font-family:'Fraunces',serif; font-weight:400;
+  font-size:clamp(3rem, 9vw, 7.5rem); line-height:.95; color:#fff;
+  letter-spacing:-.03em; max-width:900px;
+}
+.hero h1 em { font-style:italic; color:#F59E0B; font-weight:500 }
+.hero p {
+  margin-top:2rem; max-width:520px; color:rgba(255,255,255,.6); font-size:1.15rem; line-height:1.7;
+}
+.hero .actions { margin-top:2.6rem; display:flex; gap:1rem; align-items:center; flex-wrap:wrap }
+.hero .tpl-btn { padding:1rem 2rem }
+.hero .play { color:rgba(255,255,255,.6); font-size:.92rem; display:flex; align-items:center; gap:.6rem }
+.hero .play .dot { width:36px; height:36px; border:1px solid rgba(255,255,255,.25); border-radius:50%; display:flex; align-items:center; justify-content:center }
+
+.marquee {
+  background:#0c0a09; padding:2rem 0; overflow:hidden; border-top:1px solid rgba(255,255,255,.06); border-bottom:1px solid rgba(255,255,255,.06);
+}
+.marquee-track {
+  display:flex; gap:4rem; animation: m 28s linear infinite;
+  font-family:'Fraunces',serif; font-size:1.6rem; color:rgba(255,255,255,.4); white-space:nowrap;
+}
+@keyframes m { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.marquee-track span { display:flex; align-items:center; gap:4rem }
+.marquee-track span::after { content:'✦'; color:#F59E0B }
+
+.work { padding:7rem 2rem }
+.w-inner { max-width:1280px; margin:0 auto }
+.w-head { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:3rem; flex-wrap:wrap; gap:1rem }
+.w-head h2 { font-size:3.6rem; color:#fff; max-width:520px }
+.w-head h2 em { font-style:italic; color:#F59E0B }
+.w-head p { color:rgba(255,255,255,.55); max-width:380px }
+.w-grid { display:grid; grid-template-columns:1.4fr 1fr; gap:1.6rem }
+@media(max-width:900px){.w-grid{grid-template-columns:1fr}}
+.w-card { position:relative; aspect-ratio:4/3; border-radius:18px; overflow:hidden; cursor:pointer }
+.w-card:nth-child(1) { grid-row: span 2; aspect-ratio:auto }
+.w-card .bg {
+  position:absolute; inset:0;
+  background: linear-gradient(135deg,#F59E0B,#1C1917);
+  transition: transform .6s ease;
+}
+.w-card:hover .bg { transform:scale(1.04) }
+.w-card .meta {
+  position:absolute; bottom:1.6rem; left:1.6rem; right:1.6rem; color:#fff;
+}
+.w-card .tag { font-size:.72rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:#fbbf24; margin-bottom:.4rem; display:block }
+.w-card .title { font-family:'Fraunces',serif; font-size:1.6rem; line-height:1.1 }
+
+.cta { padding:6rem 2rem; background:#0c0a09; text-align:center }
+.cta h2 { font-size:3.4rem; color:#fff; max-width:780px; margin:0 auto }
+.cta h2 em { font-style:italic; color:#F59E0B }
+.cta p { margin:1rem auto 2.4rem; color:rgba(255,255,255,.55); max-width:520px }
+
+.tpl-footer { background:#000 }
+</style>
+</head>
+<body>
+
+<nav class="tpl-nav">
+  <div class="tpl-nav-inner">
+    <a href="index.html" class="tpl-logo">Northwind<span>.</span></a>
+    <div class="tpl-nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="work.html">Work</a>
+      <a href="about.html">About</a>
+      <a href="contact.html" class="tpl-nav-cta">Start a Project</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Brand · Identity · Digital</div>
+    <h1>Brands built<br>with <em>intent.</em></h1>
+    <p>An independent studio of strategists, designers, and writers who only take on work we genuinely want to make. No filler. No fluff. No reels.</p>
+    <div class="actions">
+      <a href="contact.html" class="tpl-btn">Start a project →</a>
+      <a href="work.html" class="play"><span class="dot">▶</span> See our work</a>
+    </div>
+  </div>
+</section>
+
+<div class="marquee">
+  <div class="marquee-track">
+    <span>Brand Strategy</span><span>Identity Design</span><span>Editorial</span><span>Web & Product</span><span>Film & Photography</span><span>Brand Strategy</span><span>Identity Design</span><span>Editorial</span><span>Web & Product</span><span>Film & Photography</span>
+  </div>
+</div>
+
+<section class="work">
+  <div class="w-inner">
+    <div class="w-head">
+      <h2>Selected <em>work</em></h2>
+      <p>A handful of recent projects we’re proud of. There’s more in the archive — ask us.</p>
+    </div>
+    <div class="w-grid">
+      <div class="w-card"><div class="bg"></div><div class="meta"><span class="tag">Hospitality · 2024</span><div class="title">Maison Verde — A garden hotel rebrand</div></div></div>
+      <div class="w-card"><div class="bg" style="background:linear-gradient(135deg,#fbbf24,#92400e)"></div><div class="meta"><span class="tag">Spirits · 2024</span><div class="title">Mezcal Aurora — Identity</div></div></div>
+      <div class="w-card"><div class="bg" style="background:linear-gradient(135deg,#1C1917,#F59E0B)"></div><div class="meta"><span class="tag">SaaS · 2025</span><div class="title">Atlas Cloud — Marketing site</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Have a <em>brief</em>?<br>Let’s read it together.</h2>
+  <p>30-minute discovery calls every Tuesday. No deck, no homework — just a real conversation.</p>
+  <a href="contact.html" class="tpl-btn">Book a call</a>
+</section>
+
+<footer class="tpl-footer">
+  <div class="tpl-logo" style="color:#fff">Northwind Studio</div>
+  <div><a href="index.html">Home</a><a href="work.html">Work</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+  <div class="tpl-copy">© 2025 Northwind Studio. Built with Cubico.</div>
+</footer>
+
+</body>
+</html>
