@@ -13,7 +13,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     .single();
 
   if (error || !data) return seedSettings;
-  return data as SiteSettings;
+  // Merge with seed defaults so any new field added later doesn't crash the UI
+  // before the migration is run.
+  return { ...seedSettings, ...(data as Partial<SiteSettings>) } as SiteSettings;
 }
 
 export async function updateSiteSettings(
@@ -163,5 +165,89 @@ export async function deleteService(id: string): Promise<boolean> {
   if (!supabase) return false;
 
   const { error } = await supabase.from('services').delete().eq('id', id);
+  return !error;
+}
+
+// ── Homepage services ────────────────────────────────────────────────────────
+
+export async function getHomeServices(): Promise<Service[]> {
+  if (!supabase) {
+    return seedServices
+      .filter((s) => s.is_active && s.show_on_home)
+      .sort((a, b) => (a.home_order ?? 0) - (b.home_order ?? 0));
+  }
+
+  const { data, error } = await supabase
+    .from('services')
+    .select('*')
+    .eq('is_active', true)
+    .eq('show_on_home', true)
+    .order('home_order', { ascending: true });
+
+  if (error || !data) return [];
+  return data as Service[];
+}
+
+// ── Per-service video upload (stored in the existing 'media' bucket) ─────────
+
+const SERVICE_VIDEO_BUCKET = 'media';
+
+export async function uploadServiceVideo(
+  serviceId: string,
+  file: File
+): Promise<string | null> {
+  if (!supabase) return null;
+
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? 'mp4';
+  const path = `services/${serviceId}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from(SERVICE_VIDEO_BUCKET)
+    .upload(path, file, { upsert: true, cacheControl: '3600', contentType: file.type });
+
+  if (uploadError) {
+    console.error('Service video upload failed:', uploadError);
+    return null;
+  }
+
+  // Cache-bust so the browser picks up the replacement immediately
+  const { data: urlData } = supabase.storage.from(SERVICE_VIDEO_BUCKET).getPublicUrl(path);
+  const publicUrl = `${urlData.publicUrl}?v=${Date.now()}`;
+
+  const { error: updateError } = await supabase
+    .from('services')
+    .update({ home_video_url: publicUrl, updated_at: new Date().toISOString() })
+    .eq('id', serviceId);
+
+  if (updateError) {
+    console.error('Saving home_video_url failed:', updateError);
+    return null;
+  }
+
+  return publicUrl;
+}
+
+export async function deleteServiceVideo(
+  serviceId: string,
+  currentUrl: string | null | undefined
+): Promise<boolean> {
+  if (!supabase) return false;
+
+  if (currentUrl) {
+    // Strip the cache-busting query and any leading bucket URL prefix
+    const cleaned = currentUrl.split('?')[0];
+    const marker = `/${SERVICE_VIDEO_BUCKET}/`;
+    const idx = cleaned.indexOf(marker);
+    if (idx !== -1) {
+      const path = cleaned.substring(idx + marker.length);
+      await supabase.storage.from(SERVICE_VIDEO_BUCKET).remove([path]);
+    }
+  }
+
+  const { error } = await supabase
+    .from('services')
+    .update({ home_video_url: null, updated_at: new Date().toISOString() })
+    .eq('id', serviceId);
+
   return !error;
 }
