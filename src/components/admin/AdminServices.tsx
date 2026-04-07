@@ -122,6 +122,7 @@ function ServiceRow({
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function handleSave() {
@@ -146,9 +147,13 @@ function ServiceRow({
 
   async function handleVideoUpload(file: File) {
     setUploading(true);
+    setUploadError('');
     try {
       const url = await uploadServiceVideo(service.id, file);
-      if (url) onPatch({ home_video_url: url });
+      onPatch({ home_video_url: url });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Upload failed.';
+      setUploadError(msg);
     } finally {
       setUploading(false);
     }
@@ -156,9 +161,14 @@ function ServiceRow({
 
   async function handleVideoDelete() {
     setUploading(true);
+    setUploadError('');
     try {
       const ok = await deleteServiceVideo(service.id, service.home_video_url);
-      if (ok) onPatch({ home_video_url: null });
+      if (ok) {
+        onPatch({ home_video_url: null });
+      } else {
+        setUploadError('Failed to remove the video.');
+      }
     } finally {
       setUploading(false);
     }
@@ -353,6 +363,12 @@ function ServiceRow({
                 <p className="text-[10px] text-surface-600 font-body">
                   MP4 / WebM, max 50 MB. Looped, muted, autoplay.
                 </p>
+                {uploadError && (
+                  <p className="text-[11px] text-rose-400 font-body flex items-center gap-1 mt-1">
+                    <AlertCircle size={11} />
+                    {uploadError}
+                  </p>
+                )}
               </div>
               <input
                 ref={fileRef}
