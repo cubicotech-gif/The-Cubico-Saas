@@ -191,12 +191,29 @@ export async function getHomeServices(): Promise<Service[]> {
 // ── Per-service video upload (stored in the existing 'media' bucket) ─────────
 
 const SERVICE_VIDEO_BUCKET = 'media';
+const SERVICE_VIDEO_MAX_BYTES = 50 * 1024 * 1024; // matches the bucket file_size_limit
+const SERVICE_VIDEO_ALLOWED_TYPES = ['video/mp4', 'video/webm'];
 
 export async function uploadServiceVideo(
   serviceId: string,
   file: File
-): Promise<string | null> {
-  if (!supabase) return null;
+): Promise<string> {
+  if (!supabase) {
+    throw new Error('Supabase is not configured.');
+  }
+
+  // Client-side validation so the user gets a clear error instead of a silent
+  // storage rejection.
+  if (!file.type.startsWith('video/')) {
+    throw new Error('Please choose a video file.');
+  }
+  if (!SERVICE_VIDEO_ALLOWED_TYPES.includes(file.type)) {
+    throw new Error('Only MP4 or WebM videos are allowed.');
+  }
+  if (file.size > SERVICE_VIDEO_MAX_BYTES) {
+    const mb = Math.round(file.size / (1024 * 1024));
+    throw new Error(`File is ${mb} MB — the limit is 50 MB.`);
+  }
 
   const ext = file.name.split('.').pop()?.toLowerCase() ?? 'mp4';
   const path = `services/${serviceId}.${ext}`;
@@ -206,8 +223,7 @@ export async function uploadServiceVideo(
     .upload(path, file, { upsert: true, cacheControl: '3600', contentType: file.type });
 
   if (uploadError) {
-    console.error('Service video upload failed:', uploadError);
-    return null;
+    throw new Error(uploadError.message || 'Upload to storage failed.');
   }
 
   // Cache-bust so the browser picks up the replacement immediately
@@ -220,8 +236,7 @@ export async function uploadServiceVideo(
     .eq('id', serviceId);
 
   if (updateError) {
-    console.error('Saving home_video_url failed:', updateError);
-    return null;
+    throw new Error(`Saved video but failed to attach it to the service: ${updateError.message}`);
   }
 
   return publicUrl;
