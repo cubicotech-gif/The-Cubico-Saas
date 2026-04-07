@@ -6,8 +6,6 @@ import { useRouter } from 'next/navigation';
 import {
   Settings,
   Box,
-  ExternalLink,
-  Eye,
   AlertCircle,
   ImageIcon,
   Upload,
@@ -20,18 +18,11 @@ import {
   LogOut,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
-import { seedServices, seedSettings } from '@/data/seeds';
 import { MEDIA_SLOTS, getSlotsBySection } from '@/lib/media';
 import type { MediaSlot, MediaAsset } from '@/lib/media';
-import type { Service, SiteSettings } from '@/lib/types';
 import AdminOrders from '@/components/admin/AdminOrders';
-
-const categoryLabels: Record<string, string> = {
-  institution: 'Institution',
-  healthcare: 'Healthcare',
-  individual: 'Individual',
-  creative: 'Creative',
-};
+import AdminServices from '@/components/admin/AdminServices';
+import AdminSettings from '@/components/admin/AdminSettings';
 
 // ── Media Upload Card ────────────────────────────────────────────────────────
 
@@ -180,8 +171,6 @@ export default function AdminPanel({ currentUserId }: { currentUserId: string })
   const router = useRouter();
   const supabase = createClient();
   const [tab, setTab] = useState<'orders' | 'services' | 'media' | 'settings'>('orders');
-  const [services] = useState<Service[]>(seedServices);
-  const [settings] = useState<SiteSettings>(seedSettings);
   const [hasSupabase, setHasSupabase] = useState(false);
   const [mediaAssets, setMediaAssets] = useState<Record<string, MediaAsset>>({});
   const [mediaLoading, setMediaLoading] = useState(false);
@@ -341,81 +330,7 @@ export default function AdminPanel({ currentUserId }: { currentUserId: string })
 
         {tab === 'orders' && <AdminOrders hasSupabase={hasSupabase} currentUserId={currentUserId} />}
 
-        {tab === 'services' && (
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-display font-semibold text-white">
-                Services ({services.length})
-              </h2>
-              {!hasSupabase && (
-                <span className="text-xs text-surface-500 font-body">
-                  Read-only without Supabase
-                </span>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              {services.map((service) => (
-                <div
-                  key={service.id}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-surface-900 border border-surface-800"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <p className="font-medium text-white text-sm font-body truncate">
-                        {service.title}
-                      </p>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-surface-800 text-surface-400 font-body whitespace-nowrap">
-                        {categoryLabels[service.category]}
-                      </span>
-                      <span
-                        className={`text-xs px-2 py-0.5 rounded-full font-body whitespace-nowrap ${
-                          service.link_type === 'external'
-                            ? 'bg-amber-950/50 text-amber-400'
-                            : 'bg-brand-950 text-brand-400'
-                        }`}
-                      >
-                        {service.link_type}
-                      </span>
-                    </div>
-                    <p className="text-xs text-surface-500 font-body truncate">
-                      {service.description}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {service.link_type === 'internal' && service.slug ? (
-                      <Link
-                        href={`/services/${service.slug}`}
-                        target="_blank"
-                        className="p-1.5 text-surface-500 hover:text-white transition-colors"
-                        title="Preview"
-                      >
-                        <Eye size={15} />
-                      </Link>
-                    ) : (
-                      <a
-                        href={service.link_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-1.5 text-surface-500 hover:text-white transition-colors"
-                        title="Visit"
-                      >
-                        <ExternalLink size={15} />
-                      </a>
-                    )}
-                    <div
-                      className={`w-2 h-2 rounded-full ${
-                        service.is_active ? 'bg-emerald-400' : 'bg-surface-600'
-                      }`}
-                      title={service.is_active ? 'Active' : 'Inactive'}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {tab === 'services' && <AdminServices hasSupabase={hasSupabase} />}
 
         {tab === 'media' && (
           <div>
@@ -493,59 +408,7 @@ export default function AdminPanel({ currentUserId }: { currentUserId: string })
           </div>
         )}
 
-        {tab === 'settings' && (
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-display font-semibold text-white">
-                Site Settings
-              </h2>
-              {!hasSupabase && (
-                <span className="text-xs text-surface-500 font-body">
-                  Read-only without Supabase
-                </span>
-              )}
-            </div>
-
-            <div className="max-w-xl space-y-4">
-              {(
-                [
-                  ['hero_title', 'Hero Title'],
-                  ['hero_subtitle', 'Hero Subtitle'],
-                  ['contact_whatsapp', 'WhatsApp Number'],
-                  ['contact_email', 'Contact Email'],
-                  ['footer_text', 'Footer Text'],
-                ] as [keyof SiteSettings, string][]
-              ).map(([key, label]) => (
-                <div key={key}>
-                  <label className="block text-xs text-surface-500 font-body mb-1.5 uppercase tracking-widest">
-                    {label}
-                  </label>
-                  {key === 'hero_subtitle' || key === 'footer_text' ? (
-                    <textarea
-                      defaultValue={settings[key]}
-                      disabled={!hasSupabase}
-                      rows={3}
-                      className="w-full px-4 py-3 bg-surface-900 border border-surface-700 rounded-xl text-white font-body text-sm outline-none disabled:opacity-50 resize-none"
-                    />
-                  ) : (
-                    <input
-                      type="text"
-                      defaultValue={settings[key]}
-                      disabled={!hasSupabase}
-                      className="w-full px-4 py-3 bg-surface-900 border border-surface-700 rounded-xl text-white font-body text-sm outline-none disabled:opacity-50"
-                    />
-                  )}
-                </div>
-              ))}
-
-              {hasSupabase && (
-                <button className="px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-xl transition-colors font-body text-sm">
-                  Save Changes
-                </button>
-              )}
-            </div>
-          </div>
-        )}
+        {tab === 'settings' && <AdminSettings hasSupabase={hasSupabase} />}
       </div>
     </div>
   );

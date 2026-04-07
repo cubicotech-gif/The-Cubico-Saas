@@ -4,6 +4,33 @@ export const seedSettings: SiteSettings = {
   hero_title: 'We Build Digital Products That Grow Businesses',
   hero_subtitle:
     'Websites, portals, CRMs, and marketing — engineered with brand psychology, clean code, and conversion science. Globally.',
+  hero_eyebrow: 'Web · Portals · CRM · Marketing',
+  hero_cta_primary_label: 'Explore Services',
+  hero_cta_primary_url: '#services',
+  hero_cta_secondary_label: 'Talk to Us',
+  hero_cta_secondary_url: '',
+  services_eyebrow: 'What We Build',
+  services_title: 'Digital solutions that drive real growth',
+  services_subtitle:
+    'From websites to CRMs — every product is engineered with brand psychology, clean code, and conversion science.',
+  about_eyebrow: 'About Cubico',
+  about_title: 'Design meets science. Code meets strategy.',
+  about_body:
+    'Cubico Technologies is a global software company headquartered in Pakistan. We build websites, portals, CRMs, and marketing systems for businesses that want to grow — not just exist online. Every product shares the same DNA — brand-first design, psychology-driven UX, blazing performance, and the flexibility to scale with your ambition.',
+  about_cta_label: 'Get in touch',
+  about_cta_url: 'mailto:hello@cubico.tech',
+  stats: [
+    { icon: 'Building2', value: '50+', label: 'Projects delivered' },
+    { icon: 'Users', value: '10k+', label: 'Active users' },
+    { icon: 'Globe', value: '12+', label: 'Countries reached' },
+    { icon: 'Award', value: '5+', label: 'Years in market' },
+  ],
+  mini_features: [
+    { icon: 'Palette', text: 'Brand-first design' },
+    { icon: 'Zap', text: 'Blazing fast' },
+    { icon: 'Shield', text: 'Secure & maintained' },
+    { icon: 'BarChart2', text: 'Data-driven' },
+  ],
   contact_whatsapp: '+923001234567',
   contact_email: 'hello@cubico.tech',
   footer_text: '© 2026 Cubico Technologies. Headquartered in Pakistan, serving clients globally.',
