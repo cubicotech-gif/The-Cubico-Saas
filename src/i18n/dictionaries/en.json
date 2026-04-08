@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "siteName": "Cubico Technologies",
+    "tagline": "Enterprise software for institutions, healthcare, and businesses.",
+    "description": "Cubico Technologies delivers enterprise-grade software for institutions, healthcare providers, and growing businesses across Pakistan."
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "templates": "Templates",
+    "order": "Get Website",
+    "login": "Sign In",
+    "dashboard": "Dashboard"
+  },
+  "home": {
+    "heroEyebrow": "Enterprise software, done right",
+    "heroTitle": "Software that moves your business forward",
+    "heroSubtitle": "From hospital management to e-commerce websites — built by a team that actually ships.",
+    "heroCtaPrimary": "Get Your Website",
+    "heroCtaSecondary": "See Our Work"
+  },
+  "footer": {
+    "copyright": "© {year} Cubico Technologies. All rights reserved.",
+    "madeIn": "Made in Karachi, Pakistan"
+  },
+  "order": {
+    "stepTemplate": "Template",
+    "stepBusiness": "Business",
+    "stepAssets": "Assets",
+    "stepContact": "Contact",
+    "stepPlan": "Plan",
+    "stepReview": "Review",
+    "pickPlanTitle": "Pick Your Plan",
+    "pickPlanSub": "Choose what fits — you can upgrade anytime later.",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit Order"
+  },
+  "localeSwitcher": {
+    "label": "Language"
+  }
+}
