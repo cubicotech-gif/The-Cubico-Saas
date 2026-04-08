@@ -6,6 +6,7 @@ import Link from 'next/link';
 import * as Icons from 'lucide-react';
 import { ArrowRight, Film, Play } from 'lucide-react';
 import type { Service, SiteSettings, MiniFeature, HomeAccent } from '@/lib/types';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 interface HomeServicesShowcaseProps {
   services: Service[];
@@ -45,6 +46,7 @@ function getAccent(svc: Service) {
 
 export default function HomeServicesBento({ services, settings }: HomeServicesShowcaseProps) {
   const reducedMotion = useReducedMotion();
+  const { locale, dict } = useLocale();
 
   const [active, setActive] = useState(0);
   // Click-pause and hover-pause are tracked separately so click-pause survives
@@ -102,7 +104,7 @@ export default function HomeServicesBento({ services, settings }: HomeServicesSh
   const current = services[active];
   const a = getAccent(current);
   const isInternal = current.link_type === 'internal' && current.slug;
-  const currentHref = isInternal ? `/services/${current.slug}` : current.link_url;
+  const currentHref = isInternal ? `/${locale}/services/${current.slug}` : current.link_url;
 
   return (
     <section
@@ -143,7 +145,11 @@ export default function HomeServicesBento({ services, settings }: HomeServicesSh
         {/* ── Showcase: tabs (left) + video preview (right) ───────── */}
         <div className="grid lg:grid-cols-[minmax(0,360px)_1fr] gap-6 lg:gap-10 items-start">
           {/* Tabs */}
-          <div className="space-y-2 order-2 lg:order-1" role="tablist" aria-label="Services">
+          <div
+            className="space-y-2 order-2 lg:order-1"
+            role="tablist"
+            aria-label={dict.home.servicesAriaLabel}
+          >
             {services.map((svc, i) => {
               const sa = getAccent(svc);
               const Icon = getIcon(svc.icon);
@@ -234,13 +240,13 @@ export default function HomeServicesBento({ services, settings }: HomeServicesSh
                           loop
                           playsInline
                           preload={isActiveVideo ? 'auto' : 'metadata'}
-                          aria-label={`${svc.title} preview`}
+                          aria-label={dict.home.videoPreview.replace('{title}', svc.title)}
                         />
                       ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center text-surface-700">
                           <Film size={44} strokeWidth={1.4} />
                           <p className="text-[10px] font-body mt-2 tracking-[0.2em] uppercase">
-                            video coming soon
+                            {dict.home.videoComingSoon}
                           </p>
                         </div>
                       )}
@@ -261,7 +267,7 @@ export default function HomeServicesBento({ services, settings }: HomeServicesSh
                 <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-surface-950/80 to-transparent pointer-events-none" />
                 <div className="absolute bottom-3 left-3 flex items-center gap-1.5 px-2 py-1 rounded-full bg-surface-950/70 backdrop-blur-sm border border-surface-800 text-[10px] font-body text-surface-400">
                   <Play size={9} className={`${a.text} fill-current`} />
-                  Live preview
+                  {dict.home.livePreview}
                 </div>
               </div>
 
@@ -289,7 +295,7 @@ export default function HomeServicesBento({ services, settings }: HomeServicesSh
                         href={currentHref}
                         className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-surface-800 hover:bg-surface-700 ${a.text} text-sm font-body font-medium transition-colors flex-shrink-0`}
                       >
-                        Explore
+                        {dict.home.explore}
                         <ArrowRight size={14} />
                       </Link>
                     ) : (
@@ -299,7 +305,7 @@ export default function HomeServicesBento({ services, settings }: HomeServicesSh
                         rel="noopener noreferrer"
                         className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-surface-800 hover:bg-surface-700 ${a.text} text-sm font-body font-medium transition-colors flex-shrink-0`}
                       >
-                        Visit
+                        {dict.home.visit}
                         <ArrowRight size={14} />
                       </a>
                     )}

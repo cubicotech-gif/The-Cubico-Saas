@@ -6,6 +6,7 @@ import { X, ExternalLink, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { TEMPLATES, type Template } from '@/data/templates';
 import TemplateThumb from '@/components/TemplateThumb';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 // Re-exports for backwards compatibility with files that still import
 // `TEMPLATES` / `Template` from this module.
@@ -23,6 +24,7 @@ export function PreviewModal({
   template: Template;
   onClose: () => void;
 }) {
+  const { locale, dict } = useLocale();
   // Selected page within the template (Home / About / Services / Contact …)
   const [activePage, setActivePage] = useState(template.pages[0] ?? { label: 'Home', file: template.file });
 
@@ -52,7 +54,7 @@ export function PreviewModal({
               <button
                 onClick={onClose}
                 className="w-3 h-3 rounded-full bg-[#FF5F56] hover:bg-[#ff7b73] transition-colors"
-                aria-label="Close"
+                aria-label={dict.webdev.modalClose}
               />
               <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
               <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
@@ -65,10 +67,10 @@ export function PreviewModal({
           </div>
           <div className="flex items-center gap-2">
             <Link
-              href={`/order?template=${template.key}`}
+              href={`/${locale}/order?template=${template.key}`}
               className="flex items-center gap-1.5 px-4 py-1.5 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white text-xs font-body font-semibold rounded-lg transition-colors"
             >
-              Use This Template
+              {dict.webdev.modalUseTemplate}
               <ArrowRight size={12} />
             </Link>
             <a
@@ -78,12 +80,12 @@ export function PreviewModal({
               className="flex items-center gap-1 px-2.5 py-1 text-xs text-white/60 hover:text-white border border-white/10 rounded-md transition-colors"
             >
               <ExternalLink size={11} />
-              Open
+              {dict.webdev.modalOpen}
             </a>
             <button
               onClick={onClose}
               className="p-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
-              aria-label="Close"
+              aria-label={dict.webdev.modalClose}
             >
               <X size={16} />
             </button>
@@ -118,17 +120,19 @@ export function PreviewModal({
             // Re-key on page change so iframe reloads cleanly
             key={activePage.file}
             src={activePage.file}
-            title={`${template.name} — ${activePage.label}`}
+            title={dict.webdev.modalIframeTitle
+              .replace('{name}', template.name)
+              .replace('{page}', activePage.label)}
             className="w-full h-full border-0 bg-white"
             loading="lazy"
           />
           {/* Sticky bottom CTA bar */}
           <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 flex items-center justify-center pointer-events-none">
             <Link
-              href={`/order?template=${template.key}`}
+              href={`/${locale}/order?template=${template.key}`}
               className="pointer-events-auto inline-flex items-center gap-2 px-6 py-3 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-body font-semibold rounded-xl transition-all hover:scale-[1.02] text-sm shadow-lg shadow-[#FF6B4A]/25"
             >
-              Use This Template — Get Your Website
+              {dict.webdev.modalStickyCta}
               <ArrowRight size={16} />
             </Link>
           </div>
@@ -143,6 +147,7 @@ export function PreviewModal({
    ═══════════════════════════════════════════════════════════════════ */
 
 function MobileCards({ onPreview }: { onPreview: (t: Template) => void }) {
+  const { locale, dict } = useLocale();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
 
@@ -184,7 +189,7 @@ function MobileCards({ onPreview }: { onPreview: (t: Template) => void }) {
             <div className="p-4 bg-[#0F1D32]">
               <p className="text-xs text-surface-400 font-body line-clamp-1">{t.description}</p>
               <span className="inline-flex items-center gap-1 text-xs text-[#FF6B4A] font-body font-medium mt-2">
-                Preview Template
+                {dict.webdev.templatesPreviewMobile}
                 <ExternalLink size={10} />
               </span>
             </div>
@@ -205,16 +210,19 @@ function MobileCards({ onPreview }: { onPreview: (t: Template) => void }) {
             className={`h-1.5 rounded-full transition-all duration-300 ${
               active === i ? 'bg-[#FF6B4A] w-4' : 'bg-white/15 w-1.5'
             }`}
-            aria-label={`Template ${i + 1}`}
+            aria-label={dict.webdev.modalDotAria.replace('{index}', String(i + 1))}
           />
         ))}
       </div>
       <div className="lg:hidden flex justify-center mt-6">
         <Link
-          href="/templates"
+          href={`/${locale}/templates`}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 text-xs text-surface-300 hover:text-white font-body font-medium transition-colors"
         >
-          Browse all {TEMPLATES.length}+ templates
+          {dict.webdev.templatesBrowseAllMobile.replace(
+            '{count}',
+            String(TEMPLATES.length),
+          )}
           <ArrowRight size={12} />
         </Link>
       </div>
@@ -227,6 +235,7 @@ function MobileCards({ onPreview }: { onPreview: (t: Template) => void }) {
    ═══════════════════════════════════════════════════════════════════ */
 
 export default function TemplatePreview() {
+  const { locale, dict } = useLocale();
   const [preview, setPreview] = useState<Template | null>(null);
 
   return (
@@ -245,10 +254,10 @@ export default function TemplatePreview() {
           className="text-center mb-12 sm:mb-14"
         >
           <h2 className="text-3xl sm:text-4xl font-display font-bold text-white mb-3">
-            Pick a Template. Any Template.
+            {dict.webdev.templatesTitle}
           </h2>
           <p className="text-surface-500 font-body text-base sm:text-lg max-w-lg mx-auto">
-            Every industry. Every style. Click to preview live.
+            {dict.webdev.templatesSubtitle}
           </p>
         </motion.div>
 
@@ -291,7 +300,7 @@ export default function TemplatePreview() {
                   {t.description}
                 </p>
                 <span className="flex-shrink-0 ml-3 flex items-center gap-1 text-xs text-[#FF6B4A] font-body font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                  Preview
+                  {dict.webdev.templatesPreview}
                   <ExternalLink size={10} />
                 </span>
               </div>
@@ -307,10 +316,13 @@ export default function TemplatePreview() {
           className="hidden lg:flex justify-center mt-10"
         >
           <Link
-            href="/templates"
+            href={`/${locale}/templates`}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-sm text-surface-300 hover:text-white hover:border-white/20 font-body font-medium transition-colors"
           >
-            Browse the full library ({TEMPLATES.length}+ templates)
+            {dict.webdev.templatesBrowseFull.replace(
+              '{count}',
+              String(TEMPLATES.length),
+            )}
             <ArrowRight size={14} />
           </Link>
         </motion.div>

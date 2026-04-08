@@ -8,20 +8,154 @@
     "home": "Home",
     "services": "Services",
     "templates": "Templates",
+    "about": "About",
     "order": "Get Website",
     "login": "Sign In",
-    "dashboard": "Dashboard"
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "dashboard": "Dashboard",
+    "myOrders": "My Orders",
+    "accountSettings": "Account Settings",
+    "admin": "Admin",
+    "adminPanel": "Admin Panel",
+    "toggleMenu": "Toggle menu"
   },
   "home": {
     "heroEyebrow": "Enterprise software, done right",
     "heroTitle": "Software that moves your business forward",
     "heroSubtitle": "From hospital management to e-commerce websites — built by a team that actually ships.",
     "heroCtaPrimary": "Get Your Website",
-    "heroCtaSecondary": "See Our Work"
+    "heroCtaSecondary": "See Our Work",
+    "trustStrip": "Trusted by 50+ teams · Pakistan · UAE · UK · USA",
+    "servicesAriaLabel": "Services",
+    "videoComingSoon": "video coming soon",
+    "livePreview": "Live preview",
+    "explore": "Explore",
+    "visit": "Visit",
+    "videoPreview": "{title} preview"
   },
   "footer": {
     "copyright": "© {year} Cubico Technologies. All rights reserved.",
-    "madeIn": "Made in Karachi, Pakistan"
+    "madeIn": "Made in Karachi, Pakistan",
+    "brandDesc": "Websites, portals, CRMs, and marketing — engineered for businesses worldwide.",
+    "servicesHeader": "Services",
+    "contactHeader": "Contact",
+    "whatsapp": "WhatsApp",
+    "adminPanel": "Admin Panel",
+    "linkWebsiteDev": "Website Development",
+    "linkClientPortals": "Client Portals",
+    "linkCrmSystems": "CRM Systems",
+    "linkDigitalMarketing": "Digital Marketing"
+  },
+  "templates": {
+    "metaTitle": "Template Library — Cubico Technologies",
+    "metaDescription": "Browse our complete library of website templates. Every industry, every style. Click any template for a live preview, then start your project in minutes.",
+    "badge": "{count} templates · multi-page · live preview",
+    "heroTitle": "The Template Library",
+    "heroSubtitle": "Pick a starting point. Every template ships with a working homepage and supporting pages — we customize the rest.",
+    "searchPlaceholder": "Search by name, industry, tag…",
+    "searchClearAria": "Clear search",
+    "sortFeatured": "Featured",
+    "sortAz": "A → Z",
+    "sortCategory": "By category",
+    "filterAll": "All",
+    "emptyTitle": "No templates match \"{query}\"",
+    "emptyClear": "Clear filters",
+    "cardPreview": "Preview",
+    "footerHintQuestion": "Don't see what you need?",
+    "footerHintCta": "Tell us what you want — we'll build it"
+  },
+  "service": {
+    "backToServices": "Back to services",
+    "ctaWhatsapp": "Get Started on WhatsApp",
+    "whatsappMessage": "Hi, I'm interested in {title}",
+    "featuresTitle": "Everything you need",
+    "featuresSubtitle": "Built-in features that cover every workflow out of the box.",
+    "pricingTitle": "Simple, transparent pricing",
+    "pricingSubtitle": "No hidden fees. Cancel or upgrade any time.",
+    "mostPopular": "Most Popular",
+    "planGetStarted": "Get Started",
+    "planWhatsappMessage": "Hi, I'd like to know more about the {plan} plan for {service}",
+    "ctaReadyTitle": "Ready to get started?",
+    "ctaReadySubtitle": "Message us on WhatsApp and we'll have you up and running within days, not months.",
+    "ctaReadyButton": "Chat on WhatsApp"
+  },
+  "webdev": {
+    "heroTitle1": "Your Website.",
+    "heroTitle2": "Built by Humans.",
+    "heroTitle3": "Ready in Hours.",
+    "heroSubtitle": "No templates to fight. No subscriptions forever. No freelancer who vanishes. Just a team that builds it, launches it, and stays.",
+    "heroCta": "Get Your Website",
+    "heroTrustLine": "50+ websites built  ·  12+ countries  ·  98% client retention",
+    "templatesTitle": "Pick a Template. Any Template.",
+    "templatesSubtitle": "Every industry. Every style. Click to preview live.",
+    "templatesPreview": "Preview",
+    "templatesPreviewMobile": "Preview Template",
+    "templatesBrowseFull": "Browse the full library ({count}+ templates)",
+    "templatesBrowseAllMobile": "Browse all {count}+ templates",
+    "modalClose": "Close",
+    "modalUseTemplate": "Use This Template",
+    "modalOpen": "Open",
+    "modalStickyCta": "Use This Template — Get Your Website",
+    "modalIframeTitle": "{name} — {page}",
+    "modalDotAria": "Template {index}"
+  },
+  "webPricing": {
+    "title": "Simple, transparent pricing",
+    "subtitle": "Choose the plan that fits your needs. All plans include brand-oriented design with colour psychology principles.",
+    "detecting": "Detecting your location...",
+    "pricesInPkr": "Prices shown in PKR (Pakistan)",
+    "pricesInUsd": "Prices shown in USD (International)",
+    "oneTimeDev": "one-time development",
+    "perMonth": "/ month",
+    "ecommerceNote": "E-commerce functionality: +{amount} added to development cost",
+    "pickTier": "Pick {tier}",
+    "supportNote": "Starter plan includes 3 months of free adjustments after delivery. Growth and Professional plans include continuous support and updates for as long as you're subscribed.",
+    "tiers": {
+      "starter": {
+        "subtitle": "You bring domain & hosting",
+        "highlight": "No monthly fees",
+        "features": [
+          "Up to 4 pages",
+          "Basic content & layout",
+          "Mobile responsive design",
+          "Contact form integration",
+          "Basic SEO setup",
+          "3 months free adjustments",
+          "You provide domain & hosting"
+        ]
+      },
+      "growth": {
+        "subtitle": "We handle hosting",
+        "highlight": "Most Popular",
+        "features": [
+          "Up to 4 pages",
+          "Brand-aligned design",
+          "Mobile responsive",
+          "Contact form + WhatsApp widget",
+          "SEO optimised",
+          "3 months free adjustments",
+          "Managed hosting included",
+          "SSL certificate included"
+        ]
+      },
+      "professional": {
+        "subtitle": "We handle domain + hosting",
+        "highlight": "Full Service",
+        "features": [
+          "Up to 4 pages",
+          "Psychology-based design",
+          "Mobile responsive",
+          "Contact form + WhatsApp widget",
+          "Advanced SEO",
+          "Domain registration included",
+          "Managed hosting included",
+          "SSL + security headers",
+          "Continuous support & updates",
+          "Monthly performance reports"
+        ]
+      }
+    }
   },
   "order": {
     "stepTemplate": "Template",

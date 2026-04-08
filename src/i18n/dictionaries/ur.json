@@ -8,20 +8,154 @@
     "home": "Home",
     "services": "Services",
     "templates": "Templates",
+    "about": "About",
     "order": "Website Banwayen",
     "login": "Sign In",
-    "dashboard": "Dashboard"
+    "signUp": "Sign Up",
+    "signOut": "Logout",
+    "dashboard": "Dashboard",
+    "myOrders": "Meray Orders",
+    "accountSettings": "Account Settings",
+    "admin": "Admin",
+    "adminPanel": "Admin Panel",
+    "toggleMenu": "Menu khol ya band karein"
   },
   "home": {
     "heroEyebrow": "Enterprise software, sahi tareeqay se",
     "heroTitle": "Aisa software jo aap ke business ko aagay barhaye",
     "heroSubtitle": "Hospital management se le kar e-commerce website tak — aik aisi team jo waqai cheezain deliver karti hai.",
     "heroCtaPrimary": "Apni Website Banwayen",
-    "heroCtaSecondary": "Humara Kaam Dekhein"
+    "heroCtaSecondary": "Humara Kaam Dekhein",
+    "trustStrip": "50+ teams ka bharosa · Pakistan · UAE · UK · USA",
+    "servicesAriaLabel": "Services",
+    "videoComingSoon": "video jald hi aa rahi hai",
+    "livePreview": "Live preview",
+    "explore": "Dekhein",
+    "visit": "Visit karein",
+    "videoPreview": "{title} ka preview"
   },
   "footer": {
     "copyright": "© {year} Cubico Technologies. Sab haqooq mehfooz.",
-    "madeIn": "Karachi, Pakistan mein bani"
+    "madeIn": "Karachi, Pakistan mein bani",
+    "brandDesc": "Websites, portals, CRMs aur marketing — duniya bhar ke businesses ke liye banaye gaye.",
+    "servicesHeader": "Services",
+    "contactHeader": "Raabta",
+    "whatsapp": "WhatsApp",
+    "adminPanel": "Admin Panel",
+    "linkWebsiteDev": "Website Development",
+    "linkClientPortals": "Client Portals",
+    "linkCrmSystems": "CRM Systems",
+    "linkDigitalMarketing": "Digital Marketing"
+  },
+  "templates": {
+    "metaTitle": "Template Library — Cubico Technologies",
+    "metaDescription": "Humari mukammal website templates ki library dekhein. Har industry, har style. Kisi bhi template par click karein live preview ke liye, phir minute mein apna project shuru karein.",
+    "badge": "{count} templates · multi-page · live preview",
+    "heroTitle": "Template Library",
+    "heroSubtitle": "Aik starting point chunein. Har template working homepage aur supporting pages ke saath aati hai — baaqi hum customize kar dete hain.",
+    "searchPlaceholder": "Name, industry, ya tag se dhoondein…",
+    "searchClearAria": "Search clear karein",
+    "sortFeatured": "Featured",
+    "sortAz": "A → Z",
+    "sortCategory": "Category ke hisaab se",
+    "filterAll": "Sab",
+    "emptyTitle": "\"{query}\" se koi template match nahi hua",
+    "emptyClear": "Filters clear karein",
+    "cardPreview": "Preview",
+    "footerHintQuestion": "Jo aap chahtay hain woh nahi mil raha?",
+    "footerHintCta": "Humein batayein kya chahiye — hum bana denge"
+  },
+  "service": {
+    "backToServices": "Services par wapas",
+    "ctaWhatsapp": "WhatsApp par shuru karein",
+    "whatsappMessage": "Salaam, mujhe {title} mein dilchaspi hai",
+    "featuresTitle": "Har woh cheez jo aap ko chahiye",
+    "featuresSubtitle": "Built-in features jo har workflow ko cover karte hain — box se nikaltay hi.",
+    "pricingTitle": "Saada, shafaaf pricing",
+    "pricingSubtitle": "Koi hidden fees nahi. Kabhi bhi cancel ya upgrade karein.",
+    "mostPopular": "Sab se Popular",
+    "planGetStarted": "Shuru Karein",
+    "planWhatsappMessage": "Salaam, mujhe {service} ke {plan} plan ke baaray mein mazeed jaannay mein dilchaspi hai",
+    "ctaReadyTitle": "Shuru karnay ke liye tayyar?",
+    "ctaReadySubtitle": "Humein WhatsApp par message karein — hum aap ko mahinoon nahi, dinoon mein chala denge.",
+    "ctaReadyButton": "WhatsApp par baat karein"
+  },
+  "webdev": {
+    "heroTitle1": "Aap ki Website.",
+    "heroTitle2": "Insaanon ke Haath se Bani.",
+    "heroTitle3": "Ghanton Mein Tayyar.",
+    "heroSubtitle": "Koi templates se lartay nahi. Koi hamesha ki subscription nahi. Koi aisa freelancer nahi jo ghaib ho jaye. Sirf aik team jo banati hai, launch karti hai, aur saath rehti hai.",
+    "heroCta": "Apni Website Banwayen",
+    "heroTrustLine": "50+ websites bani  ·  12+ mulk  ·  98% client retention",
+    "templatesTitle": "Koi bhi Template Chunein.",
+    "templatesSubtitle": "Har industry. Har style. Click karke live preview dekhein.",
+    "templatesPreview": "Preview",
+    "templatesPreviewMobile": "Template Preview",
+    "templatesBrowseFull": "Puri library dekhein ({count}+ templates)",
+    "templatesBrowseAllMobile": "Saari {count}+ templates dekhein",
+    "modalClose": "Band karein",
+    "modalUseTemplate": "Yeh Template Istemaal Karein",
+    "modalOpen": "Kholein",
+    "modalStickyCta": "Yeh Template Chunein — Apni Website Banwayen",
+    "modalIframeTitle": "{name} — {page}",
+    "modalDotAria": "Template {index}"
+  },
+  "webPricing": {
+    "title": "Saada, shafaaf pricing",
+    "subtitle": "Woh plan chunein jo aap ki zaroorat ke mutabiq ho. Har plan mein colour psychology principles ke saath brand-oriented design shamil hai.",
+    "detecting": "Aap ki location detect ho rahi hai...",
+    "pricesInPkr": "Prices PKR (Pakistan) mein dikhaye ja rahe hain",
+    "pricesInUsd": "Prices USD (International) mein dikhaye ja rahe hain",
+    "oneTimeDev": "aik baar ka development",
+    "perMonth": "/ mahina",
+    "ecommerceNote": "E-commerce functionality: development cost mein +{amount} add hoga",
+    "pickTier": "{tier} Chunein",
+    "supportNote": "Starter plan mein delivery ke baad 3 mahinon ki free adjustments shamil hain. Growth aur Professional plans mein jab tak aap subscribed hain continuous support aur updates milte hain.",
+    "tiers": {
+      "starter": {
+        "subtitle": "Domain aur hosting aap ka",
+        "highlight": "Koi monthly fees nahi",
+        "features": [
+          "4 pages tak",
+          "Basic content aur layout",
+          "Mobile responsive design",
+          "Contact form integration",
+          "Basic SEO setup",
+          "3 mahinay free adjustments",
+          "Domain aur hosting aap ka"
+        ]
+      },
+      "growth": {
+        "subtitle": "Hosting hum dekhte hain",
+        "highlight": "Sab se Popular",
+        "features": [
+          "4 pages tak",
+          "Brand ke mutabiq design",
+          "Mobile responsive",
+          "Contact form + WhatsApp widget",
+          "SEO optimised",
+          "3 mahinay free adjustments",
+          "Managed hosting shamil",
+          "SSL certificate shamil"
+        ]
+      },
+      "professional": {
+        "subtitle": "Domain aur hosting dono hum dekhte hain",
+        "highlight": "Mukammal Service",
+        "features": [
+          "4 pages tak",
+          "Psychology-based design",
+          "Mobile responsive",
+          "Contact form + WhatsApp widget",
+          "Advanced SEO",
+          "Domain registration shamil",
+          "Managed hosting shamil",
+          "SSL + security headers",
+          "Continuous support aur updates",
+          "Monthly performance reports"
+        ]
+      }
+    }
   },
   "order": {
     "stepTemplate": "Template",

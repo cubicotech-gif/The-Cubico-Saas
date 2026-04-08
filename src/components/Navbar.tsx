@@ -120,7 +120,7 @@ export default function Navbar() {
             href="#about"
             className="text-surface-400 hover:text-white transition-colors"
           >
-            About
+            {dict.nav.about}
           </a>
           <LocaleSwitcher currentLocale={locale} />
 
@@ -141,7 +141,7 @@ export default function Navbar() {
                   </p>
                   {isAdmin && (
                     <p className="px-3 pb-1 text-[10px] text-[#FF6B4A] font-body font-medium">
-                      Admin
+                      {dict.nav.admin}
                     </p>
                   )}
                   <div className="border-t border-white/5 my-1" />
@@ -151,7 +151,7 @@ export default function Navbar() {
                       <DropdownLink
                         href="/admin"
                         icon={<Shield size={14} />}
-                        label="Admin Panel"
+                        label={dict.nav.adminPanel}
                         onClick={() => setProfileOpen(false)}
                       />
                     </>
@@ -160,19 +160,19 @@ export default function Navbar() {
                       <DropdownLink
                         href="/dashboard"
                         icon={<LayoutDashboard size={14} />}
-                        label="Dashboard"
+                        label={dict.nav.dashboard}
                         onClick={() => setProfileOpen(false)}
                       />
                       <DropdownLink
                         href="/dashboard/orders"
                         icon={<Package size={14} />}
-                        label="My Orders"
+                        label={dict.nav.myOrders}
                         onClick={() => setProfileOpen(false)}
                       />
                       <DropdownLink
                         href="/dashboard/profile"
                         icon={<Settings size={14} />}
-                        label="Account Settings"
+                        label={dict.nav.accountSettings}
                         onClick={() => setProfileOpen(false)}
                       />
                     </>
@@ -184,7 +184,7 @@ export default function Navbar() {
                     className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-red-400 hover:bg-white/5 transition-colors font-body"
                   >
                     <LogOut size={14} />
-                    Sign Out
+                    {dict.nav.signOut}
                   </button>
                 </div>
               )}
@@ -204,7 +204,7 @@ export default function Navbar() {
                 className="flex items-center gap-1.5 px-4 py-1.5 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white rounded-full text-sm font-medium transition-colors"
               >
                 <UserPlus size={14} />
-                Sign Up
+                {dict.nav.signUp}
               </Link>
             </div>
           )}
@@ -224,7 +224,7 @@ export default function Navbar() {
           <button
             className="text-surface-400 hover:text-white transition-colors"
             onClick={() => setMenuOpen((o) => !o)}
-            aria-label="Toggle menu"
+            aria-label={dict.nav.toggleMenu}
           >
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -253,7 +253,7 @@ export default function Navbar() {
             className="block py-2 text-surface-300 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
-            About
+            {dict.nav.about}
           </a>
 
           {user ? (
@@ -266,7 +266,7 @@ export default function Navbar() {
                   onClick={() => setMenuOpen(false)}
                 >
                   <Shield size={14} />
-                  Admin Panel
+                  {dict.nav.adminPanel}
                 </Link>
               ) : (
                 <>
@@ -275,21 +275,21 @@ export default function Navbar() {
                     className="block py-2 text-surface-300 hover:text-white"
                     onClick={() => setMenuOpen(false)}
                   >
-                    Dashboard
+                    {dict.nav.dashboard}
                   </Link>
                   <Link
                     href="/dashboard/orders"
                     className="block py-2 text-surface-300 hover:text-white"
                     onClick={() => setMenuOpen(false)}
                   >
-                    My Orders
+                    {dict.nav.myOrders}
                   </Link>
                   <Link
                     href="/dashboard/profile"
                     className="block py-2 text-surface-300 hover:text-white"
                     onClick={() => setMenuOpen(false)}
                   >
-                    Account Settings
+                    {dict.nav.accountSettings}
                   </Link>
                 </>
               )}
@@ -297,7 +297,7 @@ export default function Navbar() {
                 onClick={() => { handleSignOut(); setMenuOpen(false); }}
                 className="block py-2 text-red-400"
               >
-                Sign Out
+                {dict.nav.signOut}
               </button>
             </>
           ) : (
@@ -317,7 +317,7 @@ export default function Navbar() {
                 onClick={() => setMenuOpen(false)}
               >
                 <UserPlus size={14} />
-                Sign Up
+                {dict.nav.signUp}
               </Link>
             </>
           )}

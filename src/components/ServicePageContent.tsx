@@ -9,6 +9,7 @@ import TemplatePreview from '@/components/TemplatePreview';
 import WebsitePricing from '@/components/WebsitePricing';
 import type { Service } from '@/lib/types';
 import type { MediaAsset } from '@/lib/media';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 interface ServicePageContentProps {
   service: Service;
@@ -23,7 +24,12 @@ export default function ServicePageContent({
   contactWhatsapp,
   media = {},
 }: ServicePageContentProps) {
+  const { locale, dict } = useLocale();
   const waNumber = contactWhatsapp.replace(/\D/g, '');
+  const waIntroMsg = dict.service.whatsappMessage.replace(
+    '{title}',
+    service.title,
+  );
 
   // ── Website Development — fully custom visual page ──
   if (isWebsiteDev(service.slug)) {
@@ -61,11 +67,11 @@ export default function ServicePageContent({
             transition={{ duration: 0.5 }}
           >
             <Link
-              href="/#services"
+              href={`/${locale}/#services`}
               className="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-white transition-colors mb-8 font-body"
             >
               <ArrowLeft size={14} />
-              Back to services
+              {dict.service.backToServices}
             </Link>
 
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-950 border border-brand-800 text-brand-400 mb-6">
@@ -81,13 +87,13 @@ export default function ServicePageContent({
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
               <a
-                href={`https://wa.me/${waNumber}?text=Hi, I'm interested in ${encodeURIComponent(service.title)}`}
+                href={`https://wa.me/${waNumber}?text=${encodeURIComponent(waIntroMsg)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-7 py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-xl transition-all hover:shadow-lg hover:shadow-brand-600/25 font-body"
               >
                 <MessageCircle size={16} />
-                Get Started on WhatsApp
+                {dict.service.ctaWhatsapp}
               </a>
             </div>
           </motion.div>
@@ -105,10 +111,10 @@ export default function ServicePageContent({
               className="text-center mb-12"
             >
               <h2 className="text-3xl font-display font-bold text-white mb-3">
-                Everything you need
+                {dict.service.featuresTitle}
               </h2>
               <p className="text-surface-400 font-body">
-                Built-in features that cover every workflow out of the box.
+                {dict.service.featuresSubtitle}
               </p>
             </motion.div>
 
@@ -149,10 +155,10 @@ export default function ServicePageContent({
               className="text-center mb-12"
             >
               <h2 className="text-3xl font-display font-bold text-white mb-3">
-                Simple, transparent pricing
+                {dict.service.pricingTitle}
               </h2>
               <p className="text-surface-400 font-body">
-                No hidden fees. Cancel or upgrade any time.
+                {dict.service.pricingSubtitle}
               </p>
             </motion.div>
 
@@ -172,7 +178,7 @@ export default function ServicePageContent({
                 >
                   {tier.is_featured && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-brand-600 text-white text-xs font-medium rounded-full font-body">
-                      Most Popular
+                      {dict.service.mostPopular}
                     </div>
                   )}
 
@@ -204,7 +210,11 @@ export default function ServicePageContent({
                   </ul>
 
                   <a
-                    href={`https://wa.me/${waNumber}?text=Hi, I'd like to know more about the ${encodeURIComponent(tier.name)} plan for ${encodeURIComponent(service.title)}`}
+                    href={`https://wa.me/${waNumber}?text=${encodeURIComponent(
+                      dict.service.planWhatsappMessage
+                        .replace('{plan}', tier.name)
+                        .replace('{service}', service.title),
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`block text-center py-2.5 rounded-xl text-sm font-medium transition-colors font-body ${
@@ -213,7 +223,7 @@ export default function ServicePageContent({
                         : 'bg-surface-800 hover:bg-surface-700 text-white'
                     }`}
                   >
-                    Get Started
+                    {dict.service.planGetStarted}
                   </a>
                 </motion.div>
               ))}
@@ -226,20 +236,19 @@ export default function ServicePageContent({
       <section className="py-16 bg-surface-900/50 border-t border-surface-800">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-2xl font-display font-bold text-white mb-3">
-            Ready to get started?
+            {dict.service.ctaReadyTitle}
           </h2>
           <p className="text-surface-400 font-body mb-6">
-            Message us on WhatsApp and we&apos;ll have you up and running within
-            days, not months.
+            {dict.service.ctaReadySubtitle}
           </p>
           <a
-            href={`https://wa.me/${waNumber}?text=Hi, I'm interested in ${encodeURIComponent(service.title)}`}
+            href={`https://wa.me/${waNumber}?text=${encodeURIComponent(waIntroMsg)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-xl transition-all hover:shadow-lg hover:shadow-brand-600/25 font-body"
           >
             <MessageCircle size={16} />
-            Chat on WhatsApp
+            {dict.service.ctaReadyButton}
           </a>
         </div>
       </section>

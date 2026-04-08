@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import type { SiteSettings } from '@/lib/types';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 interface HeroProps {
   settings: SiteSettings;
@@ -18,6 +19,7 @@ function isInternalRoute(url: string) {
 
 export default function Hero({ settings }: HeroProps) {
   const reducedMotion = useReducedMotion();
+  const { dict } = useLocale();
 
   const words =
     settings.hero_morph_words && settings.hero_morph_words.length > 0
@@ -163,7 +165,7 @@ export default function Hero({ settings }: HeroProps) {
             ))}
           </div>
           <span className="tracking-wide">
-            Trusted by 50+ teams · Pakistan · UAE · UK · USA
+            {dict.home.trustStrip}
           </span>
         </motion.div>
       </div>

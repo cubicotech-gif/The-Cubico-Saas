@@ -12,10 +12,12 @@ import {
 } from '@/data/templates';
 import TemplateThumb from '@/components/TemplateThumb';
 import { PreviewModal } from '@/components/TemplatePreview';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 type SortKey = 'featured' | 'az' | 'category';
 
 export default function TemplatesBrowser() {
+  const { locale, dict } = useLocale();
   const [query, setQuery] = useState('');
   const [activeCat, setActiveCat] = useState<TemplateCategory | 'All'>('All');
   const [sort, setSort] = useState<SortKey>('featured');
@@ -62,14 +64,13 @@ export default function TemplatesBrowser() {
           >
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FF6B4A]/10 border border-[#FF6B4A]/20 text-[#FF6B4A] text-xs font-body font-semibold mb-5">
               <Sparkles size={12} />
-              {TEMPLATES.length} templates · multi-page · live preview
+              {dict.templates.badge.replace('{count}', String(TEMPLATES.length))}
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white tracking-tight mb-4">
-              The Template Library
+              {dict.templates.heroTitle}
             </h1>
             <p className="text-surface-400 font-body text-lg max-w-2xl mx-auto leading-relaxed">
-              Pick a starting point. Every template ships with a working
-              homepage and supporting pages — we customize the rest.
+              {dict.templates.heroSubtitle}
             </p>
           </motion.div>
         </div>
@@ -89,13 +90,13 @@ export default function TemplatesBrowser() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by name, industry, tag…"
+                placeholder={dict.templates.searchPlaceholder}
                 className="w-full pl-11 pr-10 py-3 bg-surface-900 border border-white/10 rounded-xl text-sm text-white font-body placeholder:text-surface-600 focus:outline-none focus:border-[#FF6B4A]/40 transition-colors"
               />
               {query && (
                 <button
                   onClick={() => setQuery('')}
-                  aria-label="Clear search"
+                  aria-label={dict.templates.searchClearAria}
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-surface-500 hover:text-white"
                 >
                   <X size={14} />
@@ -107,9 +108,9 @@ export default function TemplatesBrowser() {
               onChange={(e) => setSort(e.target.value as SortKey)}
               className="hidden sm:block px-4 py-3 bg-surface-900 border border-white/10 rounded-xl text-sm text-white font-body focus:outline-none focus:border-[#FF6B4A]/40 cursor-pointer"
             >
-              <option value="featured">Featured</option>
-              <option value="az">A → Z</option>
-              <option value="category">By category</option>
+              <option value="featured">{dict.templates.sortFeatured}</option>
+              <option value="az">{dict.templates.sortAz}</option>
+              <option value="category">{dict.templates.sortCategory}</option>
             </select>
           </div>
 
@@ -121,6 +122,7 @@ export default function TemplatesBrowser() {
                 c === 'All'
                   ? TEMPLATES.length
                   : TEMPLATES.filter((t) => t.category === c).length;
+              const label = c === 'All' ? dict.templates.filterAll : c;
               return (
                 <button
                   key={c}
@@ -131,7 +133,7 @@ export default function TemplatesBrowser() {
                       : 'bg-surface-900 text-surface-300 border-white/10 hover:border-white/25 hover:text-white'
                   }`}
                 >
-                  {c}
+                  {label}
                   <span
                     className={`text-[10px] font-semibold ${
                       active ? 'text-white/80' : 'text-surface-500'
@@ -151,7 +153,7 @@ export default function TemplatesBrowser() {
         {filtered.length === 0 ? (
           <div className="text-center py-24">
             <p className="text-surface-400 font-body text-lg mb-2">
-              No templates match &quot;{query}&quot;
+              {dict.templates.emptyTitle.replace('{query}', query)}
             </p>
             <button
               onClick={() => {
@@ -160,7 +162,7 @@ export default function TemplatesBrowser() {
               }}
               className="text-[#FF6B4A] font-body text-sm hover:underline"
             >
-              Clear filters
+              {dict.templates.emptyClear}
             </button>
           </div>
         ) : (
@@ -194,7 +196,7 @@ export default function TemplatesBrowser() {
                     {t.description}
                   </p>
                   <span className="flex-shrink-0 inline-flex items-center gap-1 text-[11px] text-[#FF6B4A] font-body font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                    Preview
+                    {dict.templates.cardPreview}
                     <ExternalLink size={10} />
                   </span>
                 </div>
@@ -206,13 +208,13 @@ export default function TemplatesBrowser() {
         {/* Footer hint */}
         <div className="mt-14 text-center">
           <p className="text-sm text-surface-500 font-body mb-3">
-            Don&apos;t see what you need?
+            {dict.templates.footerHintQuestion}
           </p>
           <Link
-            href="/order"
+            href={`/${locale}/order`}
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-body font-semibold rounded-xl transition-all hover:scale-[1.02] text-sm shadow-lg shadow-[#FF6B4A]/25"
           >
-            Tell us what you want — we&apos;ll build it
+            {dict.templates.footerHintCta}
           </Link>
         </div>
       </section>
