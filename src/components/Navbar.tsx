@@ -5,10 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Menu, X, User, LayoutDashboard, Package, Settings, LogOut, LogIn, UserPlus, Shield } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
+import { useLocale } from '@/i18n/LocaleProvider';
+import LocaleSwitcher from '@/components/LocaleSwitcher';
 
 export default function Navbar() {
   const router = useRouter();
   const supabase = createClient();
+  const { locale, dict } = useLocale();
+  const p = (path: string) => `/${locale}${path}`;
 
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -88,7 +92,7 @@ export default function Navbar() {
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
+        <Link href={p('/')} className="flex items-center gap-2 group">
           <span className="text-xl font-display font-bold text-white tracking-tight">
             cubico
             <span className="text-brand-400">.</span>
@@ -104,13 +108,13 @@ export default function Navbar() {
             href="#services"
             className="text-surface-400 hover:text-white transition-colors"
           >
-            Services
+            {dict.nav.services}
           </a>
           <Link
-            href="/templates"
+            href={p('/templates')}
             className="text-surface-400 hover:text-white transition-colors"
           >
-            Templates
+            {dict.nav.templates}
           </Link>
           <a
             href="#about"
@@ -118,6 +122,7 @@ export default function Navbar() {
           >
             About
           </a>
+          <LocaleSwitcher currentLocale={locale} />
 
           {user ? (
             /* ── Profile dropdown ── */
@@ -188,14 +193,14 @@ export default function Navbar() {
             /* ── Not logged in ── */
             <div className="flex items-center gap-3">
               <Link
-                href="/login"
+                href={p('/login')}
                 className="flex items-center gap-1.5 px-4 py-1.5 text-surface-300 hover:text-white text-sm font-medium transition-colors"
               >
                 <LogIn size={14} />
-                Log In
+                {dict.nav.login}
               </Link>
               <Link
-                href="/login?mode=signup"
+                href={p('/login?mode=signup')}
                 className="flex items-center gap-1.5 px-4 py-1.5 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white rounded-full text-sm font-medium transition-colors"
               >
                 <UserPlus size={14} />
@@ -207,6 +212,7 @@ export default function Navbar() {
 
         {/* Mobile: profile + hamburger */}
         <div className="md:hidden flex items-center gap-3">
+          <LocaleSwitcher currentLocale={locale} />
           {user && (
             <Link
               href={isAdmin ? '/admin' : '/dashboard'}
@@ -233,14 +239,14 @@ export default function Navbar() {
             className="block py-2 text-surface-300 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
-            Services
+            {dict.nav.services}
           </a>
           <Link
-            href="/templates"
+            href={p('/templates')}
             className="block py-2 text-surface-300 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
-            Templates
+            {dict.nav.templates}
           </Link>
           <a
             href="#about"
@@ -298,15 +304,15 @@ export default function Navbar() {
             <>
               <div className="border-t border-white/5 my-2" />
               <Link
-                href="/login"
+                href={p('/login')}
                 className="flex items-center gap-2 py-2 text-surface-300 hover:text-white"
                 onClick={() => setMenuOpen(false)}
               >
                 <LogIn size={14} />
-                Log In
+                {dict.nav.login}
               </Link>
               <Link
-                href="/login?mode=signup"
+                href={p('/login?mode=signup')}
                 className="flex items-center gap-2 py-2 text-[#FF6B4A] font-medium"
                 onClick={() => setMenuOpen(false)}
               >

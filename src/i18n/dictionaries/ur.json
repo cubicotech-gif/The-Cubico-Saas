@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "siteName": "Cubico Technologies",
+    "tagline": "Institutions, healthcare aur business ke liye enterprise software.",
+    "description": "Cubico Technologies Pakistan ke institutions, healthcare providers aur barhti businesses ke liye enterprise-grade software banati hai."
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "templates": "Templates",
+    "order": "Website Banwayen",
+    "login": "Sign In",
+    "dashboard": "Dashboard"
+  },
+  "home": {
+    "heroEyebrow": "Enterprise software, sahi tareeqay se",
+    "heroTitle": "Aisa software jo aap ke business ko aagay barhaye",
+    "heroSubtitle": "Hospital management se le kar e-commerce website tak — aik aisi team jo waqai cheezain deliver karti hai.",
+    "heroCtaPrimary": "Apni Website Banwayen",
+    "heroCtaSecondary": "Humara Kaam Dekhein"
+  },
+  "footer": {
+    "copyright": "© {year} Cubico Technologies. Sab haqooq mehfooz.",
+    "madeIn": "Karachi, Pakistan mein bani"
+  },
+  "order": {
+    "stepTemplate": "Template",
+    "stepBusiness": "Business",
+    "stepAssets": "Assets",
+    "stepContact": "Contact",
+    "stepPlan": "Plan",
+    "stepReview": "Review",
+    "pickPlanTitle": "Apna Plan Chunein",
+    "pickPlanSub": "Jo aap ke liye theek ho — baad mein upgrade bhi kar saktay hain.",
+    "back": "Wapas",
+    "next": "Agla",
+    "submit": "Order Submit Karein"
+  },
+  "localeSwitcher": {
+    "label": "Zuban"
+  }
+}

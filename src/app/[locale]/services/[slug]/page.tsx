@@ -5,16 +5,19 @@ import Footer from '@/components/Footer';
 import ServicePageContent from '@/components/ServicePageContent';
 import { getServiceBySlug, getAllServiceSlugs, getSiteSettings } from '@/lib/data';
 import { getMediaAssets } from '@/lib/mediaData';
+import { locales } from '@/i18n/config';
 
 export const revalidate = 60;
 
 interface Props {
-  params: { slug: string };
+  params: { locale: string; slug: string };
 }
 
 export async function generateStaticParams() {
   const slugs = await getAllServiceSlugs();
-  return slugs.map((slug) => ({ slug }));
+  return locales.flatMap((locale) =>
+    slugs.map((slug) => ({ locale, slug })),
+  );
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
