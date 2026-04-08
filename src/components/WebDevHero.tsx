@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { MediaAsset } from '@/lib/media';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 /*
  * Hero is intentionally compact (≈70vh) so the background video plays
@@ -20,6 +21,7 @@ interface WebDevHeroProps {
 }
 
 export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevHeroProps) {
+  const { locale, dict } = useLocale();
   const heroVideo = media['webdev-hero-video'];
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
@@ -103,11 +105,11 @@ export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevH
               transition={{ duration: 0.4, delay: 0.1 }}
             >
               <Link
-                href="/#services"
+                href={`/${locale}/#services`}
                 className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/70 transition-colors mb-8 font-body"
               >
                 <ArrowLeft size={14} />
-                Back to services
+                {dict.service.backToServices}
               </Link>
             </motion.div>
 
@@ -118,9 +120,9 @@ export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevH
               transition={{ duration: 0.6, delay: 0.3 }}
               className="text-[2rem] sm:text-[2.8rem] lg:text-[3.5rem] xl:text-[4rem] font-display font-extrabold text-white leading-[1.08] tracking-tight mb-5"
             >
-              Your Website.<br />
-              Built by Humans.<br />
-              <span className="text-[#FF6B4A]">Ready in Hours.</span>
+              {dict.webdev.heroTitle1}<br />
+              {dict.webdev.heroTitle2}<br />
+              <span className="text-[#FF6B4A]">{dict.webdev.heroTitle3}</span>
             </motion.h1>
 
             {/* Subheadline */}
@@ -130,8 +132,7 @@ export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevH
               transition={{ duration: 0.6, delay: 0.5 }}
               className="text-[1rem] sm:text-lg text-white/50 font-body leading-relaxed max-w-md lg:max-w-lg mb-8"
             >
-              No templates to fight. No subscriptions forever. No freelancer who
-              vanishes. Just a team that builds it, launches it, and stays.
+              {dict.webdev.heroSubtitle}
             </motion.p>
 
             {/* CTA Button */}
@@ -141,10 +142,10 @@ export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevH
               transition={{ duration: 0.6, delay: 0.7 }}
             >
               <Link
-                href="/order"
+                href={`/${locale}/order`}
                 className="group inline-flex items-center gap-2.5 px-8 py-4 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-semibold rounded-xl transition-all duration-200 hover:scale-[1.03] hover:shadow-xl hover:shadow-[#FF6B4A]/25 font-body text-base sm:text-lg w-full sm:w-auto justify-center sm:justify-start"
               >
-                Get Your Website
+                {dict.webdev.heroCta}
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
@@ -156,7 +157,7 @@ export default function WebDevHero({ title, subtitle, waNumber, media }: WebDevH
               transition={{ duration: 0.5, delay: 1 }}
               className="mt-6 text-[11px] text-white/25 font-body tracking-wide"
             >
-              50+ websites built &nbsp;·&nbsp; 12+ countries &nbsp;·&nbsp; 98% client retention
+              {dict.webdev.heroTrustLine}
             </motion.p>
           </div>
         </div>

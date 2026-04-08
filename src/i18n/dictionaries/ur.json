@@ -80,6 +80,83 @@
     "ctaReadySubtitle": "Humein WhatsApp par message karein — hum aap ko mahinoon nahi, dinoon mein chala denge.",
     "ctaReadyButton": "WhatsApp par baat karein"
   },
+  "webdev": {
+    "heroTitle1": "Aap ki Website.",
+    "heroTitle2": "Insaanon ke Haath se Bani.",
+    "heroTitle3": "Ghanton Mein Tayyar.",
+    "heroSubtitle": "Koi templates se lartay nahi. Koi hamesha ki subscription nahi. Koi aisa freelancer nahi jo ghaib ho jaye. Sirf aik team jo banati hai, launch karti hai, aur saath rehti hai.",
+    "heroCta": "Apni Website Banwayen",
+    "heroTrustLine": "50+ websites bani  ·  12+ mulk  ·  98% client retention",
+    "templatesTitle": "Koi bhi Template Chunein.",
+    "templatesSubtitle": "Har industry. Har style. Click karke live preview dekhein.",
+    "templatesPreview": "Preview",
+    "templatesPreviewMobile": "Template Preview",
+    "templatesBrowseFull": "Puri library dekhein ({count}+ templates)",
+    "templatesBrowseAllMobile": "Saari {count}+ templates dekhein",
+    "modalClose": "Band karein",
+    "modalUseTemplate": "Yeh Template Istemaal Karein",
+    "modalOpen": "Kholein",
+    "modalStickyCta": "Yeh Template Chunein — Apni Website Banwayen",
+    "modalIframeTitle": "{name} — {page}",
+    "modalDotAria": "Template {index}"
+  },
+  "webPricing": {
+    "title": "Saada, shafaaf pricing",
+    "subtitle": "Woh plan chunein jo aap ki zaroorat ke mutabiq ho. Har plan mein colour psychology principles ke saath brand-oriented design shamil hai.",
+    "detecting": "Aap ki location detect ho rahi hai...",
+    "pricesInPkr": "Prices PKR (Pakistan) mein dikhaye ja rahe hain",
+    "pricesInUsd": "Prices USD (International) mein dikhaye ja rahe hain",
+    "oneTimeDev": "aik baar ka development",
+    "perMonth": "/ mahina",
+    "ecommerceNote": "E-commerce functionality: development cost mein +{amount} add hoga",
+    "pickTier": "{tier} Chunein",
+    "supportNote": "Starter plan mein delivery ke baad 3 mahinon ki free adjustments shamil hain. Growth aur Professional plans mein jab tak aap subscribed hain continuous support aur updates milte hain.",
+    "tiers": {
+      "starter": {
+        "subtitle": "Domain aur hosting aap ka",
+        "highlight": "Koi monthly fees nahi",
+        "features": [
+          "4 pages tak",
+          "Basic content aur layout",
+          "Mobile responsive design",
+          "Contact form integration",
+          "Basic SEO setup",
+          "3 mahinay free adjustments",
+          "Domain aur hosting aap ka"
+        ]
+      },
+      "growth": {
+        "subtitle": "Hosting hum dekhte hain",
+        "highlight": "Sab se Popular",
+        "features": [
+          "4 pages tak",
+          "Brand ke mutabiq design",
+          "Mobile responsive",
+          "Contact form + WhatsApp widget",
+          "SEO optimised",
+          "3 mahinay free adjustments",
+          "Managed hosting shamil",
+          "SSL certificate shamil"
+        ]
+      },
+      "professional": {
+        "subtitle": "Domain aur hosting dono hum dekhte hain",
+        "highlight": "Mukammal Service",
+        "features": [
+          "4 pages tak",
+          "Psychology-based design",
+          "Mobile responsive",
+          "Contact form + WhatsApp widget",
+          "Advanced SEO",
+          "Domain registration shamil",
+          "Managed hosting shamil",
+          "SSL + security headers",
+          "Continuous support aur updates",
+          "Monthly performance reports"
+        ]
+      }
+    }
+  },
   "order": {
     "stepTemplate": "Template",
     "stepBusiness": "Business",
