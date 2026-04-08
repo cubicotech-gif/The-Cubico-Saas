@@ -1,11 +1,17 @@
+'use client';
+
 import Link from 'next/link';
 import type { SiteSettings } from '@/lib/types';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 interface FooterProps {
   settings: SiteSettings;
 }
 
 export default function Footer({ settings }: FooterProps) {
+  const { locale, dict } = useLocale();
+  const p = (path: string) => `/${locale}${path}`;
+
   return (
     <footer className="bg-surface-950 border-t border-surface-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -16,47 +22,46 @@ export default function Footer({ settings }: FooterProps) {
               cubico<span className="text-brand-400">.</span>
             </p>
             <p className="text-sm text-surface-500 font-body leading-relaxed">
-              Websites, portals, CRMs, and marketing — engineered for businesses
-              worldwide.
+              {dict.footer.brandDesc}
             </p>
           </div>
 
           {/* Services */}
           <div>
             <p className="text-xs text-surface-500 font-body uppercase tracking-widest mb-3">
-              Services
+              {dict.footer.servicesHeader}
             </p>
             <ul className="space-y-2 text-sm font-body text-surface-400">
               <li>
                 <Link
-                  href="/services/website-development"
+                  href={p('/services/website-development')}
                   className="hover:text-white transition-colors"
                 >
-                  Website Development
+                  {dict.footer.linkWebsiteDev}
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/services/client-portals"
+                  href={p('/services/client-portals')}
                   className="hover:text-white transition-colors"
                 >
-                  Client Portals
+                  {dict.footer.linkClientPortals}
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/services/crm-systems"
+                  href={p('/services/crm-systems')}
                   className="hover:text-white transition-colors"
                 >
-                  CRM Systems
+                  {dict.footer.linkCrmSystems}
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/services/digital-marketing"
+                  href={p('/services/digital-marketing')}
                   className="hover:text-white transition-colors"
                 >
-                  Digital Marketing
+                  {dict.footer.linkDigitalMarketing}
                 </Link>
               </li>
             </ul>
@@ -65,7 +70,7 @@ export default function Footer({ settings }: FooterProps) {
           {/* Contact */}
           <div>
             <p className="text-xs text-surface-500 font-body uppercase tracking-widest mb-3">
-              Contact
+              {dict.footer.contactHeader}
             </p>
             <ul className="space-y-2 text-sm font-body text-surface-400">
               <li>
@@ -83,12 +88,12 @@ export default function Footer({ settings }: FooterProps) {
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
                 >
-                  WhatsApp
+                  {dict.footer.whatsapp}
                 </a>
               </li>
               <li>
                 <Link href="/admin" className="hover:text-white transition-colors">
-                  Admin Panel
+                  {dict.footer.adminPanel}
                 </Link>
               </li>
             </ul>

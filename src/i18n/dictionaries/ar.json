@@ -8,20 +8,44 @@
     "home": "الرئيسية",
     "services": "خدماتنا",
     "templates": "القوالب",
+    "about": "من نحن",
     "order": "اطلب موقعك",
     "login": "تسجيل الدخول",
-    "dashboard": "لوحة التحكم"
+    "signUp": "إنشاء حساب",
+    "signOut": "تسجيل الخروج",
+    "dashboard": "لوحة التحكم",
+    "myOrders": "طلباتي",
+    "accountSettings": "إعدادات الحساب",
+    "admin": "مسؤول",
+    "adminPanel": "لوحة الإدارة",
+    "toggleMenu": "فتح أو إغلاق القائمة"
   },
   "home": {
     "heroEyebrow": "برمجيات احترافية بأعلى جودة",
     "heroTitle": "برمجيات تدفع أعمالك إلى الأمام",
     "heroSubtitle": "من أنظمة إدارة المستشفيات إلى مواقع التجارة الإلكترونية — فريق يُنفّذ ما يَعِد به.",
     "heroCtaPrimary": "اطلب موقعك الآن",
-    "heroCtaSecondary": "شاهد أعمالنا"
+    "heroCtaSecondary": "شاهد أعمالنا",
+    "trustStrip": "يثق بنا أكثر من 50 فريق · باكستان · الإمارات · المملكة المتحدة · الولايات المتحدة",
+    "servicesAriaLabel": "الخدمات",
+    "videoComingSoon": "الفيديو قريباً",
+    "livePreview": "معاينة مباشرة",
+    "explore": "استكشف",
+    "visit": "زيارة",
+    "videoPreview": "معاينة {title}"
   },
   "footer": {
     "copyright": "© {year} كيوبيكو تكنولوجيز. جميع الحقوق محفوظة.",
-    "madeIn": "صُنع بحب من كراتشي"
+    "madeIn": "صُنع بحب من كراتشي",
+    "brandDesc": "مواقع، بوابات، أنظمة CRM، وتسويق رقمي — مُصمَّم للشركات حول العالم.",
+    "servicesHeader": "خدماتنا",
+    "contactHeader": "تواصل معنا",
+    "whatsapp": "واتساب",
+    "adminPanel": "لوحة الإدارة",
+    "linkWebsiteDev": "تطوير المواقع",
+    "linkClientPortals": "بوابات العملاء",
+    "linkCrmSystems": "أنظمة CRM",
+    "linkDigitalMarketing": "التسويق الرقمي"
   },
   "order": {
     "stepTemplate": "القالب",

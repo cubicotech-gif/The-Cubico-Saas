@@ -8,20 +8,44 @@
     "home": "Home",
     "services": "Services",
     "templates": "Templates",
+    "about": "About",
     "order": "Website Banwayen",
     "login": "Sign In",
-    "dashboard": "Dashboard"
+    "signUp": "Sign Up",
+    "signOut": "Logout",
+    "dashboard": "Dashboard",
+    "myOrders": "Meray Orders",
+    "accountSettings": "Account Settings",
+    "admin": "Admin",
+    "adminPanel": "Admin Panel",
+    "toggleMenu": "Menu khol ya band karein"
   },
   "home": {
     "heroEyebrow": "Enterprise software, sahi tareeqay se",
     "heroTitle": "Aisa software jo aap ke business ko aagay barhaye",
     "heroSubtitle": "Hospital management se le kar e-commerce website tak — aik aisi team jo waqai cheezain deliver karti hai.",
     "heroCtaPrimary": "Apni Website Banwayen",
-    "heroCtaSecondary": "Humara Kaam Dekhein"
+    "heroCtaSecondary": "Humara Kaam Dekhein",
+    "trustStrip": "50+ teams ka bharosa · Pakistan · UAE · UK · USA",
+    "servicesAriaLabel": "Services",
+    "videoComingSoon": "video jald hi aa rahi hai",
+    "livePreview": "Live preview",
+    "explore": "Dekhein",
+    "visit": "Visit karein",
+    "videoPreview": "{title} ka preview"
   },
   "footer": {
     "copyright": "© {year} Cubico Technologies. Sab haqooq mehfooz.",
-    "madeIn": "Karachi, Pakistan mein bani"
+    "madeIn": "Karachi, Pakistan mein bani",
+    "brandDesc": "Websites, portals, CRMs aur marketing — duniya bhar ke businesses ke liye banaye gaye.",
+    "servicesHeader": "Services",
+    "contactHeader": "Raabta",
+    "whatsapp": "WhatsApp",
+    "adminPanel": "Admin Panel",
+    "linkWebsiteDev": "Website Development",
+    "linkClientPortals": "Client Portals",
+    "linkCrmSystems": "CRM Systems",
+    "linkDigitalMarketing": "Digital Marketing"
   },
   "order": {
     "stepTemplate": "Template",

@@ -8,20 +8,44 @@
     "home": "Home",
     "services": "Services",
     "templates": "Templates",
+    "about": "About",
     "order": "Get Website",
     "login": "Sign In",
-    "dashboard": "Dashboard"
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "dashboard": "Dashboard",
+    "myOrders": "My Orders",
+    "accountSettings": "Account Settings",
+    "admin": "Admin",
+    "adminPanel": "Admin Panel",
+    "toggleMenu": "Toggle menu"
   },
   "home": {
     "heroEyebrow": "Enterprise software, done right",
     "heroTitle": "Software that moves your business forward",
     "heroSubtitle": "From hospital management to e-commerce websites — built by a team that actually ships.",
     "heroCtaPrimary": "Get Your Website",
-    "heroCtaSecondary": "See Our Work"
+    "heroCtaSecondary": "See Our Work",
+    "trustStrip": "Trusted by 50+ teams · Pakistan · UAE · UK · USA",
+    "servicesAriaLabel": "Services",
+    "videoComingSoon": "video coming soon",
+    "livePreview": "Live preview",
+    "explore": "Explore",
+    "visit": "Visit",
+    "videoPreview": "{title} preview"
   },
   "footer": {
     "copyright": "© {year} Cubico Technologies. All rights reserved.",
-    "madeIn": "Made in Karachi, Pakistan"
+    "madeIn": "Made in Karachi, Pakistan",
+    "brandDesc": "Websites, portals, CRMs, and marketing — engineered for businesses worldwide.",
+    "servicesHeader": "Services",
+    "contactHeader": "Contact",
+    "whatsapp": "WhatsApp",
+    "adminPanel": "Admin Panel",
+    "linkWebsiteDev": "Website Development",
+    "linkClientPortals": "Client Portals",
+    "linkCrmSystems": "CRM Systems",
+    "linkDigitalMarketing": "Digital Marketing"
   },
   "order": {
     "stepTemplate": "Template",
