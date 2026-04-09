@@ -25,7 +25,7 @@ export default function AboutSection({ settings }: AboutSectionProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-brand-400 text-sm font-body font-medium tracking-widest uppercase mb-2">
+          <p className="text-brand-400 text-xs font-body font-medium tracking-[0.2em] uppercase mb-2">
             {settings.about_eyebrow}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white leading-tight mb-4">
@@ -37,7 +37,7 @@ export default function AboutSection({ settings }: AboutSectionProps) {
           {settings.about_cta_label && (
             <a
               href={settings.about_cta_url || '#'}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-medium transition-colors font-body text-sm"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-xl font-medium transition-all duration-300 hover:shadow-lg hover:shadow-brand-600/25 hover:scale-[1.02] font-body text-sm"
             >
               {settings.about_cta_label}
             </a>
@@ -56,7 +56,7 @@ export default function AboutSection({ settings }: AboutSectionProps) {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className="p-4 sm:p-5 rounded-2xl bg-surface-900 border border-surface-800"
+                  className="group p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/[0.07] hover:bg-white/[0.06] hover:border-white/[0.14] transition-all duration-300"
                 >
                   <Icon size={20} className="text-brand-400 mb-2" />
                   <p className="text-2xl sm:text-3xl font-display font-bold text-white mb-0.5">

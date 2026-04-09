@@ -19,7 +19,7 @@ export default async function HomePage() {
         {/* Screen 1: Hero + Services — everything at one glance */}
         <HeroWithServices settings={settings} services={homeServices} />
         {/* Screen 2: About + Footer */}
-        <section className="h-screen snap-start flex flex-col bg-surface-950">
+        <section className="h-screen snap-start flex flex-col bg-[#060d18]">
           <div className="flex-1 flex items-center overflow-hidden">
             <AboutSection settings={settings} />
           </div>
