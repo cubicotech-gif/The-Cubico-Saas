@@ -174,6 +174,7 @@ export default function AdminPanel({ currentUserId }: { currentUserId: string })
   const [hasSupabase, setHasSupabase] = useState(false);
   const [mediaAssets, setMediaAssets] = useState<Record<string, MediaAsset>>({});
   const [mediaLoading, setMediaLoading] = useState(false);
+  const [mediaError, setMediaError] = useState('');
 
   useEffect(() => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
@@ -189,18 +190,21 @@ export default function AdminPanel({ currentUserId }: { currentUserId: string })
 
   async function loadMedia() {
     setMediaLoading(true);
+    setMediaError('');
     try {
       const { getMediaAssets } = await import('@/lib/mediaData');
       const assets = await getMediaAssets();
       setMediaAssets(assets);
     } catch (err) {
       console.error('Failed to load media:', err);
+      setMediaError('Failed to load media assets.');
     } finally {
       setMediaLoading(false);
     }
   }
 
   async function handleUpload(slotKey: string, file: File) {
+    setMediaError('');
     try {
       const { uploadMediaAsset } = await import('@/lib/mediaData');
       const asset = await uploadMediaAsset(slotKey, file);
@@ -209,10 +213,12 @@ export default function AdminPanel({ currentUserId }: { currentUserId: string })
       }
     } catch (err) {
       console.error('Upload failed:', err);
+      setMediaError('Upload failed. Please try again.');
     }
   }
 
   async function handleDelete(slotKey: string) {
+    setMediaError('');
     try {
       const { deleteMediaAsset } = await import('@/lib/mediaData');
       const ok = await deleteMediaAsset(slotKey);
@@ -225,12 +231,19 @@ export default function AdminPanel({ currentUserId }: { currentUserId: string })
       }
     } catch (err) {
       console.error('Delete failed:', err);
+      setMediaError('Delete failed. Please try again.');
     }
+  }
+
+  function getLocale() {
+    try {
+      return document.cookie.match(/cubico_locale=(\w+)/)?.[1] || 'en';
+    } catch { return 'en'; }
   }
 
   async function handleSignOut() {
     await supabase.auth.signOut();
-    router.push('/login');
+    router.push(`/${getLocale()}/login`);
   }
 
   const slotsBySection = getSlotsBySection();
@@ -242,7 +255,7 @@ export default function AdminPanel({ currentUserId }: { currentUserId: string })
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
-              href="/"
+              href={`/${getLocale()}`}
               className="flex items-center gap-1.5 text-sm text-surface-500 hover:text-white transition-colors font-body"
             >
               <ArrowLeft size={14} />
@@ -358,6 +371,12 @@ export default function AdminPanel({ currentUserId }: { currentUserId: string })
                 </button>
               )}
             </div>
+
+            {mediaError && (
+              <div className="mb-6 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-body">
+                {mediaError}
+              </div>
+            )}
 
             {Object.entries(slotsBySection).map(([section, slots]) => {
               const uploaded = slots.filter((s) => mediaAssets[s.key]).length;

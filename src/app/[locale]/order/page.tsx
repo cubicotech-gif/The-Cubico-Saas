@@ -139,11 +139,15 @@ function OrderFlow() {
   const initialPlan = restoredData?.planName || planParam;
 
   // Steps: 0 = template, 1 = business, 2 = assets, 3 = contact, 4 = plan, 5 = review
-  const [step, setStep] = useState(() => {
+  const [step, setStepRaw] = useState(() => {
     if (returnedFromAuth && restoredData) return 5; // jump to review after auth
     if (initialTemplate) return 1;
     return 0;
   });
+  const setStep = (s: number | ((prev: number) => number)) => {
+    setStepRaw(s);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
     TEMPLATES.find((t) => t.key === initialTemplate) || null,

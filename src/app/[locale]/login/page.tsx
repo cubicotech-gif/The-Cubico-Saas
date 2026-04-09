@@ -75,7 +75,11 @@ function LoginForm() {
           }
         }
 
-        window.location.href = next;
+        // If next points to a localized route, ensure locale prefix
+        const localeAwareNext = next.startsWith('/dashboard') || next.startsWith('/admin')
+          ? next
+          : next.startsWith(`/${locale}`) ? next : `/${locale}${next}`;
+        window.location.href = localeAwareNext;
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : dict.login.genericError;

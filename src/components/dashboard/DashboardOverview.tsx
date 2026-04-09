@@ -42,19 +42,23 @@ export default function DashboardOverview({
   const firstName = profile?.full_name?.split(' ')[0] || 'there';
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState('');
 
   // Fetch orders client-side to avoid server-side session/RLS issues
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return;
+      if (!user) { setLoading(false); return; }
       supabase
         .from('orders')
         .select('*')
         .eq('customer_id', user.id)
         .order('created_at', { ascending: false })
         .then(({ data, error }) => {
-          if (error) console.error('Orders fetch error:', error);
+          if (error) {
+            console.error('Orders fetch error:', error);
+            setFetchError('Could not load your orders. Please try refreshing.');
+          }
           setOrders(data ?? []);
           setLoading(false);
         });
@@ -83,6 +87,13 @@ export default function DashboardOverview({
           Here&apos;s what&apos;s happening with your projects.
         </p>
       </motion.div>
+
+      {/* Error banner */}
+      {fetchError && (
+        <div className="mb-6 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-body">
+          {fetchError}
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
@@ -151,7 +162,7 @@ export default function DashboardOverview({
             href="/services/website-development"
             className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-body font-medium text-sm rounded-xl transition-all"
           >
-            Browse Templates
+            Start New Website
           </Link>
         </div>
       ) : (
