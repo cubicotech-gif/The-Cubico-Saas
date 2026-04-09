@@ -16,12 +16,17 @@ export default async function HomePage() {
   return (
     <>
       <Navbar />
-      <main>
+      <main className="h-screen overflow-y-auto snap-y snap-mandatory">
         <Hero settings={settings} />
         <HomeServicesBento services={homeServices} settings={settings} />
-        <AboutSection settings={settings} />
+        {/* About + Footer share the final snap screen */}
+        <section className="h-screen snap-start flex flex-col bg-surface-950">
+          <div className="flex-1 flex items-center overflow-hidden">
+            <AboutSection settings={settings} />
+          </div>
+          <Footer settings={settings} />
+        </section>
       </main>
-      <Footer settings={settings} />
     </>
   );
 }
