@@ -93,12 +93,10 @@ export default function Navbar() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href={p('/')} className="flex items-center gap-2 group">
-          <span className="text-xl font-display font-bold text-white tracking-tight">
+          <span className="text-2xl font-display font-bold text-white tracking-tight">
+            <span className="text-surface-400 font-medium">my</span>{' '}
             cubico
             <span className="text-brand-400">.</span>
-          </span>
-          <span className="hidden sm:block text-xs text-surface-400 font-body tracking-widest uppercase mt-0.5">
-            technologies
           </span>
         </Link>
 
