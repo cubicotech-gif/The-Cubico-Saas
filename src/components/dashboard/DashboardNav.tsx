@@ -42,9 +42,15 @@ export default function DashboardNav({
 
   const displayName = profile?.full_name || user.email?.split('@')[0] || 'User';
 
+  const getLocale = () => {
+    try {
+      return document.cookie.match(/cubico_locale=(\w+)/)?.[1] || 'en';
+    } catch { return 'en'; }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push('/');
+    router.push(`/${getLocale()}`);
     router.refresh();
   };
 
@@ -58,7 +64,7 @@ export default function DashboardNav({
       {/* Logo */}
       <div className="px-5 h-16 flex items-center border-b border-white/5">
         <Link
-          href="/"
+          href={`/${getLocale()}`}
           className="font-display font-bold text-white text-xl hover:text-[#FF6B4A] transition-colors"
         >
           Cubico
@@ -78,7 +84,7 @@ export default function DashboardNav({
       {/* New order button */}
       <div className="px-4 pt-4">
         <Link
-          href="/services/website-development"
+          href={`/${getLocale()}/services/website-development`}
           className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-body font-medium text-xs rounded-lg transition-all"
           onClick={() => setMobileOpen(false)}
         >
@@ -136,7 +142,7 @@ export default function DashboardNav({
       {/* Mobile header */}
       <header className="lg:hidden sticky top-0 z-30 h-14 bg-[#0F1D32] border-b border-white/5 flex items-center justify-between px-5">
         <Link
-          href="/"
+          href={`/${getLocale()}`}
           className="font-display font-bold text-white text-lg"
         >
           Cubico

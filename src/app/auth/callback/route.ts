@@ -62,5 +62,6 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth`);
+  const locale = request.cookies.get('cubico_locale')?.value || 'en';
+  return NextResponse.redirect(`${origin}/${locale}/login?error=auth`);
 }

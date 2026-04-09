@@ -104,24 +104,24 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-6 text-sm font-body">
-          <a
-            href="#services"
+          <Link
+            href={p('/#services')}
             className="text-surface-400 hover:text-white transition-colors"
           >
             {dict.nav.services}
-          </a>
+          </Link>
           <Link
             href={p('/templates')}
             className="text-surface-400 hover:text-white transition-colors"
           >
             {dict.nav.templates}
           </Link>
-          <a
-            href="#about"
+          <Link
+            href={p('/#about')}
             className="text-surface-400 hover:text-white transition-colors"
           >
             {dict.nav.about}
-          </a>
+          </Link>
           <LocaleSwitcher currentLocale={locale} />
 
           {user ? (
@@ -234,13 +234,13 @@ export default function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-surface-950/95 backdrop-blur-md border-b border-surface-800 px-4 pb-4 space-y-1 font-body text-sm">
-          <a
-            href="#services"
+          <Link
+            href={p('/#services')}
             className="block py-2 text-surface-300 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
             {dict.nav.services}
-          </a>
+          </Link>
           <Link
             href={p('/templates')}
             className="block py-2 text-surface-300 hover:text-white"
@@ -248,13 +248,13 @@ export default function Navbar() {
           >
             {dict.nav.templates}
           </Link>
-          <a
-            href="#about"
+          <Link
+            href={p('/#about')}
             className="block py-2 text-surface-300 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
             {dict.nav.about}
-          </a>
+          </Link>
 
           {user ? (
             <>

@@ -42,6 +42,7 @@ const FILTER_OPTIONS = [
 export default function OrdersList() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState('');
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
 
@@ -49,14 +50,17 @@ export default function OrdersList() {
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return;
+      if (!user) { setLoading(false); return; }
       supabase
         .from('orders')
         .select('*')
         .eq('customer_id', user.id)
         .order('created_at', { ascending: false })
         .then(({ data, error }) => {
-          if (error) console.error('Orders fetch error:', error);
+          if (error) {
+            console.error('Orders fetch error:', error);
+            setFetchError('Could not load your orders. Please try refreshing.');
+          }
           setOrders(data ?? []);
           setLoading(false);
         });
@@ -122,6 +126,13 @@ export default function OrdersList() {
         </div>
       </div>
 
+      {/* Error banner */}
+      {fetchError && (
+        <div className="mb-6 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-body">
+          {fetchError}
+        </div>
+      )}
+
       {/* Orders list */}
       {loading ? (
         <div className="rounded-xl border border-white/10 bg-[#0F1D32] p-8 flex justify-center">
@@ -140,7 +151,7 @@ export default function OrdersList() {
               href="/services/website-development"
               className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#FF6B4A] hover:bg-[#ff7f61] text-white font-body font-medium text-sm rounded-xl transition-all"
             >
-              Browse Templates
+              Start New Website
             </Link>
           )}
         </div>
