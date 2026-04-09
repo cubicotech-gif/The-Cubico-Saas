@@ -18,7 +18,8 @@ export default function Footer({ settings }: FooterProps) {
         <div className="grid sm:grid-cols-3 gap-8 mb-10">
           {/* Brand */}
           <div>
-            <p className="text-xl font-display font-bold text-white mb-2">
+            <p className="text-2xl font-display font-bold text-white mb-2">
+              <span className="text-surface-400 font-medium">my</span>{' '}
               cubico<span className="text-brand-400">.</span>
             </p>
             <p className="text-sm text-surface-500 font-body leading-relaxed">
