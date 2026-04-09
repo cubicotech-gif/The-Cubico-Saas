@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 import type { SiteSettings } from '@/lib/types';
 import { useLocale } from '@/i18n/LocaleProvider';
 
@@ -43,17 +44,16 @@ export default function Hero({ settings }: HeroProps) {
     ? settings.hero_cta_secondary_url
     : `https://wa.me/${settings.contact_whatsapp.replace(/\D/g, '')}`;
 
-  // Static aria-label so screen readers get a single, stable sentence instead of
-  // a flood of updates as the cycling word changes.
   const a11yTitle = hasMorph ? `${prefix}${words[0]}${suffix}` : settings.hero_title;
 
   return (
-    <section className="relative flex items-center overflow-hidden bg-surface-950 pt-28 pb-20 sm:pt-32 sm:pb-24">
-      {/* Background — single soft gradient + faint grid */}
+    <section className="relative h-screen snap-start flex flex-col justify-center overflow-hidden bg-surface-950">
+      {/* Background */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[420px] bg-brand-600/15 rounded-full blur-[110px]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-brand-600/15 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[300px] bg-[#FF6B4A]/8 rounded-full blur-[100px]" />
         <div
-          className="absolute inset-0 opacity-[0.035]"
+          className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)',
@@ -70,7 +70,7 @@ export default function Hero({ settings }: HeroProps) {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-3 py-1 mb-5 rounded-full bg-brand-950/60 border border-brand-800/60 text-brand-300 text-[11px] font-body tracking-wide backdrop-blur-sm"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 mb-6 rounded-full bg-brand-950/60 border border-brand-800/60 text-brand-300 text-xs font-body tracking-wide backdrop-blur-sm"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse" />
           {settings.hero_eyebrow}
@@ -82,14 +82,12 @@ export default function Hero({ settings }: HeroProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.05 }}
           aria-label={a11yTitle}
-          className="text-[2.25rem] sm:text-5xl lg:text-6xl font-display font-bold text-white leading-[1.05] tracking-tight mb-5"
+          className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-white leading-[1.08] tracking-tight mb-5"
         >
           <span aria-hidden="true">
             {prefix}
             {hasMorph && (
               <span className="relative inline-grid align-baseline mx-1 sm:mx-2">
-                {/* Invisible placeholder lets the grid cell expand to the natural
-                    width of the longest morph word — no fragile ch math. */}
                 <span className="invisible col-start-1 row-start-1 whitespace-nowrap">
                   {words.reduce((a, b) => (a.length > b.length ? a : b), '')}
                 </span>
@@ -125,7 +123,7 @@ export default function Hero({ settings }: HeroProps) {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.15 }}
-          className="text-sm sm:text-base text-surface-400 font-body leading-relaxed max-w-xl mx-auto mb-7"
+          className="text-base sm:text-lg text-surface-400 font-body leading-relaxed max-w-xl mx-auto mb-8"
         >
           {settings.hero_subtitle}
         </motion.p>
@@ -135,7 +133,7 @@ export default function Hero({ settings }: HeroProps) {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.22 }}
-          className="flex flex-col sm:flex-row gap-3 justify-center mb-7"
+          className="flex flex-col sm:flex-row gap-3 justify-center mb-8"
         >
           <HeroCTA
             href={settings.hero_cta_primary_url || '#services'}
@@ -148,7 +146,7 @@ export default function Hero({ settings }: HeroProps) {
           </HeroCTA>
         </motion.div>
 
-        {/* Trust strip — small, hardcoded for polish. Colors aligned to brand palette. */}
+        {/* Trust strip */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -169,11 +167,24 @@ export default function Hero({ settings }: HeroProps) {
           </span>
         </motion.div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+      >
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <ChevronDown size={20} className="text-surface-600" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
-
-// ── CTA wrapper that picks <Link> for internal routes, <a> for everything else ─
 
 function HeroCTA({
   href,
@@ -185,8 +196,8 @@ function HeroCTA({
   children: React.ReactNode;
 }) {
   const className = primary
-    ? 'px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-brand-600/30 font-body text-sm'
-    : 'px-6 py-2.5 bg-surface-900/70 hover:bg-surface-800 text-white font-medium rounded-xl transition-colors border border-surface-700 backdrop-blur-sm font-body text-sm';
+    ? 'px-7 py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-brand-600/30 font-body text-sm sm:text-base'
+    : 'px-7 py-3 bg-surface-900/70 hover:bg-surface-800 text-white font-medium rounded-xl transition-colors border border-surface-700 backdrop-blur-sm font-body text-sm sm:text-base';
 
   if (isInternalRoute(href)) {
     return (
