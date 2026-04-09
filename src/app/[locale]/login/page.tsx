@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase-browser';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 export default function LoginPage() {
   return (
@@ -18,6 +19,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next') || '/dashboard';
+  const { locale, dict } = useLocale();
 
   const initialMode = searchParams.get('mode') === 'signup' ? 'signup' : 'login';
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
@@ -50,7 +52,7 @@ function LoginForm() {
           },
         });
         if (signUpError) throw signUpError;
-        setSuccess('Account created! Check your email to confirm, then log in.');
+        setSuccess(dict.login.successSignUp);
         setMode('login');
       } else {
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -76,7 +78,7 @@ function LoginForm() {
         window.location.href = next;
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Something went wrong';
+      const message = err instanceof Error ? err.message : dict.login.genericError;
       setError(message);
     } finally {
       setLoading(false);
@@ -99,15 +101,15 @@ function LoginForm() {
         {/* Logo / back */}
         <div className="text-center mb-8">
           <Link
-            href="/"
+            href={`/${locale}`}
             className="inline-block text-2xl font-display font-bold text-white hover:text-[#FF6B4A] transition-colors"
           >
             Cubico
           </Link>
           <p className="text-surface-500 font-body text-sm mt-2">
             {mode === 'login'
-              ? 'Sign in to your account'
-              : 'Create your account'}
+              ? dict.login.signInTitle
+              : dict.login.signUpTitle}
           </p>
         </div>
 
@@ -123,7 +125,7 @@ function LoginForm() {
                   : 'text-surface-400 hover:text-white'
               }`}
             >
-              Log In
+              {dict.login.tabLogIn}
             </button>
             <button
               onClick={() => { setMode('signup'); setError(''); setSuccess(''); }}
@@ -133,7 +135,7 @@ function LoginForm() {
                   : 'text-surface-400 hover:text-white'
               }`}
             >
-              Sign Up
+              {dict.login.tabSignUp}
             </button>
           </div>
 
@@ -155,26 +157,26 @@ function LoginForm() {
               <>
                 <div>
                   <label className="block text-xs text-surface-400 font-body mb-1.5">
-                    Full Name
+                    {dict.login.labelFullName}
                   </label>
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required
-                    placeholder="Your full name"
+                    placeholder={dict.login.placeholderName}
                     className="w-full px-3 py-2.5 bg-surface-950 border border-white/10 rounded-lg text-white text-sm font-body placeholder:text-surface-600 focus:outline-none focus:border-[#FF6B4A]/50 transition-colors"
                   />
                 </div>
                 <div>
                   <label className="block text-xs text-surface-400 font-body mb-1.5">
-                    Phone (WhatsApp)
+                    {dict.login.labelPhone}
                   </label>
                   <input
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+92 300 1234567"
+                    placeholder={dict.login.placeholderPhone}
                     className="w-full px-3 py-2.5 bg-surface-950 border border-white/10 rounded-lg text-white text-sm font-body placeholder:text-surface-600 focus:outline-none focus:border-[#FF6B4A]/50 transition-colors"
                   />
                 </div>
@@ -183,21 +185,21 @@ function LoginForm() {
 
             <div>
               <label className="block text-xs text-surface-400 font-body mb-1.5">
-                Email
+                {dict.login.labelEmail}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="you@example.com"
+                placeholder={dict.login.placeholderEmail}
                 className="w-full px-3 py-2.5 bg-surface-950 border border-white/10 rounded-lg text-white text-sm font-body placeholder:text-surface-600 focus:outline-none focus:border-[#FF6B4A]/50 transition-colors"
               />
             </div>
 
             <div>
               <label className="block text-xs text-surface-400 font-body mb-1.5">
-                Password
+                {dict.login.labelPassword}
               </label>
               <input
                 type="password"
@@ -205,7 +207,7 @@ function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                placeholder="Min 6 characters"
+                placeholder={dict.login.placeholderPassword}
                 className="w-full px-3 py-2.5 bg-surface-950 border border-white/10 rounded-lg text-white text-sm font-body placeholder:text-surface-600 focus:outline-none focus:border-[#FF6B4A]/50 transition-colors"
               />
             </div>
@@ -216,17 +218,17 @@ function LoginForm() {
               className="w-full py-3 bg-[#FF6B4A] hover:bg-[#ff7f61] disabled:opacity-50 disabled:cursor-not-allowed text-white font-body font-semibold rounded-xl transition-all text-sm"
             >
               {loading
-                ? 'Please wait...'
+                ? dict.login.submitting
                 : mode === 'login'
-                  ? 'Log In'
-                  : 'Create Account'}
+                  ? dict.login.submitLogIn
+                  : dict.login.submitSignUp}
             </button>
           </form>
         </div>
 
         {/* Footer */}
         <p className="text-center text-xs text-surface-600 font-body mt-6">
-          By continuing, you agree to Cubico&apos;s Terms of Service.
+          {dict.login.terms}
         </p>
       </motion.div>
     </div>

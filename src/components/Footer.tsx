@@ -101,7 +101,7 @@ export default function Footer({ settings }: FooterProps) {
         </div>
 
         <div className="border-t border-surface-800 pt-6 text-center text-xs text-surface-600 font-body">
-          {settings.footer_text}
+          {dict.footer.copyright.replace('{year}', new Date().getFullYear().toString())}
         </div>
       </div>
     </footer>

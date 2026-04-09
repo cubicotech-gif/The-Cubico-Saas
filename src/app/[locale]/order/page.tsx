@@ -17,6 +17,7 @@ import { createClient } from '@/lib/supabase-browser';
 import { TEMPLATES, type Template } from '@/data/templates';
 import TemplateThumb from '@/components/TemplateThumb';
 import { useCurrency } from '@/hooks/useCurrency';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 const STORAGE_KEY = 'cubico_order_draft';
 
@@ -122,6 +123,7 @@ function OrderFlow() {
 
   const supabase = createClient();
   const { format: formatPrice, loading: currencyLoading, isPakistan } = useCurrency();
+  const { locale, dict } = useLocale();
 
   // Try restoring form from localStorage (for post-auth return)
   const restoredData = typeof window !== 'undefined'
@@ -240,7 +242,7 @@ function OrderFlow() {
 
         // If email confirmation is required
         if (data.user && !data.session) {
-          setAuthSuccess('Check your email to confirm, then come back and log in.');
+          setAuthSuccess(dict.order.authConfirmEmail);
           setAuthMode('login');
           setAuthLoading(false);
           return;
@@ -268,7 +270,7 @@ function OrderFlow() {
         }
       }
     } catch (err: unknown) {
-      setAuthError(err instanceof Error ? err.message : 'Something went wrong');
+      setAuthError(err instanceof Error ? err.message : dict.order.authGenericError);
     } finally {
       setAuthLoading(false);
     }
@@ -376,7 +378,7 @@ function OrderFlow() {
     await submitOrderWithUser(user.id);
   };
 
-  const stepLabels = ['Template', 'Business', 'Assets', 'Contact', 'Plan', 'Review'];
+  const stepLabels = [dict.order.stepTemplate, dict.order.stepBusiness, dict.order.stepAssets, dict.order.stepContact, dict.order.stepPlan, dict.order.stepReview];
 
   return (
     <div className="min-h-screen bg-surface-950">
@@ -384,13 +386,13 @@ function OrderFlow() {
       <header className="border-b border-white/5 bg-[#0F1D32]">
         <div className="max-w-4xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
           <Link
-            href="/services/website-development"
+            href={`/${locale}/services/website-development`}
             className="flex items-center gap-1.5 text-sm text-surface-400 hover:text-white transition-colors font-body"
           >
             <ArrowLeft size={14} />
-            Back to Templates
+            {dict.order.backToTemplates}
           </Link>
-          <Link href="/" className="font-display font-bold text-white text-lg">
+          <Link href={`/${locale}`} className="font-display font-bold text-white text-lg">
             Cubico
           </Link>
         </div>
@@ -443,10 +445,10 @@ function OrderFlow() {
           {step === 0 && (
             <StepWrapper key="step0">
               <h1 className="text-2xl font-display font-bold text-white mb-2">
-                Choose Your Template
+                {dict.order.chooseTemplate}
               </h1>
               <p className="text-surface-500 font-body text-sm mb-8">
-                Pick the one closest to your industry. We&apos;ll customize everything.
+                {dict.order.chooseTemplateSub}
               </p>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {TEMPLATES.map((t) => (
@@ -489,41 +491,41 @@ function OrderFlow() {
               <TemplateBadge template={selectedTemplate} onChangeStep={() => setStep(0)} />
 
               <h1 className="text-2xl font-display font-bold text-white mb-2">
-                About Your Business
+                {dict.order.aboutBusiness}
               </h1>
               <p className="text-surface-500 font-body text-sm mb-6">
-                Just the basics — we&apos;ll figure out the rest together.
+                {dict.order.aboutBusinessSub}
               </p>
 
               {error && <ErrorBanner message={error} />}
 
               <div className="space-y-5">
-                <Field label="Business Name" required>
+                <Field label={dict.order.labelBusinessName} required>
                   <input
                     type="text"
                     value={form.businessName}
                     onChange={(e) => updateForm({ businessName: e.target.value })}
-                    placeholder="e.g. Ali's Restaurant, MedCare Clinic"
+                    placeholder={dict.order.placeholderBusinessName}
                     className={INPUT_CLASS}
                   />
                 </Field>
 
-                <Field label="Industry / Type">
+                <Field label={dict.order.labelIndustry}>
                   <input
                     type="text"
                     value={form.businessIndustry}
                     onChange={(e) => updateForm({ businessIndustry: e.target.value })}
-                    placeholder="e.g. Restaurant, Clinic, School, Agency"
+                    placeholder={dict.order.placeholderIndustry}
                     className={INPUT_CLASS}
                   />
                 </Field>
 
-                <Field label="What does your business do? (2-3 sentences max)">
+                <Field label={dict.order.labelBusinessDesc}>
                   <textarea
                     value={form.businessDescription}
                     onChange={(e) => updateForm({ businessDescription: e.target.value })}
                     rows={3}
-                    placeholder="A brief description of your business..."
+                    placeholder={dict.order.placeholderBusinessDesc}
                     className={INPUT_CLASS + ' resize-none'}
                   />
                 </Field>
@@ -533,7 +535,7 @@ function OrderFlow() {
                 onBack={() => setStep(0)}
                 onNext={() => { setError(''); setStep(2); }}
                 nextDisabled={!canProceedStep1}
-                nextLabel="Next: Assets"
+                nextLabel={dict.order.nextAssets}
               />
             </StepWrapper>
           )}
@@ -544,18 +546,18 @@ function OrderFlow() {
               <TemplateBadge template={selectedTemplate} onChangeStep={() => setStep(0)} />
 
               <h1 className="text-2xl font-display font-bold text-white mb-2">
-                Assets & Preferences
+                {dict.order.assetsTitle}
               </h1>
               <p className="text-surface-500 font-body text-sm mb-6">
-                All optional — skip what you don&apos;t have.
+                {dict.order.assetsSub}
               </p>
 
               <div className="space-y-5">
-                <Field label="Logo (optional)">
+                <Field label={dict.order.labelLogo}>
                   <label className="flex items-center gap-3 px-3 py-3 bg-surface-950 border border-white/10 border-dashed rounded-lg cursor-pointer hover:border-[#FF6B4A]/30 transition-colors">
                     <Upload size={16} className="text-surface-500" />
                     <span className="text-xs text-surface-400 font-body">
-                      {logoFile ? logoFile.name : 'Upload your logo (PNG, SVG, JPG)'}
+                      {logoFile ? logoFile.name : dict.order.logoUploadText}
                     </span>
                     <input
                       type="file"
@@ -566,7 +568,7 @@ function OrderFlow() {
                   </label>
                 </Field>
 
-                <Field label="Preferred Colors">
+                <Field label={dict.order.labelColors}>
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -576,7 +578,7 @@ function OrderFlow() {
                         className="w-4 h-4 rounded border-surface-600 bg-surface-800 text-[#FF6B4A] focus:ring-[#FF6B4A] focus:ring-offset-0"
                       />
                       <span className="text-xs text-surface-400 font-body">
-                        Let our team decide the best colors
+                        {dict.order.letTeamDecide}
                       </span>
                     </label>
                     {!form.letTeamDecideColors && (
@@ -584,19 +586,19 @@ function OrderFlow() {
                         type="text"
                         value={form.colorPreferences}
                         onChange={(e) => updateForm({ colorPreferences: e.target.value })}
-                        placeholder="e.g. Blue and white, match my logo, earthy tones"
+                        placeholder={dict.order.placeholderColors}
                         className={INPUT_CLASS}
                       />
                     )}
                   </div>
                 </Field>
 
-                <Field label="Reference websites you like (optional)">
+                <Field label={dict.order.labelReferences}>
                   <textarea
                     value={form.referenceUrls}
                     onChange={(e) => updateForm({ referenceUrls: e.target.value })}
                     rows={2}
-                    placeholder="Paste any website URLs you like the design of..."
+                    placeholder={dict.order.placeholderReferences}
                     className={INPUT_CLASS + ' resize-none'}
                   />
                 </Field>
@@ -605,7 +607,7 @@ function OrderFlow() {
               <StepActions
                 onBack={() => setStep(1)}
                 onNext={() => setStep(3)}
-                nextLabel="Next: Contact"
+                nextLabel={dict.order.nextContact}
               />
             </StepWrapper>
           )}
@@ -616,47 +618,51 @@ function OrderFlow() {
               <TemplateBadge template={selectedTemplate} onChangeStep={() => setStep(0)} />
 
               <h1 className="text-2xl font-display font-bold text-white mb-2">
-                How Can We Reach You?
+                {dict.order.contactTitle}
               </h1>
               <p className="text-surface-500 font-body text-sm mb-6">
-                We need at least one way to contact you.
+                {dict.order.contactSub}
               </p>
 
               <div className="space-y-5">
-                <Field label="WhatsApp Number" required>
+                <Field label={dict.order.labelWhatsapp} required>
                   <input
                     type="tel"
                     value={form.whatsapp}
                     onChange={(e) => updateForm({ whatsapp: e.target.value })}
-                    placeholder="+92 300 1234567"
+                    placeholder={dict.order.placeholderWhatsapp}
                     className={INPUT_CLASS}
                   />
                 </Field>
 
-                <Field label="Email">
+                <Field label={dict.order.labelContactEmail}>
                   <input
                     type="email"
                     value={form.contactEmail}
                     onChange={(e) => updateForm({ contactEmail: e.target.value })}
-                    placeholder="you@example.com"
+                    placeholder={dict.order.placeholderContactEmail}
                     className={INPUT_CLASS}
                   />
                 </Field>
 
-                <Field label="Preferred Language">
+                <Field label={dict.order.labelLanguage}>
                   <div className="flex gap-2">
-                    {['English', 'Urdu', 'Arabic'].map((lang) => (
+                    {([
+                      { value: 'English', label: dict.order.langEnglish },
+                      { value: 'Urdu', label: dict.order.langUrdu },
+                      { value: 'Arabic', label: dict.order.langArabic },
+                    ]).map(({ value, label }) => (
                       <button
-                        key={lang}
+                        key={value}
                         type="button"
-                        onClick={() => updateForm({ preferredLanguage: lang })}
+                        onClick={() => updateForm({ preferredLanguage: value })}
                         className={`flex-1 py-2.5 rounded-lg text-xs font-body font-medium border transition-all ${
-                          form.preferredLanguage === lang
+                          form.preferredLanguage === value
                             ? 'border-[#FF6B4A]/50 bg-[#FF6B4A]/10 text-[#FF6B4A]'
                             : 'border-white/10 text-surface-400 hover:border-white/20'
                         }`}
                       >
-                        {lang}
+                        {label}
                       </button>
                     ))}
                   </div>
@@ -667,7 +673,7 @@ function OrderFlow() {
                 onBack={() => setStep(2)}
                 onNext={() => { setError(''); setStep(4); }}
                 nextDisabled={!canProceedStep3}
-                nextLabel="Next: Plan"
+                nextLabel={dict.order.nextPlan}
               />
             </StepWrapper>
           )}
@@ -678,22 +684,22 @@ function OrderFlow() {
               <TemplateBadge template={selectedTemplate} onChangeStep={() => setStep(0)} />
 
               <h1 className="text-2xl font-display font-bold text-white mb-2">
-                Pick Your Plan
+                {dict.order.pickPlanTitle}
               </h1>
               <p className="text-surface-500 font-body text-sm mb-3">
-                Choose what fits — you can upgrade anytime later.
+                {dict.order.pickPlanSub}
               </p>
 
               <div className="mb-6">
                 {currencyLoading ? (
                   <span className="inline-flex items-center gap-1.5 text-[11px] text-surface-500 font-body">
                     <Loader2 size={11} className="animate-spin" />
-                    Detecting your location…
+                    {dict.order.detecting}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0F1D32] border border-white/10 text-[11px] text-surface-400 font-body">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                    Prices in {isPakistan ? 'PKR (Pakistan)' : 'USD (International)'}
+                    {dict.order.pricesIn.replace('{currency}', isPakistan ? 'PKR (Pakistan)' : 'USD (International)')}
                   </span>
                 )}
               </div>
@@ -730,22 +736,22 @@ function OrderFlow() {
                           {formatPrice(p.devCostPKR)}
                         </p>
                         <p className="text-[10px] text-surface-500 font-body">
-                          one-time development
+                          {dict.order.oneTimeDev}
                         </p>
                         {p.monthlyPKR > 0 ? (
                           <p className="mt-1.5 text-[12px] font-display font-semibold text-[#FF6B4A]">
                             + {formatPrice(p.monthlyPKR)}
                             <span className="text-surface-500 font-body font-normal">
-                              {' '}/ month
+                              {' '}{dict.order.perMonth}
                             </span>
                           </p>
                         ) : (
                           <p className="mt-1.5 text-[11px] text-green-400 font-body font-semibold">
-                            No monthly fees
+                            {dict.order.noMonthlyFees}
                           </p>
                         )}
                         <p className="mt-1 text-[10px] text-surface-500 font-body">
-                          E-commerce add-on: +{formatPrice(p.ecommerceExtraPKR)}
+                          {dict.order.ecommerceAddon.replace('{amount}', formatPrice(p.ecommerceExtraPKR))}
                         </p>
                       </div>
 
@@ -763,7 +769,7 @@ function OrderFlow() {
                       {selected && (
                         <div className="mt-3 flex items-center gap-1 text-[10px] text-[#FF6B4A] font-body font-semibold">
                           <Check size={11} />
-                          Selected
+                          {dict.order.selected}
                         </div>
                       )}
                     </button>
@@ -772,15 +778,14 @@ function OrderFlow() {
               </div>
 
               <p className="text-[11px] text-surface-500 font-body mt-4 leading-relaxed">
-                International pricing is auto-converted from PKR. Final invoice
-                will match the currency shown above.
+                {dict.order.pricingNote}
               </p>
 
               <StepActions
                 onBack={() => setStep(3)}
                 onNext={() => { setError(''); setStep(5); }}
                 nextDisabled={!canProceedStep4}
-                nextLabel="Review Order"
+                nextLabel={dict.order.reviewOrder}
               />
             </StepWrapper>
           )}
@@ -789,17 +794,17 @@ function OrderFlow() {
           {step === 5 && selectedTemplate && (
             <StepWrapper key="step5">
               <h1 className="text-2xl font-display font-bold text-white mb-2">
-                Review Your Order
+                {dict.order.reviewTitle}
               </h1>
               <p className="text-surface-500 font-body text-sm mb-6">
-                Make sure everything looks good. You can chat with your developer later to change anything.
+                {dict.order.reviewSub}
               </p>
 
               {error && <ErrorBanner message={error} />}
 
               <div className="space-y-4">
                 {/* Template */}
-                <ReviewCard title="Template">
+                <ReviewCard title={dict.order.reviewTemplate}>
                   <div className="flex items-center gap-3">
                     <div className="w-14 h-9 rounded" style={{ background: selectedTemplate.gradient }} />
                     <div>
@@ -810,49 +815,49 @@ function OrderFlow() {
                 </ReviewCard>
 
                 {/* Business */}
-                <ReviewCard title="Business">
-                  <Row label="Name" value={form.businessName} />
-                  {form.businessIndustry && <Row label="Industry" value={form.businessIndustry} />}
-                  {form.businessDescription && <Row label="Description" value={form.businessDescription} />}
+                <ReviewCard title={dict.order.reviewBusiness}>
+                  <Row label={dict.order.reviewName} value={form.businessName} />
+                  {form.businessIndustry && <Row label={dict.order.reviewIndustry} value={form.businessIndustry} />}
+                  {form.businessDescription && <Row label={dict.order.reviewDescription} value={form.businessDescription} />}
                 </ReviewCard>
 
                 {/* Assets */}
-                <ReviewCard title="Assets & Preferences">
-                  {logoFile && <Row label="Logo" value={logoFile.name} />}
+                <ReviewCard title={dict.order.reviewAssetsPrefs}>
+                  {logoFile && <Row label={dict.order.reviewLogo} value={logoFile.name} />}
                   <Row
-                    label="Colors"
-                    value={form.letTeamDecideColors ? 'Team decides' : (form.colorPreferences || 'Not specified')}
+                    label={dict.order.reviewColors}
+                    value={form.letTeamDecideColors ? dict.order.teamDecides : (form.colorPreferences || dict.order.notSpecified)}
                   />
-                  {form.referenceUrls && <Row label="References" value={form.referenceUrls} />}
+                  {form.referenceUrls && <Row label={dict.order.reviewReferences} value={form.referenceUrls} />}
                 </ReviewCard>
 
                 {/* Contact */}
-                <ReviewCard title="Contact">
-                  {form.whatsapp && <Row label="WhatsApp" value={form.whatsapp} />}
-                  {form.contactEmail && <Row label="Email" value={form.contactEmail} />}
-                  <Row label="Language" value={form.preferredLanguage} />
+                <ReviewCard title={dict.order.reviewContact}>
+                  {form.whatsapp && <Row label={dict.order.reviewWhatsapp} value={form.whatsapp} />}
+                  {form.contactEmail && <Row label={dict.order.reviewEmail} value={form.contactEmail} />}
+                  <Row label={dict.order.reviewLanguage} value={form.preferredLanguage} />
                 </ReviewCard>
 
                 {/* Plan */}
-                <ReviewCard title="Plan">
+                <ReviewCard title={dict.order.reviewPlan}>
                   {(() => {
                     const picked = PLANS.find((p) => p.name === form.planName);
                     if (!picked) {
-                      return <Row label="Selected" value="Not picked" />;
+                      return <Row label={dict.order.reviewSelected} value={dict.order.notPicked} />;
                     }
                     return (
                       <>
-                        <Row label="Selected" value={picked.name} />
+                        <Row label={dict.order.reviewSelected} value={picked.name} />
                         <Row
-                          label="Development"
-                          value={`${formatPrice(picked.devCostPKR)} one-time`}
+                          label={dict.order.reviewDevelopment}
+                          value={`${formatPrice(picked.devCostPKR)} ${dict.order.oneTime}`}
                         />
                         <Row
-                          label="Monthly"
+                          label={dict.order.reviewMonthly}
                           value={
                             picked.monthlyPKR > 0
-                              ? `${formatPrice(picked.monthlyPKR)} / month`
-                              : 'No monthly fees'
+                              ? `${formatPrice(picked.monthlyPKR)} ${dict.order.perMonth}`
+                              : dict.order.noMonthly
                           }
                         />
                       </>
@@ -863,15 +868,10 @@ function OrderFlow() {
                 {/* What happens next */}
                 <div className="p-4 rounded-xl border border-[#FF6B4A]/20 bg-[#FF6B4A]/5">
                   <p className="text-sm font-display font-semibold text-white mb-2">
-                    What happens next?
+                    {dict.order.whatsNext}
                   </p>
                   <ul className="space-y-1.5 text-xs text-surface-400 font-body">
-                    {[
-                      'A developer is assigned to your project immediately',
-                      "You'll get a live preview link within hours",
-                      'Chat with your developer anytime from your dashboard',
-                      "Pay only when you're happy — full ownership, no lock-in",
-                    ].map((text) => (
+                    {dict.order.whatsNextItems.map((text: string) => (
                       <li key={text} className="flex items-start gap-2">
                         <Check size={12} className="text-[#FF6B4A] mt-0.5 flex-shrink-0" />
                         {text}
@@ -888,7 +888,7 @@ function OrderFlow() {
                   className="flex items-center gap-1.5 px-4 py-2.5 text-sm text-surface-400 hover:text-white font-body transition-colors"
                 >
                   <ArrowLeft size={14} />
-                  Edit Details
+                  {dict.order.editDetails}
                 </button>
                 <button
                   onClick={handleSubmitAttempt}
@@ -898,11 +898,11 @@ function OrderFlow() {
                   {loading ? (
                     <>
                       <Loader2 size={16} className="animate-spin" />
-                      Submitting...
+                      {dict.order.submitting}
                     </>
                   ) : (
                     <>
-                      Submit Order
+                      {dict.order.submit}
                       <ArrowRight size={16} />
                     </>
                   )}
@@ -937,10 +937,10 @@ function OrderFlow() {
               </button>
 
               <h2 className="text-lg font-display font-bold text-white mb-1">
-                {authMode === 'signup' ? 'Create Account' : 'Sign In'}
+                {authMode === 'signup' ? dict.order.authCreateAccount : dict.order.authSignIn}
               </h2>
               <p className="text-xs text-surface-500 font-body mb-5">
-                Quick account to track your order and chat with your developer.
+                {dict.order.authSubtitle}
               </p>
 
               {/* Auth tabs */}
@@ -951,7 +951,7 @@ function OrderFlow() {
                     authMode === 'login' ? 'bg-[#FF6B4A] text-white' : 'text-surface-400 hover:text-white'
                   }`}
                 >
-                  Log In
+                  {dict.order.authTabLogIn}
                 </button>
                 <button
                   onClick={() => { setAuthMode('signup'); setAuthError(''); setAuthSuccess(''); }}
@@ -959,7 +959,7 @@ function OrderFlow() {
                     authMode === 'signup' ? 'bg-[#FF6B4A] text-white' : 'text-surface-400 hover:text-white'
                   }`}
                 >
-                  Sign Up
+                  {dict.order.authTabSignUp}
                 </button>
               </div>
 
@@ -976,7 +976,7 @@ function OrderFlow() {
                     type="text"
                     value={authName}
                     onChange={(e) => setAuthName(e.target.value)}
-                    placeholder="Full Name"
+                    placeholder={dict.order.authPlaceholderName}
                     className={INPUT_CLASS}
                   />
                 )}
@@ -985,7 +985,7 @@ function OrderFlow() {
                   value={authEmail}
                   onChange={(e) => setAuthEmail(e.target.value)}
                   required
-                  placeholder="Email"
+                  placeholder={dict.order.authPlaceholderEmail}
                   className={INPUT_CLASS}
                 />
                 <input
@@ -994,7 +994,7 @@ function OrderFlow() {
                   onChange={(e) => setAuthPassword(e.target.value)}
                   required
                   minLength={6}
-                  placeholder="Password (min 6 chars)"
+                  placeholder={dict.order.authPlaceholderPassword}
                   className={INPUT_CLASS}
                 />
                 <button
@@ -1003,10 +1003,10 @@ function OrderFlow() {
                   className="w-full py-2.5 bg-[#FF6B4A] hover:bg-[#ff7f61] disabled:opacity-50 text-white font-body font-semibold rounded-xl transition-all text-sm"
                 >
                   {authLoading
-                    ? 'Please wait...'
+                    ? dict.order.authSubmitting
                     : authMode === 'signup'
-                      ? 'Create Account & Submit'
-                      : 'Sign In & Submit'}
+                      ? dict.order.authSubmitSignUp
+                      : dict.order.authSubmitLogIn}
                 </button>
               </form>
             </motion.div>
@@ -1044,12 +1044,13 @@ function TemplateBadge({
   template: Template | null;
   onChangeStep: () => void;
 }) {
+  const { dict } = useLocale();
   if (!template) return null;
   return (
     <div className="flex items-center gap-3 mb-6 p-3 rounded-lg bg-[#0F1D32] border border-white/10">
       <div className="w-12 h-8 rounded" style={{ background: template.gradient }} />
       <div>
-        <p className="text-xs text-surface-500 font-body">Template selected</p>
+        <p className="text-xs text-surface-500 font-body">{dict.order.selected}</p>
         <p className="text-sm text-white font-body font-medium">
           {template.name} — {template.industry}
         </p>
@@ -1058,7 +1059,7 @@ function TemplateBadge({
         onClick={onChangeStep}
         className="ml-auto text-xs text-[#FF6B4A] font-body hover:underline"
       >
-        Change
+        {dict.order.changeTemplate}
       </button>
     </div>
   );
@@ -1087,7 +1088,7 @@ function Field({
 function StepActions({
   onBack,
   onNext,
-  nextLabel = 'Next',
+  nextLabel,
   nextDisabled = false,
 }: {
   onBack: () => void;
@@ -1095,6 +1096,7 @@ function StepActions({
   nextLabel?: string;
   nextDisabled?: boolean;
 }) {
+  const { dict } = useLocale();
   return (
     <div className="flex justify-between mt-8">
       <button
@@ -1102,14 +1104,14 @@ function StepActions({
         className="flex items-center gap-1.5 px-4 py-2.5 text-sm text-surface-400 hover:text-white font-body transition-colors"
       >
         <ArrowLeft size={14} />
-        Back
+        {dict.order.back}
       </button>
       <button
         onClick={onNext}
         disabled={nextDisabled}
         className="flex items-center gap-2 px-6 py-2.5 bg-[#FF6B4A] hover:bg-[#ff7f61] disabled:opacity-40 text-white font-body font-semibold text-sm rounded-xl transition-all"
       >
-        {nextLabel}
+        {nextLabel || dict.order.next}
         <ArrowRight size={14} />
       </button>
     </div>
