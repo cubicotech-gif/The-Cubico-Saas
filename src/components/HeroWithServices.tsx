@@ -302,56 +302,40 @@ export default function HeroWithServices({ settings, services, media }: Props) {
 
             {/* ── COL 3 (or COL 2 if no visual): Service cards ── */}
             <div className={`order-3 ${hasVisual ? '' : 'order-2'}`}>
-              <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5">
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
                 {services.slice(0, 6).map((svc, i) => {
                   const a = getAccent(svc);
-                  const Icon = getIcon(svc.icon);
                   const isInternal = svc.link_type === 'internal' && svc.slug;
                   const href = isInternal ? `/${locale}/services/${svc.slug}` : svc.link_url;
 
                   const card = (
                     <motion.div
-                      initial={{ opacity: 0, x: 20 }}
+                      initial={{ opacity: 0, x: 16 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.45, delay: 0.2 + i * 0.08 }}
-                      whileHover={reducedMotion ? {} : { x: 4, scale: 1.01 }}
-                      className="group relative flex items-start gap-3 p-3 sm:p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] backdrop-blur-sm cursor-pointer transition-all duration-300 hover:bg-white/[0.06] hover:border-white/[0.12] overflow-hidden"
+                      transition={{ duration: 0.4, delay: 0.2 + i * 0.07 }}
+                      whileHover={reducedMotion ? {} : { x: 4 }}
+                      className="group relative flex items-center justify-between px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-300 overflow-hidden"
+                      style={{
+                        borderLeft: `2px solid ${a.hex}50`,
+                      }}
                     >
-                      {/* Hover glow */}
+                      {/* Background — appears on hover */}
                       <div
-                        className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                        className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                         style={{
-                          background: `linear-gradient(135deg, ${a.hex}08 0%, transparent 60%)`,
+                          background: `linear-gradient(90deg, ${a.hex}10 0%, transparent 100%)`,
                         }}
                       />
 
-                      {/* Icon */}
-                      <div
-                        className="relative flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
-                        style={{
-                          background: `linear-gradient(135deg, ${a.hex}20, ${a.hex}08)`,
-                          border: `1px solid ${a.hex}25`,
-                        }}
-                      >
-                        <Icon size={16} className={a.text} />
-                      </div>
-
-                      {/* Text */}
-                      <div className="relative min-w-0 flex-1">
-                        <h3 className="font-display font-semibold text-white text-xs sm:text-sm leading-tight mb-0.5 group-hover:text-brand-300 transition-colors duration-300">
-                          {svc.title}
-                        </h3>
-                        {svc.home_tagline && (
-                          <p className="text-[10px] text-surface-500 font-body leading-snug line-clamp-1">
-                            {svc.home_tagline}
-                          </p>
-                        )}
-                      </div>
+                      {/* Service name */}
+                      <span className="relative font-display font-medium text-surface-300 text-xs sm:text-sm tracking-wide group-hover:text-white transition-colors duration-300">
+                        {svc.title}
+                      </span>
 
                       {/* Arrow */}
                       <ArrowRight
                         size={12}
-                        className={`relative flex-shrink-0 mt-1 ${a.text} opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5`}
+                        className={`relative flex-shrink-0 ${a.text} opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5`}
                       />
                     </motion.div>
                   );
