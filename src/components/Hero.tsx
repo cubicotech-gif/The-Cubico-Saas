@@ -48,7 +48,7 @@ export default function Hero({ settings }: HeroProps) {
   const a11yTitle = hasMorph ? `${prefix}${words[0]}${suffix}` : settings.hero_title;
 
   return (
-    <section className="relative flex items-center overflow-hidden bg-surface-950 pt-28 pb-14 sm:pt-32 sm:pb-16">
+    <section className="relative flex items-center overflow-hidden bg-surface-950 pt-28 pb-20 sm:pt-32 sm:pb-24">
       {/* Background — single soft gradient + faint grid */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[420px] bg-brand-600/15 rounded-full blur-[110px]" />
