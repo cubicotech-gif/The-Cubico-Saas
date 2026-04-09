@@ -1,6 +1,5 @@
 import Navbar from '@/components/Navbar';
-import Hero from '@/components/Hero';
-import HomeServicesBento from '@/components/HomeServicesBento';
+import HeroWithServices from '@/components/HeroWithServices';
 import AboutSection from '@/components/AboutSection';
 import Footer from '@/components/Footer';
 import { getSiteSettings, getHomeServices } from '@/lib/data';
@@ -17,9 +16,9 @@ export default async function HomePage() {
     <>
       <Navbar />
       <main className="h-screen overflow-y-auto snap-y snap-mandatory">
-        <Hero settings={settings} />
-        <HomeServicesBento services={homeServices} settings={settings} />
-        {/* About + Footer share the final snap screen */}
+        {/* Screen 1: Hero + Services — everything at one glance */}
+        <HeroWithServices settings={settings} services={homeServices} />
+        {/* Screen 2: About + Footer */}
         <section className="h-screen snap-start flex flex-col bg-surface-950">
           <div className="flex-1 flex items-center overflow-hidden">
             <AboutSection settings={settings} />
