@@ -326,6 +326,9 @@ function OrderFlow() {
         logoUrl = urlData.publicUrl;
       }
 
+      const pickedPlan = PLANS.find((p) => p.name === form.planName);
+      const priceAmount = pickedPlan?.devCostPKR || 0;
+
       // Use .select() to verify the row was actually created
       const { data: inserted, error: insertError } = await supabase
         .from('orders')
@@ -341,11 +344,10 @@ function OrderFlow() {
             : form.colorPreferences.trim(),
           domain_info: '',
           extra_notes: (() => {
-            const picked = PLANS.find((p) => p.name === form.planName);
-            const priceLine = picked
-              ? ` Price: ${formatPrice(picked.devCostPKR)} one-time${
-                  picked.monthlyPKR > 0
-                    ? ` + ${formatPrice(picked.monthlyPKR)}/mo`
+            const priceLine = pickedPlan
+              ? ` Price: ${formatPrice(pickedPlan.devCostPKR)} one-time${
+                  pickedPlan.monthlyPKR > 0
+                    ? ` + ${formatPrice(pickedPlan.monthlyPKR)}/mo`
                     : ''
                 }.`
               : '';
@@ -353,6 +355,9 @@ function OrderFlow() {
           })(),
           logo_url: logoUrl,
           status: 'pending',
+          price_amount: priceAmount,
+          price_currency: 'PKR',
+          is_paid: false,
         })
         .select()
         .single();

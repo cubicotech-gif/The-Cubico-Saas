@@ -87,6 +87,28 @@ src/
 - **External** links go to existing Cubico product sites
 - **Internal** links render dedicated landing pages at `/services/[slug]`
 
+## PayPal Integration
+
+Payments on order completion are processed through PayPal. To enable them:
+
+1. Create a REST API app at [developer.paypal.com](https://developer.paypal.com)
+   → **Apps & Credentials**.
+2. Copy the **Client ID** and **Secret** (use Sandbox credentials while testing).
+3. Add these to `.env.local`:
+   ```
+   PAYPAL_CLIENT_ID=...
+   PAYPAL_CLIENT_SECRET=...
+   PAYPAL_ENVIRONMENT=sandbox          # or "live" in production
+   NEXT_PUBLIC_PAYPAL_CLIENT_ID=...     # same value as PAYPAL_CLIENT_ID
+   PKR_TO_USD_RATE=280                  # PKR orders are charged in USD
+   ```
+
+The server exposes two API routes that the PaymentModal uses:
+- `POST /api/paypal/create-order` — creates a PayPal order for the logged-in
+  customer's order, returns the PayPal order id.
+- `POST /api/paypal/capture-order` — captures the approved payment, records a
+  row in `transactions`, and marks the order `is_paid = true`.
+
 ## Deploy to Vercel
 
 1. Push to GitHub
@@ -95,6 +117,11 @@ src/
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `NEXT_PUBLIC_ADMIN_PASSWORD`
+   - `PAYPAL_CLIENT_ID`
+   - `PAYPAL_CLIENT_SECRET`
+   - `PAYPAL_ENVIRONMENT` (`sandbox` or `live`)
+   - `NEXT_PUBLIC_PAYPAL_CLIENT_ID`
+   - `PKR_TO_USD_RATE` (optional, defaults to 280)
 4. Deploy
 
 Pages use ISR with 60-second revalidation — content updates from admin reflect within a minute.
