@@ -26,7 +26,6 @@ import { createClient } from '@/lib/supabase-browser';
 import { TEMPLATES } from '@/components/TemplatePreview';
 import OrderChat from '@/components/dashboard/OrderChat';
 import PaymentModal from '@/components/dashboard/PaymentModal';
-import type { PaymentResult } from '@/lib/payment';
 
 interface Order {
   id: string;
@@ -148,17 +147,9 @@ export default function OrderDetail({
     setShowPayment(true);
   };
 
-  const handlePaymentSuccess = async (result: PaymentResult) => {
-    // Update order as paid + completed
-    await supabase
-      .from('orders')
-      .update({
-        is_paid: true,
-        status: 'completed',
-        extra_notes: `${order.extra_notes}\n[Payment] ${result.transactionId} | ${result.method} | ${result.paidAt}`,
-      })
-      .eq('id', order.id);
-
+  const handlePaymentSuccess = () => {
+    // The capture API route already updated the orders row and recorded a
+    // transaction. We just refresh local state so the UI reflects it.
     setOrder((prev) => ({ ...prev, is_paid: true, status: 'completed' }));
   };
 
