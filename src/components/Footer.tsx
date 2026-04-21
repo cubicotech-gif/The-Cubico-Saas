@@ -101,8 +101,25 @@ export default function Footer({ settings }: FooterProps) {
           </div>
         </div>
 
-        <div className="border-t border-surface-800 pt-6 text-center text-xs text-surface-600 font-body">
-          {dict.footer.copyright.replace('{year}', new Date().getFullYear().toString())}
+        <div className="border-t border-surface-800 pt-6 flex flex-col sm:flex-row gap-4 sm:gap-0 items-center justify-between text-xs text-surface-600 font-body">
+          <p>{dict.footer.copyright.replace('{year}', new Date().getFullYear().toString())}</p>
+          <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            <Link href={p('/privacy')} className="hover:text-surface-300 transition-colors">
+              Privacy
+            </Link>
+            <Link href={p('/terms')} className="hover:text-surface-300 transition-colors">
+              Terms
+            </Link>
+            <Link href={p('/refund')} className="hover:text-surface-300 transition-colors">
+              Refunds
+            </Link>
+            <Link href={p('/cookies')} className="hover:text-surface-300 transition-colors">
+              Cookies
+            </Link>
+            <Link href={p('/acceptable-use')} className="hover:text-surface-300 transition-colors">
+              Acceptable Use
+            </Link>
+          </nav>
         </div>
       </div>
     </footer>
