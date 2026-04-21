@@ -73,12 +73,17 @@ interface OrderPlan {
   tagline: string;
   bullets: string[];
   featured: boolean;
-  /** One-time development cost in PKR (base currency). */
+  /** One-time development cost in PKR. */
   devCostPKR: number;
+  /** One-time development cost in USD. */
+  devCostUSD: number;
   /** Recurring monthly cost in PKR (0 for one-time-only plans). */
   monthlyPKR: number;
+  /** Recurring monthly cost in USD (0 for one-time-only plans). */
+  monthlyUSD: number;
   /** Extra one-time fee added if e-commerce is requested. */
   ecommerceExtraPKR: number;
+  ecommerceExtraUSD: number;
 }
 
 const PLANS: OrderPlan[] = [
@@ -89,8 +94,11 @@ const PLANS: OrderPlan[] = [
     bullets: ['Up to 4 pages', 'Mobile responsive', 'Contact form', '3 mo. free adjustments'],
     featured: false,
     devCostPKR: 12000,
+    devCostUSD: 149,
     monthlyPKR: 0,
+    monthlyUSD: 0,
     ecommerceExtraPKR: 5000,
+    ecommerceExtraUSD: 49,
   },
   {
     name: 'Growth',
@@ -99,8 +107,11 @@ const PLANS: OrderPlan[] = [
     bullets: ['Up to 4 pages', 'Brand-aligned design', 'Managed hosting + SSL', 'WhatsApp widget'],
     featured: true,
     devCostPKR: 10000,
+    devCostUSD: 129,
     monthlyPKR: 1000,
+    monthlyUSD: 19,
     ecommerceExtraPKR: 5000,
+    ecommerceExtraUSD: 49,
   },
   {
     name: 'Professional',
@@ -109,8 +120,11 @@ const PLANS: OrderPlan[] = [
     bullets: ['Domain + hosting included', 'Advanced SEO', 'Continuous support', 'Monthly reports'],
     featured: false,
     devCostPKR: 8000,
+    devCostUSD: 99,
     monthlyPKR: 1500,
+    monthlyUSD: 39,
     ecommerceExtraPKR: 5000,
+    ecommerceExtraUSD: 49,
   },
 ];
 
@@ -327,7 +341,12 @@ function OrderFlow() {
       }
 
       const pickedPlan = PLANS.find((p) => p.name === form.planName);
-      const priceAmount = pickedPlan?.devCostPKR || 0;
+      const priceAmount = pickedPlan
+        ? isPakistan
+          ? pickedPlan.devCostPKR
+          : pickedPlan.devCostUSD
+        : 0;
+      const priceCurrency = isPakistan ? 'PKR' : 'USD';
 
       // Use .select() to verify the row was actually created
       const { data: inserted, error: insertError } = await supabase
@@ -345,9 +364,9 @@ function OrderFlow() {
           domain_info: '',
           extra_notes: (() => {
             const priceLine = pickedPlan
-              ? ` Price: ${formatPrice(pickedPlan.devCostPKR)} one-time${
+              ? ` Price: ${formatPrice({ pkr: pickedPlan.devCostPKR, usd: pickedPlan.devCostUSD })} one-time${
                   pickedPlan.monthlyPKR > 0
-                    ? ` + ${formatPrice(pickedPlan.monthlyPKR)}/mo`
+                    ? ` + ${formatPrice({ pkr: pickedPlan.monthlyPKR, usd: pickedPlan.monthlyUSD })}/mo`
                     : ''
                 }.`
               : '';
@@ -356,7 +375,7 @@ function OrderFlow() {
           logo_url: logoUrl,
           status: 'pending',
           price_amount: priceAmount,
-          price_currency: 'PKR',
+          price_currency: priceCurrency,
           is_paid: false,
         })
         .select()
@@ -742,14 +761,14 @@ function OrderFlow() {
                       {/* Price block */}
                       <div className="mb-3 pb-3 border-b border-white/5">
                         <p className="text-xl font-display font-bold text-white leading-tight">
-                          {formatPrice(p.devCostPKR)}
+                          {formatPrice({ pkr: p.devCostPKR, usd: p.devCostUSD })}
                         </p>
                         <p className="text-[10px] text-surface-500 font-body">
                           {dict.order.oneTimeDev}
                         </p>
                         {p.monthlyPKR > 0 ? (
                           <p className="mt-1.5 text-[12px] font-display font-semibold text-[#FF6B4A]">
-                            + {formatPrice(p.monthlyPKR)}
+                            + {formatPrice({ pkr: p.monthlyPKR, usd: p.monthlyUSD })}
                             <span className="text-surface-500 font-body font-normal">
                               {' '}{dict.order.perMonth}
                             </span>
@@ -760,7 +779,10 @@ function OrderFlow() {
                           </p>
                         )}
                         <p className="mt-1 text-[10px] text-surface-500 font-body">
-                          {dict.order.ecommerceAddon.replace('{amount}', formatPrice(p.ecommerceExtraPKR))}
+                          {dict.order.ecommerceAddon.replace(
+                            '{amount}',
+                            formatPrice({ pkr: p.ecommerceExtraPKR, usd: p.ecommerceExtraUSD }),
+                          )}
                         </p>
                       </div>
 
@@ -859,13 +881,13 @@ function OrderFlow() {
                         <Row label={dict.order.reviewSelected} value={picked.name} />
                         <Row
                           label={dict.order.reviewDevelopment}
-                          value={`${formatPrice(picked.devCostPKR)} ${dict.order.oneTime}`}
+                          value={`${formatPrice({ pkr: picked.devCostPKR, usd: picked.devCostUSD })} ${dict.order.oneTime}`}
                         />
                         <Row
                           label={dict.order.reviewMonthly}
                           value={
                             picked.monthlyPKR > 0
-                              ? `${formatPrice(picked.monthlyPKR)} ${dict.order.perMonth}`
+                              ? `${formatPrice({ pkr: picked.monthlyPKR, usd: picked.monthlyUSD })} ${dict.order.perMonth}`
                               : dict.order.noMonthly
                           }
                         />

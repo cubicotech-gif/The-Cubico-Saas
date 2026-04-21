@@ -58,4 +58,31 @@
   .animate-glow {
     animation: glow 3s ease-in-out infinite;
   }
+
+  /* Long-form legal page typography. Keeps headings/lists consistent across
+     privacy, terms, refund, cookies, and acceptable-use pages. */
+  .legal-prose h2 {
+    @apply text-2xl font-display font-bold text-white mt-10 mb-3;
+  }
+  .legal-prose h3 {
+    @apply text-lg font-display font-semibold text-white mt-6 mb-2;
+  }
+  .legal-prose p {
+    @apply text-surface-300 leading-relaxed;
+  }
+  .legal-prose ul {
+    @apply list-disc pl-6 space-y-1.5 text-surface-300;
+  }
+  .legal-prose ol {
+    @apply list-decimal pl-6 space-y-1.5 text-surface-300;
+  }
+  .legal-prose a {
+    @apply text-brand-400 hover:text-brand-300 underline decoration-brand-400/30 hover:decoration-brand-300 transition-colors;
+  }
+  .legal-prose strong {
+    @apply text-white font-semibold;
+  }
+  .legal-prose hr {
+    @apply border-surface-800 my-8;
+  }
 }

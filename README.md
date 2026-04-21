@@ -103,11 +103,33 @@ Payments on order completion are processed through PayPal. To enable them:
    PKR_TO_USD_RATE=280                  # PKR orders are charged in USD
    ```
 
-The server exposes two API routes that the PaymentModal uses:
+The server exposes three API routes for PayPal:
 - `POST /api/paypal/create-order` — creates a PayPal order for the logged-in
   customer's order, returns the PayPal order id.
 - `POST /api/paypal/capture-order` — captures the approved payment, records a
-  row in `transactions`, and marks the order `is_paid = true`.
+  row in `transactions`, and marks the order `is_paid = true`. Idempotent:
+  repeated calls return the original capture instead of charging again.
+- `POST /api/paypal/webhook` — receives server-to-server events from PayPal
+  (refunds, reversals, disputes). Verifies each request's signature before
+  acting.
+
+### Webhook setup
+
+1. In PayPal dashboard → Apps & Credentials → your app → **Webhooks** →
+   **Add Webhook**.
+2. URL: `https://YOUR_DOMAIN/api/paypal/webhook`.
+3. Subscribe to at least:
+   - `PAYMENT.CAPTURE.COMPLETED`
+   - `PAYMENT.CAPTURE.REFUNDED`
+   - `PAYMENT.CAPTURE.REVERSED`
+   - `PAYMENT.CAPTURE.DENIED`
+   - `CUSTOMER.DISPUTE.CREATED`
+   - `CUSTOMER.DISPUTE.UPDATED`
+   - `CUSTOMER.DISPUTE.RESOLVED`
+4. Copy the **Webhook ID** from the dashboard and set it in env as
+   `PAYPAL_WEBHOOK_ID` (sandbox + live get different IDs).
+5. The webhook writes with the Supabase service role, so also set
+   `SUPABASE_SERVICE_ROLE_KEY` (Supabase → Settings → API → service_role).
 
 ## Deploy to Vercel
 
@@ -122,6 +144,8 @@ The server exposes two API routes that the PaymentModal uses:
    - `PAYPAL_ENVIRONMENT` (`sandbox` or `live`)
    - `NEXT_PUBLIC_PAYPAL_CLIENT_ID`
    - `PKR_TO_USD_RATE` (optional, defaults to 280)
+   - `PAYPAL_WEBHOOK_ID`
+   - `SUPABASE_SERVICE_ROLE_KEY`
 4. Deploy
 
 Pages use ISR with 60-second revalidation — content updates from admin reflect within a minute.

@@ -50,6 +50,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Order already paid' }, { status: 409 });
   }
 
+  // Idempotency guard: if a transaction already exists for this PayPal order,
+  // return the original result instead of calling capture a second time. Stops
+  // double-clicks from producing duplicate captures at PayPal.
+  const { data: existingTxn } = await supabase
+    .from('transactions')
+    .select('transaction_id, amount, currency, status')
+    .eq('order_id', order.id)
+    .eq('method', 'paypal')
+    .maybeSingle();
+  if (existingTxn?.transaction_id) {
+    return NextResponse.json({
+      success: true,
+      transactionId: existingTxn.transaction_id,
+      paidAt: new Date().toISOString(),
+      method: 'paypal',
+      status: existingTxn.status || 'completed',
+      amount: String(existingTxn.amount),
+      currency: existingTxn.currency,
+      payerEmail: null,
+      payerName: null,
+      idempotent: true,
+    });
+  }
+
   try {
     const capture = await capturePayPalOrder(paypalOrderId);
 

@@ -14,8 +14,11 @@ interface PricingTier {
   key: TierKey;
   name: string;
   devCostPKR: number;
+  devCostUSD: number;
   monthlyPKR: number;
+  monthlyUSD: number;
   ecommerceExtraPKR: number;
+  ecommerceExtraUSD: number;
   is_featured: boolean;
 }
 
@@ -24,24 +27,33 @@ const tiers: PricingTier[] = [
     key: 'starter',
     name: 'Starter',
     devCostPKR: 12000,
+    devCostUSD: 149,
     monthlyPKR: 0,
+    monthlyUSD: 0,
     ecommerceExtraPKR: 5000,
+    ecommerceExtraUSD: 49,
     is_featured: false,
   },
   {
     key: 'growth',
     name: 'Growth',
     devCostPKR: 10000,
+    devCostUSD: 129,
     monthlyPKR: 1000,
+    monthlyUSD: 19,
     ecommerceExtraPKR: 5000,
+    ecommerceExtraUSD: 49,
     is_featured: true,
   },
   {
     key: 'professional',
     name: 'Professional',
     devCostPKR: 8000,
+    devCostUSD: 99,
     monthlyPKR: 1500,
+    monthlyUSD: 39,
     ecommerceExtraPKR: 5000,
+    ecommerceExtraUSD: 49,
     is_featured: false,
   },
 ];
@@ -126,7 +138,7 @@ export default function WebsitePricing(_props: WebsitePricingProps) {
                 {/* Development cost */}
                 <div className="mb-1">
                   <p className="text-3xl font-display font-bold text-white">
-                    {format(tier.devCostPKR)}
+                    {format({ pkr: tier.devCostPKR, usd: tier.devCostUSD })}
                   </p>
                   <p className="text-sm text-surface-500 font-body">
                     {dict.webPricing.oneTimeDev}
@@ -137,7 +149,7 @@ export default function WebsitePricing(_props: WebsitePricingProps) {
                 {tier.monthlyPKR > 0 && (
                   <div className="mb-4">
                     <p className="text-lg font-display font-semibold text-brand-400">
-                      + {format(tier.monthlyPKR)}
+                      + {format({ pkr: tier.monthlyPKR, usd: tier.monthlyUSD })}
                       <span className="text-sm text-surface-500 font-body font-normal">
                         {' '}
                         {dict.webPricing.perMonth}
@@ -153,7 +165,7 @@ export default function WebsitePricing(_props: WebsitePricingProps) {
                   <p className="text-[11px] text-surface-400 font-body leading-relaxed">
                     {dict.webPricing.ecommerceNote.replace(
                       '{amount}',
-                      format(tier.ecommerceExtraPKR),
+                      format({ pkr: tier.ecommerceExtraPKR, usd: tier.ecommerceExtraUSD }),
                     )}
                   </p>
                 </div>

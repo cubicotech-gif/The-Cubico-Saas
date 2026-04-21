@@ -178,3 +178,44 @@ export async function capturePayPalOrder(
     payerName: fullName,
   };
 }
+
+/**
+ * Verify a PayPal webhook request using PayPal's verify-webhook-signature
+ * endpoint. Returns true only if PayPal confirms the signature.
+ *
+ * Requires PAYPAL_WEBHOOK_ID in the environment (the webhook id shown in the
+ * PayPal developer dashboard after creating the webhook subscription).
+ */
+export async function verifyPayPalWebhook(opts: {
+  headers: Record<string, string | null>;
+  rawBody: string;
+}): Promise<boolean> {
+  const webhookId = process.env.PAYPAL_WEBHOOK_ID;
+  if (!webhookId) throw new Error('PAYPAL_WEBHOOK_ID is not configured.');
+
+  const h = (name: string) =>
+    opts.headers[name] ?? opts.headers[name.toLowerCase()] ?? '';
+
+  const token = await getAccessToken();
+  const res = await fetch(`${paypalApiBase()}/v1/notifications/verify-webhook-signature`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    cache: 'no-store',
+    body: JSON.stringify({
+      auth_algo: h('paypal-auth-algo'),
+      cert_url: h('paypal-cert-url'),
+      transmission_id: h('paypal-transmission-id'),
+      transmission_sig: h('paypal-transmission-sig'),
+      transmission_time: h('paypal-transmission-time'),
+      webhook_id: webhookId,
+      webhook_event: JSON.parse(opts.rawBody),
+    }),
+  });
+
+  if (!res.ok) return false;
+  const data = (await res.json()) as { verification_status?: string };
+  return data.verification_status === 'SUCCESS';
+}
