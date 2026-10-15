@@ -9,6 +9,10 @@ import {
 } from '@/i18n/config';
 
 const LOCALE_COOKIE = 'cubico_locale';
+/** When Supabase env vars are missing, skip auth entirely so the site still loads. */
+const SUPABASE_CONFIGURED = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+);
 /** Paths that should never be locale-prefixed. */
 const NON_LOCALIZED_PREFIXES = [
   '/api',
@@ -97,6 +101,8 @@ export async function middleware(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 365,
     });
 
+    if (!SUPABASE_CONFIGURED) return supabaseResponse;
+
     // Still refresh the Supabase session on localized routes.
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -124,7 +130,11 @@ export async function middleware(request: NextRequest) {
         },
       },
     );
-    await supabase.auth.getUser();
+    try {
+      await supabase.auth.getUser();
+    } catch {
+      // Never let an auth failure take the page down.
+    }
 
     return supabaseResponse;
   }
@@ -137,6 +147,8 @@ export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request: { headers: requestHeaders },
   });
+
+  if (!SUPABASE_CONFIGURED) return supabaseResponse;
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -161,9 +173,14 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    ({
+      data: { user },
+    } = await supabase.auth.getUser());
+  } catch {
+    // Treat as signed out; protected routes below will redirect to login.
+  }
 
   // Protected routes
   if ((pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) && !user) {
